@@ -1,0 +1,16 @@
+# Op6_CallNativeRetry: the park (ruling 5, 2; $0070C8-$0070D0), at Flight_FrameClouds' first call
+# (the cloud bank's frame callback: the bank on screen, g_LayerA x below $E40, so
+# g_SceneVars+$A3 = $FF as Flight_StartClouds set it; fuzz-48600-s1 / the TAS f47955-f49938). The
+# case runs the op as the stage 2 $2400 loader reaches it (Tbl_03301E $03308A: `70E0 0000 772E
+# 2400`, then `70BE 0003 337C` at $033092, so a6 = $033094, the native's long): the native,
+# Flight_WaitCloudsPassed, returns g_SceneVars+$A3 = $FF, so the op parks with the resume hook
+# $70D2. The state is the real one but for the loader's progress: the $2400 loader is started by
+# the VM5 spawn entry $021D94 after a population wait (`6FB2 0010` at $021D82 after `6ED2`, the
+# wave cleared), so how early it can start against the clouds' 3,660 frames is undetermined
+# (NOTES, Open questions: cov6, cov12, cov16 "Op6_CallNativeRetry's park"); the TAS starts it
+# 17,000 frames after the clouds pass.
+at $033402
+
+case clouds_on
+reg a6 = $033094
+b $FFFFF597 = $FF

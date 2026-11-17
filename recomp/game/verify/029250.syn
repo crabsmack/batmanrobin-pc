@@ -1,0 +1,22 @@
+# Boss_BeamShip_Spawn: the pool running out (ruling 5, 2), at its first call (the scene init $33A62).
+# pool_empty: no free object block (g_ObjPoolFree = 0), so the radius object's
+# Obj_SpawnScriptedUnlinked fails: d0 = -1. short_N: N free blocks, enough for the radius object
+# but not for the ship too, so Obj_SpawnScripted fails and the radius object is freed again
+# (Obj_FreeWithBlocks) before d0 = -1 (the N that reaches it depends on the blocks a scripted
+# object takes: the cases try 1-4). A full or nearly full pool is a state the game handles; the
+# corpus never makes it.
+
+case pool_empty
+b $FFFFF4B0 = 0
+
+case short_1
+b $FFFFF4B0 = 1
+
+case short_2
+b $FFFFF4B0 = 2
+
+case short_3
+b $FFFFF4B0 = 3
+
+case short_4
+b $FFFFF4B0 = 4

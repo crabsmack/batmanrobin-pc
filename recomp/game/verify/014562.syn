@@ -1,0 +1,13 @@
+# Menu_MoveCursor: the cursor clamps (ruling 5, 2), at its first call (the options screen: d1 = the
+# last item, 2, for Tbl_049994). up_at_top: Up newly pressed on pad 1 ($F626 bit 0) with the
+# cursor ($F3B4) at 0: stays 0. down_at_bottom: Down (bit 1) at item 2: stays 2. Real states: the
+# player pressing Up on the first option or Down on the last; scenario-options never does.
+
+case up_at_top
+w $FFFFF3B4 = 0
+b $FFFFF626 = $01
+
+case down_at_bottom
+w $FFFFF3B4 = 2
+reg d1 = 2
+b $FFFFF626 = $02

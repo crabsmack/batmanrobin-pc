@@ -1,0 +1,7 @@
+# Enemy_Clown_SpawnRanges: no corpus run reaches its trigger entries (ruling 5, 2). Its callers are
+# the trigger callback longs at $016F26 / $016F2E in Tbl_0166EA (the parade truck), as Enemy_Clown_
+# SpawnGreen's entries in the same table (d4/d5 the entry's position). The case runs at Enemy_Clown_
+# SpawnGreen's first call (TAS f3515), the same call.
+at $01B68E
+
+case as_called

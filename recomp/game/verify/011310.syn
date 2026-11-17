@@ -1,0 +1,6 @@
+# HUD_StepIdle (rts): HUD_Update jumps here only when g_HUDStep is 0, which HUD_StepLoadArt leaves
+# when DMA_Reserve fails (its failure path, $0079B8-$0079BE, never runs in the corpus either) or
+# before HUD_Init. Ruling 5 (2): run from the first call of any function.
+at any
+
+case idle

@@ -1,0 +1,6 @@
+# DMA_ReserveSlots: the DMA queue full (ruling 5, 2), at its first call: g_DMAQueueFree = 0 (40
+# slots after DMA_ResetQueue, every queued transfer takes its entries), so the slots are given
+# back and d0 = -1.
+
+case queue_full
+w $FFFF9918 = 0

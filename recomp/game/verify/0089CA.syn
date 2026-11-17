@@ -1,0 +1,5 @@
+# Obj_NewClear: the object pool empty (ruling 5, 2), at its first call: g_ObjPoolFree = 0, so the
+# count is clamped at 0 and d0 = -1.
+
+case pool_empty
+b $FFFFF4B0 = 0

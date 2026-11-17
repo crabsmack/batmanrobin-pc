@@ -1,0 +1,7 @@
+# Enemy_RabbitPot_SpawnE: no corpus run calls it (ruling 5, 2). Its caller: the wave spawn entry at $034926. The case runs at
+# Enemy_RabbitPot_SpawnA's first corpus call ($03665C), a call of the same kind with the same contract (d4/d5 the
+# position, the caller's other registers), so the state is one a caller naming $036628 would
+# leave (raw-stubs 2026-10-30).
+at $03665C
+
+case as_rabbitpot_spawna

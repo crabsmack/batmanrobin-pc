@@ -1,0 +1,15 @@
+# Layer_ScrollStepY's -16 clamp (ruling 5, 2; $012B88-$012B8C), at Boss_ForestRobot_Spawn's first
+# call (the stage 3 mushroom forest's clearing, the scene whose robot boss starts the big shakes),
+# run on g_LayerA (a6 = $FFFFED9C, the layer Stage3_RunMushroomForest's loop steps): the pending y +6 at -17, so the step
+# is clamped to -16 and -1 stays pending. The pending y is the view y's change (g_CameraY + the
+# shake); the forest is the one layer-scrolling scene with big shakes ($03C772 / $03CC02 /
+# $03CC64), and one frame can drop g_ShakeY by a peak minus the new shake's first step: 17 for a
+# Shake_StartRandom of 3 px on a big shake's peak frame (18). Whether such a start lands on a big
+# shake's peak in the forest is not traced, so reachability is undetermined (NOTES, Open
+# questions: cov13's "Layer_QueueColumn" / "+6 (pending y) writers" and the camera writers' bounds).
+
+at $03C64E
+
+case pending_minus_17
+reg a6 = $FFFFED9C
+w a6 + 6 = $FFEF

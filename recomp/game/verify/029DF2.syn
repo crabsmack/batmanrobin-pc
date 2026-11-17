@@ -1,0 +1,6 @@
+# Enemy_Jet_SpawnMissileLauncherB: no corpus run spawns it (ruling 5, 2). Its callers (the spawner longs named in its header)
+# make the call Enemy_Jet_SpawnMissileLauncher gets from its own entries, the same contract (lea script / jmp Obj_SpawnEnemy as its siblings).
+# The case runs at Enemy_Jet_SpawnMissileLauncher's first call, the same call.
+at $029D0C
+
+case as_called

@@ -1,0 +1,7 @@
+# Enemy_ArenaDebris_SpawnBounceAtX: no corpus run calls it (ruling 5, 2). Its caller: the arena wave's spawn entries at $03C54E / $03C56C / $03C596 / $03C5B4. The case runs at
+# Enemy_ArenaDebris_SpawnBounce's first corpus call ($03C600), a call of the same kind with the same contract (d4/d5 the
+# position, the caller's other registers), so the state is one a caller naming $03C636 would
+# leave (raw-stubs 2026-10-30).
+at $03C600
+
+case as_arenadebris_spawnbounce

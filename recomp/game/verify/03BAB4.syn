@@ -1,0 +1,15 @@
+# Boss_CatHead_DriverSettle with the raster driver left of / above its rest point (ruling 5, 2), at
+# its first call (the head's energy just reached 0). The settle starts when the head dies, wherever
+# the sway's two oscillators have the driver then: Op2_SetOscX ($03BA3C) and Op2_SetOscY ($03BA76)
+# add a velocity that swings between -limit and +limit, so x and y swing both ways around their
+# start (RAM f88320, mid-sway: g_SceneVars+$10 = x >> 6 = $E178, negative). The corpus's three
+# kills came at a positive x and y. far: both still negative after this frame's step (bmi taken);
+# near: one step crosses 0 and is floored there (the bra to the clear).
+
+case far
+l a6 + $3E = $FFF00000
+l a6 + $42 = $FFF80000
+
+case near
+l a6 + $3E = $FFFFFFFF
+l a6 + $42 = $FFFFFFFF

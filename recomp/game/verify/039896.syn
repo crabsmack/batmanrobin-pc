@@ -1,0 +1,8 @@
+# ToyChain_Spawn8B: no corpus run calls it at 4:3 (ruling 5, 2). Its caller is the wave spawn entry at $034632 (x $154, y $E09C)
+# (VM5_SpawnEntry's `jsr (a0)` at $007016); the 4:3 corpus never reaches that wave step, the gameplay
+# mode's widened windows may (ws-tail 2026-10-30). The case runs at ToyChain_Spawn10B's first call
+# (TAS f86799), a call from the same VM5_SpawnEntry `jsr (a0)` with the same contract (d4/d5 the
+# entry's position, a6 the wave object), so the state is one a wave entry naming $039896 would leave.
+at $0396C2
+
+case as_10b

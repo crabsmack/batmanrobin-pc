@@ -1,0 +1,16 @@
+# Obj_SpawnAfter: no corpus run calls it (ruling 5, 2). Its caller: Obj_SpawnEnemyAfter's bsr.w at $008E28. It links the new object
+# right after a6, so a6 must be a live object: the case runs at Enemy_SpinMine_SpawnDown's first
+# corpus call ($0299D2), entered from Spawn_AtOwnPos with a6 = the spawning object and d4/d5 the
+# position, as the Hatter road pieces call it (Op2_CallNative Spawn_AtOwnPos), with what Obj_SpawnEnemyAfter passes on: d7 = 4 blocks, a0 = VM2_RunObject. At Obj_NewMulti's
+# or Obj_SpawnEnemy's first call a6 is no RAM object and the C's handle of it faulted (2026-10-30).
+# raw-stubs 2026-10-30.
+at $0299D2
+
+case as_road_piece
+reg d7 = $00000004
+reg a0 = $000007D2
+
+case pool_short          # g_ObjPoolFree = 0: the borrow path (Obj_NewMultiFail, d0 = -1)
+reg d7 = $00000004
+reg a0 = $000007D2
+b $FFFFF4B0 = 0

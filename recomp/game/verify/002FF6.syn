@@ -1,0 +1,7 @@
+# Op2_HoldRangeOfPlayerX: no targeted player (ruling 5, 2), at its first call: a4 +$10 = 0, the
+# target the targeting ops leave while no player is in play (the corpus reaches that state:
+# Op2_BranchPlayerInBox's no-target path $003488 runs), so the op brakes x and skips its 8 bytes
+# of operands.
+
+case no_target
+w a4 + $10 = 0

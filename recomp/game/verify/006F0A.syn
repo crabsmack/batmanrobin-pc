@@ -1,0 +1,34 @@
+# Op5_StartGroup with the wave's previous kill group still open (ruling 5, 2), at its first call.
+# A group stays open (the wave's $32 set) until as many members have spawned as its target
+# (VM5_SpawnEntry clears $32 when group +6 reaches +0), and only successful spawns count: a
+# spawner that fails (Obj_SpawnEnemy* on a full pool: the pool does run out, the TAS reaches
+# VM4_SpawnChild's full-pool rts $006154) leaves the group one short. The wave scripts give a
+# group exactly the spawns of one Op5_SpawnMulti and then wait for the population and start the
+# next group (Tbl_0166EA $017012-$0170F4: `6F0A 0006 ...` then `6FBC 0005` six entries, then
+# `6ED2`, then the next `6F0A`), so one failed spawn of the six reaches the next StartGroup with
+# the old group open at 5 of 6. The case allocates the old group as ObjPool_Alloc would (the free
+# list's head, g_ObjPoolHead $FFAD52, popped; g_ObjPoolFree $FFF4B0 one less) and links it from
+# $32: members 6, spawned 5; all_dead: the 5 spawned are dead, so the op reuses the block for the
+# new group; alive: 3 of them still alive, so it closes the old group at 5 and allocates a new one.
+
+case all_dead
+w a6 + $32 = {$FFFFAD52}
+w $FFFFAD52 = {{$FFFFAD52}}
+b $FFFFF4B0 = {$FFFFF4AF} - 1
+w {a6 + $32} = 6
+w {a6 + $32} + 2 = 1
+w {a6 + $32} + 4 = $16
+w {a6 + $32} + 6 = 5
+w {a6 + $32} + 8 = 5
+l {a6 + $32} + $A = 0
+
+case alive
+w a6 + $32 = {$FFFFAD52}
+w $FFFFAD52 = {{$FFFFAD52}}
+b $FFFFF4B0 = {$FFFFF4AF} - 1
+w {a6 + $32} = 6
+w {a6 + $32} + 2 = 4
+w {a6 + $32} + 4 = $16
+w {a6 + $32} + 6 = 5
+w {a6 + $32} + 8 = 2
+l {a6 + $32} + $A = 0

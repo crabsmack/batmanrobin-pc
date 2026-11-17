@@ -1,0 +1,50 @@
+# widescreen_screens.toml - every screen the 16:9 view reaches, wide or 4:3 centred with bars, and
+# why (docs/phases/P6-enhance.md R5, E3; the ids are recomp/platform/native/widescreen.cpp's
+# screen_now: a stage section by g_SectionId, a plain scene by the header Scene_InitCommon read).
+# Checked 2026-10-30 by rendering every screen the corpus reaches with 40-px margins
+# (BR_WS_ALLWIDE=1, one picture per screen): a plain scene's picture is 320 px wide unless said.
+
+"boot" = { mode = "4:3", why = "before the first scene: the VDP's power-on state, no picture" }
+
+# --- stage sections: wide (R5), the streamer widened, the render camera keeps the view on the map (R16)
+"section-1100" = { mode = "wide", why = "stage 1 street: the facade and the fire sky are drawn whole on 1024-px planes" }
+"section-1300" = { mode = "wide", why = "stage 1 gem expo: the streamed block map (254 blocks)" }
+"section-1301" = { mode = "wide", why = "stage 1 warehouse: the streamed block map (130 blocks)" }
+"section-1400" = { mode = "wide", why = "stage 1 parade truck: the streamed block map (294 blocks)" }
+"section-2100" = { mode = "wide", why = "stage 2 lift: the shaft map is 19 blocks (304 px), centred with bars past its ends (R16); column V-scroll widened (R12)" }
+"section-2200" = { mode = "wide", why = "stage 2 flight: whole-drawn parallax planes 1024 px wide" }
+"section-2300" = { mode = "wide", why = "stage 2 flight: the streamed block map (228 blocks) under parallax bands" }
+"section-2400" = { mode = "wide", why = "stage 2 airship: the streamed block map (275 blocks)" }
+"section-2401" = { mode = "wide", why = "stage 2 airship boss: whole-drawn planes, the picture goes on past 320 px" }
+"section-3100" = { mode = "wide", why = "stage 3 backlot: the streamed block map (416 blocks)" }
+"section-3101" = { mode = "wide", why = "stage 3 cat head arena: the 320-px stage picture, bars past its ends (R16); the sway's column V-scroll widened (R12)" }
+"section-3200" = { mode = "wide", why = "stage 3 mushroom forest: the streamed block map (281 blocks)" }
+"section-3300" = { mode = "wide", why = "stage 3 spotted room: whole-drawn repeating pattern; column V-scroll widened (R12); the x 0-15 cover at the wide left edge" }
+"section-3400" = { mode = "wide", why = "stage 3 card hall: whole-drawn hall picture, bars where it ends" }
+"section-3401" = { mode = "wide", why = "stage 3 Hatter road: whole-drawn starfield and road" }
+"section-4000" = { mode = "wide", why = "stage 4 hall: whole-drawn planes" }
+"section-4300" = { mode = "wide", why = "stage 4 lab: whole-drawn 1024-px planes" }
+"section-4400" = { mode = "wide", why = "stage 4 tube: whole-drawn repeating tube" }
+"section-4401" = { mode = "wide", why = "stage 4 Freeze fight: the arena picture, bars where it ends" }
+
+# --- plain scenes
+"game-over" = { mode = "wide", why = "the snowy skyline is drawn across the 512-px plane: it goes on naturally past 320 px" }
+"sega-logo" = { mode = "4:3", why = "the logo on a blank plane: nothing past 320 px" }
+"sega-logo-palette" = { mode = "4:3", why = "the logo's palette cycle: the same blank plane as sega-logo" }
+"copyright" = { mode = "4:3", why = "text on a blank plane: nothing past 320 px" }
+"title" = { mode = "4:3", why = "the title picture is 320 px wide (rendered wide: black past it)" }
+"player-select" = { mode = "4:3", why = "the 320-px select picture; past it the plane holds unrelated cells" }
+"batmobile-intro" = { mode = "4:3", why = "the stage cards' picture (LEVEL THREE): 320 px, cut off past it" }
+"stage-card-1" = { mode = "4:3", why = "stage card: a 320-px picture" }
+"stage-card-2" = { mode = "4:3", why = "stage card: a 320-px picture" }
+"stage-card-4" = { mode = "4:3", why = "stage card: a 320-px picture" }
+"story-asylum-gate" = { mode = "4:3", why = "the asylum gate picture ends at 320 px (a dark strip past it)" }
+"story-gate-scroll" = { mode = "4:3", why = "the searchlight pan's picture ends inside the right margin" }
+"story-searchlight" = { mode = "4:3", why = "a 320-px story picture" }
+"story-tower" = { mode = "4:3", why = "the tower picture is 320 px wide (black past it)" }
+"story-facade" = { mode = "4:3", why = "four framed panels in a 320-px picture" }
+"attract-skyline" = { mode = "4:3", why = "the attract skyline strip is 320 px wide (black past it)" }
+"attract-scroll" = { mode = "4:3", why = "the attract skyline pan: the same 320-px strip" }
+"continue" = { mode = "4:3", why = "the continue picture (Freeze and the counters) is 320 px wide" }
+"ending-epilogue" = { mode = "4:3", why = "a 320-px ending picture (black past it)" }
+"ending-freeze-cell" = { mode = "4:3", why = "a 320-px ending picture (black past it)" }

@@ -1,0 +1,6 @@
+# Obj_SpawnUnlinked: the allocation failing (ruling 5, 2), at its first call: the object pool has
+# no free block (g_ObjPoolFree = 0), so Obj_NewMultiUnlinked fails and it returns d0 nonzero
+# without Obj_InitSpawned.
+
+case pool_empty
+b $FFFFF4B0 = 0

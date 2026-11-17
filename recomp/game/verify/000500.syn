@@ -1,0 +1,21 @@
+# Boot_DrawLockoutText: the region-lockout screen (ruling 5, 2). A real state: the cartridge
+# (header region 'JU') on a European console, whose version register maps to 'E', which
+# Boot_CheckRegion finds nowhere in Hdr_Regions, so it draws the lockout lines; the corpus is
+# recorded on a US console (dkit.toml [emulator] region = 0, autodetect from the header).
+# The cases are Boot_CheckRegion's calls: a0 = the string after its column byte, d0 = that
+# byte, d1 = the row ($8 for the first line, +1 per line), a4/a5 = the VDP data/control ports.
+at any
+
+case developed            # the first line: Str_LockoutDeveloped $00054E, column $06, row 8
+reg a0 = $0000054F
+reg d0 = $06
+reg d1 = $08
+reg a4 = $00C00000
+reg a5 = $00C00004
+
+case systems              # the last line: Str_LockoutSystems $00056E, column $0F, row 10
+reg a0 = $0000056F
+reg d0 = $0F
+reg d1 = $0A
+reg a4 = $00C00000
+reg a5 = $00C00004

@@ -1,0 +1,7 @@
+# Op2_CruiseRight: a negative x cruise speed (ruling 5, 2), at its first call: $30(a3) < 0, so the
+# op negates it (the target speed $24 = +|cruise|). Real scripts set negative cruise speeds
+# (Op2_SetCruiseX $FD80 at $019838 in the Harley cart's Scr2_019822, $F600 at $03FC1C, $FB00 at
+# $03FD58, $F600 at $04CFC0 / $04FAFC); the corpus never runs this op while one holds.
+
+case negative_cruise
+l a3 + $30 = $FFFF8000

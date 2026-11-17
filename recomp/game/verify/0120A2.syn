@@ -1,0 +1,69 @@
+# Coll_WalkBlockMap's never-run stops (ruling 5, 2), at its first call (TAS f6362, the GemExpo
+# scene: g_LayerA holds its 254x15 block map, the one of TAS RAM dump f6360), each case a walker's
+# call as Coll_MoveGroundedBlockMap makes it (d1 = x move, d4/d5 = position, d6/d7 = wall/floor
+# masks: 1, the bit of the walls used). The positions are the map's own walls (scratchpad
+# cov17_walls.py). cov13 established that no GROUNDED walker (feet over a floor pixel) meets a wall
+# with its feet at row 0 of a block in any block map, and that a 2-px wall in column 15 of a block
+# exists only at GemExpo's last block column; spawns and carried objects (a walker placed off a
+# floor) were not checked, so these walkers are placed off a floor, and reachability is
+# undetermined (NOTES, Open questions: cov13's "Coll_MoveBlockMap / Coll_WalkBlockMap").
+
+# Walking right into the 1-px wall at x 2553 (y 160-191, across the block-row boundary at 176)
+# with the feet at row 0 of block row 11 ($01229E-$0122C4): the step and the one-pixel climb both
+# meet the wall, so the walker steps back and down across the boundary.
+case right_wall_feet_row0
+reg d1 = 1
+reg d4 = 2552
+reg d5 = 176
+reg d6 = 1
+reg d7 = 1
+
+# The same wall walking left from x 2554 ($012454-$01247A).
+case left_wall_feet_row0
+reg d1 = -1
+reg d4 = 2554
+reg d5 = 176
+reg d6 = 1
+reg d7 = 1
+
+# Walking left from x 4064 (column 0 of block 254, one past the map's right end: the block lookups
+# use the last column) into the wall in column 15 of block 253 (y 0-63) ($012426-$012430,
+# $01244A: the step back right recrosses the block edge; block 254 is not a map column, so the
+# block is not reloaded). The reload of an in-map block edge ($012432-$012446) needs such a wall
+# with a map column to its right, which no block map has (cov13, cov17_walls.py's LE-in-map).
+case left_wall_block_edge
+reg d1 = -1
+reg d4 = 4064
+reg d5 = 10
+reg d6 = 1
+reg d7 = 1
+
+# A walker below the map's last block row (y 248 >= 15 x 16, $0120DE-$0120E2: the lookup is
+# clamped to row 14), not moving: only the probe below its feet. A mover falling past the bottom
+# edge onto walking is not excluded by anything known.
+case below_map
+reg d1 = 0
+reg d4 = 100
+reg d5 = 248
+reg d6 = 1
+reg d7 = 1
+
+# The block reload at an in-map block edge ($012432-$012446): a grounded walker at (2560, 167),
+# column 0 of block (160,10), on the 1-px platform at y 168 (cell $0748, mask 1, spans 08-08),
+# walking left into column 15 of block (159,10), the platform's left end (cell $0740: its collision
+# data $FF281E has mask 1, column 9 the 8-F pillar, columns 10-15 08-08). The wall is constructed:
+# column 15's span made 00-0F, a full-height pillar column like the map's own (cells $0868 /
+# $0870, and the GemExpo map's last column), so the step and the one-pixel climb both meet it and
+# the step back right recrosses the block edge, block 160 being a map column (the block is
+# reloaded). No intact block map has such a wall (cov13, cov17_col15all.py: 0 in 6,563 dumps of
+# 24 runs); a walker on stale level data may meet one (the stage-2 arena: a barrel thug landing
+# on the lift's girder at map y 258 survives into the arena, cov18), so reachability is
+# undetermined (NOTES, Open questions: cov17's "the 12 undetermined files as synthetic cases").
+case left_wall_in_map_edge
+b $FFFF283E = $00
+b $FFFF283F = $0F
+reg d1 = -1
+reg d4 = 2560
+reg d5 = 167
+reg d6 = 1
+reg d7 = 1

@@ -1,0 +1,8 @@
+# Op4_SaveDrawPos: an a4 object with a nonzero radius (ruling 5, 2), at its first call: the radius
+# word $26(a6) = $20, so the saved draw position is the centre plus radius x (sin, cos) of the
+# heading $2A(a5). A real state: VM4_SpawnChild_InitMotion stores the spawn's radius d2 (or its
+# parameter table's, e.g. the spawns at $013148-$0131E6 with tables) at +$26; the corpus's users
+# of this op all had radius 0.
+
+case radius
+w a6 + $26 = $0020

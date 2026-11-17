@@ -1,0 +1,12 @@
+# Frame_RunWorld's free-camera branch ($009BEA Frame_RunFreeCam: jmp Debug_FreeCamStep): no real
+# state sets g_FreeCam ($F4F1; its one writer Debug_PauseMenu runs only while g_DebugPause, which
+# only ever gets 0). Ruling 5 (2): at its own first call, g_FreeCam set, pad 1's live record idle.
+
+case freecam
+b $FFFFF4F1 = $FF
+w $FFFFF418 = $F62C
+b $FFFFF62C = 0
+b $FFFFF62E = 0
+l $FFFFDFC0 = 0
+l $FFFFF41A = [$FFFFDFC4] + $00A00000
+l $FFFFF41E = [$FFFFDFC8] + $00700000

@@ -1,0 +1,6 @@
+# Op2_SpawnChildOrWait: the spawn failing (ruling 5, 2), at its first call: the object pool has
+# no free block (g_ObjPoolFree = 0), so the spawner it calls returns nonzero and the op backs a2
+# up by its 8 operand bytes and yields, retrying next frame.
+
+case pool_empty
+b $FFFFF4B0 = 0

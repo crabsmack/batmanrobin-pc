@@ -1,0 +1,17 @@
+# HUD_PlayerOut: the two panels no corpus frame shows when a player is out while the other plays
+# on (ruling 5, 2), at its first call (a player has lost the last life), the other record in play
+# (+$25 bit 0). boss_time: joining locked (g_JoinLocked, HUD_LockJoin's BOSS TIME: the player
+# fell during a boss fight) with credits left: script $11012. no_credits: every credit used
+# (g_Credits 0, the joins and continues take them): script $10FB2.
+
+case boss_time
+b $FFFFF675 = 1
+b $FFFFF6B5 = 1
+w $FFFFF64E = 3
+b $FFFFF4EB = $FF
+
+case no_credits
+b $FFFFF675 = 1
+b $FFFFF6B5 = 1
+w $FFFFF64E = 0
+b $FFFFF4EB = 0

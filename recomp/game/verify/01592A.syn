@@ -1,0 +1,9 @@
+# Debug_FreeCamSyncLayer (Debug_FreeCamStep's exit when the cursor is left of the centre): the
+# debug free camera, which no real state turns on (015730.syn). Ruling 5 (2), at Frame_RunWorld's
+# first call (plane A's layer set up).
+at $009BC0
+
+case as_is
+
+case moved_camera         # the camera 24 px right of where the layer is
+l $FFFFDFC4 = [$FFFFDFC4] + $00180000

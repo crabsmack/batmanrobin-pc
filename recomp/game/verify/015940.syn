@@ -1,0 +1,15 @@
+# Debug_DrawHexBytes: called only by Debug_FreeCamStep, which no real state runs (015730.syn).
+# Ruling 5 (2), at Frame_RunWorld's first call (the sprite list set up): d0 = column << 8 | row,
+# d1 = the byte count, a6 = the bytes.
+at $009BC0
+
+case camera_x_2           # two bytes of RAM (the camera's integer x)
+reg d0 = $1E18
+reg d1 = 2
+reg a6 = $FFFFDFC4
+
+case rom_4                # four bytes of ROM: every digit 0-F shows up across them
+reg d0 = $0203
+reg d1 = $FFFF0004
+reg a6 = $000100
+w $FFFFF436 = 0

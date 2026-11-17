@@ -1,0 +1,13 @@
+# DMA_FlushQueue_40: the flush of a full DMA queue (ruling 5, 2). A state the real game can be in:
+# every queue writer reserves its slots with `sub.w d0,(g_DMAQueueFree).w` / bmi (00799C, 0079C0,
+# 008042), so a frame that queues 40 commands leaves 0 free and DMA_FlushQueue's
+# `jmp $785A(pc,d0.w)` lands here (d0 = 0); no corpus frame queues that many. At DMA_FlushQueue's
+# first call (the V-int: a0 = the VDP control port), a3 = the queue's start, the 40 entries as
+# the RAM holds them (the hardware writes are captured, not performed).
+
+at $00784A
+
+case full
+reg a0 = $00C00004
+reg a3 = $FFFF991C
+w $FFFF9918 = 0

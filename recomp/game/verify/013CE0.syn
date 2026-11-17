@@ -1,0 +1,16 @@
+# Item_CollectWeapon: a value-0 weapon pickup collected (ruling 5, 2), at its first call (a player
+# touching a weapon pickup: a6 = the pickup, g_FoundBox = the player's box): the pickup's value
+# $2A(a6) = 0, which lowers the weapon level by one. A real state: Item_SpawnWeaponRandomOrDownFromHit
+# picks the value from Tbl_013C7E (0-3; the TAS spawns them at f80646, f80790), and the power-up
+# cycles its shown value (Item_WeaponItemShowNext). at_0: level 0 (both records): unchanged.
+# from_3: level 3: lowered to 2.
+
+case at_0
+w a6 + $2A = 0
+w $FFFFF67A = 0
+w $FFFFF6BA = 0
+
+case from_3
+w a6 + $2A = 0
+w $FFFFF67A = 3
+w $FFFFF6BA = 3

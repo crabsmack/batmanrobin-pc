@@ -1,0 +1,6 @@
+# Item_SpawnWeaponRandomOrDownDrifting: no corpus run spawns it (ruling 5, 2). Spawn action 20 of Tbl_012EF0, called by
+# SpawnAction_Run like every item spawner (d4/d5 the position, a4/a6 the caller's). The case runs at
+# Item_SpawnWeaponRandom's first call ($0139A4, spawn action 15: TAS f603), the same call.
+at $0139A4
+
+case as_called

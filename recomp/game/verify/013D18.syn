@@ -1,0 +1,19 @@
+# Item_CollectWeaponLevelUp: the power-up's touch native (ruling 5, 2). A real state reaches it
+# (the stepped runner collected one in 5 fuzz runs, P4 kickoff 2026-10-27), the timed corpus
+# never: the cases run at Item_CollectBigHealth's first call, the same moment for another pickup
+# (g_FoundBox = the collecting player's box), with the weapon level (record +$2A, 0-6) below and
+# at the cap in both records (whichever player collected).
+
+at $013440
+
+case level_0              # raised to 1
+w $FFFFF67A = 0
+w $FFFFF6BA = 0
+
+case level_5              # raised to 6
+w $FFFFF67A = 5
+w $FFFFF6BA = 5
+
+case capped               # at 6: unchanged
+w $FFFFF67A = 6
+w $FFFFF6BA = 6

@@ -1,0 +1,8 @@
+# Op4_BodyBox: the box allocation failing (ruling 5, 2), at its first call: the object has no box
+# yet ($14(a6) = 0, the op's first run on it, when it creates one) and the object pool is full
+# (g_ObjPoolFree = 0: 140 blocks at scene init, every ObjPool_Alloc* takes one), so ObjPool_Alloc
+# fails and the op skips its operands without a box, to try again next run.
+
+case pool_empty
+w a6 + $14 = 0
+b $FFFFF4B0 = 0

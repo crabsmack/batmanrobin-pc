@@ -1,0 +1,8 @@
+# Enemy_BarrelThug_ThrowBarrel: the barrel not spawned (ruling 5, 2), at its first call: the object
+# pool has no free block (g_ObjPoolFree = 0), so Enemy_Barrel_Spawn (Obj_SpawnEnemy) fails and the
+# native returns d0 = -1 with the thug keeping its drop. A full pool is a state the game handles
+# (the lift section spawns thugs, barrels and bullets from one 140-block pool); the corpus never
+# fills it.
+
+case pool_empty
+b $FFFFF4B0 = 0

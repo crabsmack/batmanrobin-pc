@@ -1,0 +1,13 @@
+# Stage4_ConeAlloc with all three cone slots in use (ruling 5, 2), at its first call: the object has
+# no cone yet ($1E(a6) = 0) and every slot's in-use byte is set, so the scan finds none and it
+# returns d0 = 1 ($047350). Cones are owned by the gas orbs (coroutine 1 at $04224E, after the
+# first hit) and the cone director Scr2_0451B6, and both callers handle the failure (the orb's
+# switch takes its second offset to Op2_Return; the director waits $F0 frames and retries at
+# $0451BE), so a fourth owner while three cones are live is a state the game plans for; the
+# corpus never had more than three at once.
+
+case full
+w a6 + $1E = 0
+b $FFFFF444 = $FF
+b $FFFFF462 = $FF
+b $FFFFF480 = $FF

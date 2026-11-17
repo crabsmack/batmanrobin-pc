@@ -1,0 +1,23 @@
+# SceneCb_WaitPlayersExit: the section exit with player 1 out and player 2 in play (ruling 5, 2),
+# at its first call (TAS f6115: the exit walk under way, g_ExitTimer counting): player 1's record
+# not in play (+$25 bit 0 clear), player 2's in play with the walking player object (record +$2C
+# = the handle player 1's record held), so only player 2's script variable 1 is read
+# (Player_GetP2Var1). A real state: player 1 out of lives while player 2 finishes the section
+# (scenario-two-player-exit plays player 2 alone after the continue, but not to an exit).
+
+case p2_alone
+b $FFFFF675 = 0
+b $FFFFF6B5 = 1
+w $FFFFF6BC = {$FFFFF67C}
+
+# Both players out of play while the exit counts (ruling 5, 2): SceneCb_WaitPlayersExit neither
+# counts nor ends ($009DA8 `bra` to the rts). A real state: Player_SetExitFlag installs this
+# callback for every record with +$25 bit 0 set, and a player whose last life is gone keeps that
+# bit through the death script (Player_LoseLife d0 = 1 clears lives and health only; the bit is
+# cleared by Player_DespawnNative at the script's end), while the section exit is started by the
+# boss's or director's own script (Section_StartExit / StartExitN natives). A last player dying as
+# the section clears is then despawned with the exit callback in g_FrameCallback, where it
+# replaced SceneCb_CheckGameOver: no game over is detected, and this path runs every frame.
+case both_out
+b $FFFFF675 = 0
+b $FFFFF6B5 = 0

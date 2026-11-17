@@ -1,0 +1,6 @@
+# Op4_ForkOrBranch: the object pool full (ruling 5, 2), at its first call: g_ObjPoolFree = 0
+# (140 blocks at scene init, every Obj_New / ObjPool_Alloc* takes one), so VM4_Fork's Obj_New
+# fails and the op takes its failure branch instead of forking.
+
+case pool_empty
+b $FFFFF4B0 = 0

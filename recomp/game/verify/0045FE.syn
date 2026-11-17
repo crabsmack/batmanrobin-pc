@@ -1,0 +1,9 @@
+# Op2_DrawSprAttrOff: the H-flipped offset (ruling 5, 2), at its first call: the sprite block's
+# attribute word $38(a5) with bit 11 set (byte $38 bit 3: the object faces left), so dx is negated
+# before the frame is added. A real state the corpus never drew through this op: the op is in the
+# draw lists of ten script families, among them Scr2_019822 (Harley), whose Op2_ModSprAttr
+# `F808` ($019C18, $019D12, $019D34) sets that bit. Every corpus call had it clear, so + $800 sets
+# only bit 11.
+
+case hflip
+w a5 + $38 = {a5 + $38} + $800

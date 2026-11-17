@@ -1,0 +1,7 @@
+# Boss_Harley_LobAtPlayer: no target (ruling 5, 2), at its first call (TAS f5765: Harley on the
+# raised pole, a4 = her speed block): $10(a4) = 0, so no projectile. A real state: the script's
+# target ops clear $10(a4) when no player can be targeted (Op2_SwapPlayerTarget's clr.w $10(a4)
+# at $002E16: e.g. the player between lives).
+
+case no_target
+w a4 + $10 = 0

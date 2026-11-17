@@ -1,0 +1,6 @@
+# Op2_AnimByCruiseX: an x cruise speed under 100 (ruling 5, 2), at its first call: $30(a3) = 0, so
+# the animation speed $36(a5) is 1. A real state: an object whose script runs this op before
+# setting its x cruise speed (the motion block starts cleared: Obj_InitSpawned).
+
+case slow
+l a3 + $30 = 0

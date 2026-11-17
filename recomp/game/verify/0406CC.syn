@@ -1,0 +1,22 @@
+# Stage3_DrawRoad's pitch and bend clamps (ruling 5, 2; $0406D8-$04070E), at its first call (the
+# Hatter road's driver object, every frame of the road; fuzz-113400-s1): the pitch g_SceneVars2+$1C
+# and the bend +$16 as Boss_Hatter_SteerRoad leaves them from a steerer position beyond the road's
+# limits (bend = steerer x / 16, beyond +-24 for |x| > 384 px; pitch = y / 16, above 40 for y > 640
+# or below -480 for y < -7680), each clamped and stored back. The steerer's targets are x 0 and y in
+# -4500..+150, but its osc segments restart from the current position (96 px X swing spans +-167 px
+# per run) and pattern 2's continuation Scr2_03E532 installs three with only stop segments between,
+# which could carry x past 384 depending on the phases; no run reached that part of the pattern
+# (cov11's probe stopped at $03EBB1), so reachability is undetermined (NOTES, Open questions:
+# cov7/cov9's "$04062A Stage3_DrawRoad's bend / pitch clamps", cov11's "Stage3_RoadCameraFollow").
+
+case pitch_low             # $0406D8-$0406DE: y < -7680
+l $FFFFF5BA = $FE100000
+
+case pitch_high            # $0406E8: y > 640
+l $FFFFF5BA = $300000
+
+case bend_left             # $0406FE-$040704: x < -384
+l $FFFFF5B4 = $FFE00000
+
+case bend_right            # $04070E: x > 384
+l $FFFFF5B4 = $200000

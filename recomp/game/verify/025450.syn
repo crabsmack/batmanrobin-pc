@@ -1,0 +1,9 @@
+# Enemy_Barrel_KnockByHit: no corpus run reaches it (ruling 5, 2). It runs inline in the barrel's
+# script when a struck barrel is hit by its switch's attacker kind: a3 = the barrel's motion block and
+# g_StruckBox the box just struck. The cases run at Item_SpawnRapidChargeFromHit's first call
+# ($01388A: TAS f6969, called as an object is struck, so g_StruckBox is the box just hit), a3 moved
+# to the struck object's own motion block (handle +$8 of a6).
+at $01388A
+
+case as_struck
+reg a3 = {a6 + 8}

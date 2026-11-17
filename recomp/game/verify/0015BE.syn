@@ -1,0 +1,8 @@
+# Mot_SteerToHeading: the movement pause (ruling 5, 2), at its first call: the stun count $1(a3)
+# set, so it counts down and only the impulses move the object (Op2_StepVelocity_Impulse with
+# d1 = d2 = 0). The count is real: an attacker's hit sets it on the attacker's motion block
+# (EnemyAtk_ApplyHit $0107B0: 7; PlayerAtk_HitPause $0107E8: 6) and Op2_StepVelocity counts it
+# down the same way; the corpus never has a stunned object running a heading-steer op.
+
+case stunned
+b a3 + 1 = 7

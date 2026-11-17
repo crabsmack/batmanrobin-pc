@@ -1,0 +1,9 @@
+# Player_JoinOrSpawn: the spawn refused for a full object pool (ruling 5, 2), at its first call (a
+# player slot object, a6+$1E = its record): the record in play (+$25 bit 0), g_ObjPoolFree = 0
+# (140 blocks at scene init, every Obj_New / ObjPool_Alloc* takes one), so the 3-block allocation
+# fails and the slot waits to retry next frame. A busy screen can hold every block when a player
+# respawns (after a lost life) or joins.
+
+case pool_full
+b [a6 + $1E] + $25 = 1
+b $FFFFF4B0 = 0

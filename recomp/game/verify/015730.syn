@@ -1,0 +1,60 @@
+# Debug_FreeCamStep: no real state runs it (ruling 5, 2): g_FreeCam is set only by Debug_PauseMenu,
+# which Pause_Update enters only while g_DebugPause ($F60E) is nonzero, and its one writer
+# ($009E02) stores 0. The cases run at Frame_RunWorld's first call (a stage in play: the sprite
+# list, the camera and the layers set up), the pad record = pad 1's live one ($F62C).
+at $009BC0
+
+case idle_left            # nothing held or pressed; the cursor 16 px left of the centre
+w $FFFFF418 = $F62C
+b $FFFFF62C = 0
+b $FFFFF62E = 0
+l $FFFFDFC0 = 0
+l $FFFFF41A = [$FFFFDFC4] + $00900000
+l $FFFFF41E = [$FFFFDFC8] + $00700000
+
+case right_lock           # right held, C pressed: the lock set; speed reaches the cap
+w $FFFFF418 = $F62C
+b $FFFFF62C = $08
+b $FFFFF62E = $20
+l $FFFFDFC0 = 0
+l $FFFFF422 = $3E000
+l $FFFFF41A = [$FFFFDFC4] + $00B00000
+l $FFFFF41E = [$FFFFDFC8] + $00700000
+
+case unlock_up_left       # up + left held at top speed, C pressed with the lock set: cleared
+w $FFFFF418 = $F62C
+b $FFFFF62C = $05
+b $FFFFF62E = $20
+l $FFFFDFC0 = [$FFFFDFC4] + $00A00000
+l $FFFFF422 = $40000
+l $FFFFF41A = [$FFFFDFC4] + $00C00000
+l $FFFFF41E = [$FFFFDFC8] + $00400000
+
+case locked_right_down    # down + right, the lock left of the cursor: the camera follows the lock
+w $FFFFF418 = $F62C
+b $FFFFF62C = $0A
+b $FFFFF62E = 0
+l $FFFFDFC0 = [$FFFFDFC4] + $00800000
+l $FFFFF422 = $8000
+l $FFFFF41A = [$FFFFDFC4] + $00B00000
+l $FFFFF41E = [$FFFFDFC8] + $00800000
+
+case terrain_right_down   # A held: the step goes through Coll_MoveScene with player 1's motion block
+w $FFFFF418 = $F62C
+b $FFFFF62C = $4A
+b $FFFFF62E = 0
+l $FFFFDFC0 = 0
+l $FFFFF422 = $18000
+l $FFFFF41A = [$FFFFDFC4] + $00A08000
+l $FFFFF41E = [$FFFFDFC8] + $00704000
+reg a3 = {{$FFFFF67C} + 8}
+
+case terrain_up_left      # A held, up + left
+w $FFFFF418 = $F62C
+b $FFFFF62C = $45
+b $FFFFF62E = 0
+l $FFFFDFC0 = 0
+l $FFFFF422 = $20000
+l $FFFFF41A = [$FFFFDFC4] + $00A00000
+l $FFFFF41E = [$FFFFDFC8] + $00700000
+reg a3 = {{$FFFFF67C} + 8}

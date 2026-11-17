@@ -1,0 +1,9 @@
+# ToyFigure_DrawSpin1 from rotation index 59 (ruling 5, 2), at its first call: +1 gives 60, so the
+# mod-60 loop subtracts once ($036CE4) and the figure draws index 0. $22(a5) is the index the last
+# figure draw native left (ToyFigure_DrawIndex stores every one, 0-59), and the spin1 anim
+# ($036CBC) takes over from other anims: at $036C72, after the fall that follows the tumble anim
+# ($036CAC), whose ToyFigure_DrawByVelY maps the y speed onto any index 0-59. A spin that starts at
+# 59, or simply lasts 59 draws, wraps; the corpus's spins never did.
+
+case wrap
+w a5 + $22 = 59

@@ -1,0 +1,74 @@
+; ---------------------------------------------------------------------------
+; Obj_InitSpawned - initialises a freshly allocated script object: clears its blocks, default hook scripts, position d4/d5, serial and sprite attribute
+; In:  a6 = object (+8/+$A/+$C = blocks a3/a4/a5), d4/d5 = x/y
+; Out: a3/a4/a5 = the blocks, d0 = 0
+; Evidence: clears a6+$18..$31, $40 bytes of a3, $2A of a4 and a5; a4 coroutine slots $38/$3C/$40/$44 = Scr2_002D28 (a lone return op; stepped by $235A-$2432); $3E/$42 = x/y; $56 = g_ObjSerial++; $58 = 0; a5+$3A = 1; a5+$38 = g_SceneSprAttr
+; ---------------------------------------------------------------------------
+Obj_InitSpawned:
+	movea.w	$8(a6),a3
+	movea.w	$A(a6),a4
+	movea.w	$C(a6),a5
+	lea.l	$18(a6),a0
+	moveq	#$0,d0
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.w	d0,(a0)+
+	movea.l	a3,a0
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	movea.l	a4,a0
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.w	d0,(a0)+
+	movea.l	a5,a0
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.l	d0,(a0)+
+	move.w	d0,(a0)+
+	move.l	#$2D28,d0
+	move.l	d0,$38(a4)
+	move.l	d0,$3C(a4)
+	move.l	d0,$40(a4)
+	move.l	d0,$44(a4)
+	move.w	d4,$3E(a6)
+	move.w	d5,$42(a6)
+	move.w	(g_ObjSerial).w,$56(a6)
+	addq.w	#$1,(g_ObjSerial).w
+	move.w	#$0,$58(a6)
+	move.w	#$1,$3A(a5)
+	move.w	(g_SceneSprAttr).w,$38(a5)
+	moveq	#$0,d0
+	rts

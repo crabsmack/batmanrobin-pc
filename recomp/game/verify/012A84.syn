@@ -1,0 +1,29 @@
+# Layer_QueueColumn's left wraps (ruling 5, 2), at Flight_FrameAirship's first call (the stage 2
+# flight's airship stretch, fuzz-68400-s1; only the flight scrolls left, P4-decomp.md's
+# Layer_ScrollStepX row), each case running the column queue on g_LayerA (a6 = $FFFFED9C, the only
+# layer) as ScrollStepX's left branch calls it (d0 = -1 block column, d1 = 0, d2 = -2
+# plane cells, d3 = 0). Reachability undetermined (NOTES, Open questions: cov11's ScrollStepX row,
+# cov13's "Layer_QueueColumn"): the layer follows the path object of Scr2_02F644, whose director
+# seeks a list of targets with one leftward step ($307 -> $2FD) and an X oscillator at each target
+# (about +-22 px in the TAS); a proof needs the oscillator's range and the path-to-layer offset.
+at $0333B2
+
+# The block column at 0 before the left step ($012A8E: +$26 + d0 < 0, so + the map width $2E):
+# the layer at x 16..31 (+ the map width), stepping left past a block edge.
+case block_wrap
+reg a6 = $FFFFED9C
+reg d0 = -1
+reg d1 = 0
+reg d2 = -2
+reg d3 = 0
+w a6 + $26 = 0
+
+# The plane cell column at 0 before the left step ($012ACE: +$32 + d2 < 0, so + the plane width
+# $3A): $80 cells in the flight, the layer x in 688..703 + 1024k there.
+case plane_wrap
+reg a6 = $FFFFED9C
+reg d0 = -1
+reg d1 = 0
+reg d2 = -2
+reg d3 = 0
+w a6 + $32 = 0

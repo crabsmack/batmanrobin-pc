@@ -1,0 +1,16 @@
+# Op2_BrakeXGotoIfStopped: its two uses are the Harley cart's coroutines at $01969E and $019722
+# (Scr2_01963A: brake, then branch to $01823E, Op2_GotoVector1, once stopped; else the rumble
+# native and the timer). A real state reaches it (the stepped runner, 5 fuzz runs, P4 kickoff
+# 2026-10-27); the timed corpus never enters that part of the script. Ruling 5 (2): the cases run
+# at Boss_Harley_RumbleWhenFast's first call (TAS f4540: the cart rolling in, a6/a3/a4 its object,
+# motion and script blocks), a2 = the op's operand at $0196A0 as the VM dispatches it.
+
+at $01A04C
+
+case stopped              # x velocity 0: Op2_Goto to $01823E
+reg a2 = $000196A0
+l a3 + $18 = 0
+
+case moving               # still rolling left: continues after the operand
+reg a2 = $000196A0
+l a3 + $18 = $FFFF8000

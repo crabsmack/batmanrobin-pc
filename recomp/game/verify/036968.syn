@@ -1,0 +1,7 @@
+# Enemy_DropCarrier_SpawnRabbitsC: no corpus run calls it (ruling 5, 2). Its caller: the wave spawn entries at $03469A / $0346A2 (action byte $26). The case runs at
+# Enemy_DropCarrier_SpawnRabbits's first corpus call ($03699C), a call of the same kind with the same contract (d4/d5 the
+# position, the caller's other registers), so the state is one a caller naming $036968 would
+# leave (raw-stubs 2026-10-30).
+at $03699C
+
+case as_dropcarrier_spawnrabbits

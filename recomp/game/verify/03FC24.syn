@@ -1,0 +1,7 @@
+# Boss_Hatter_SpawnRoadPieceLeft2: no corpus run calls it (ruling 5, 2). Its caller: Op2_CallNative Spawn_AtOwnPos's dc.l at $03FBF4 (Boss_Hatter_SpawnRoadSplitLeft's coroutine 0). The case runs at
+# Enemy_SpinMine_SpawnDown's first corpus call ($0299D2), a call of the same kind with the same contract (d4/d5 the
+# position, the caller's other registers), so the state is one a caller naming $03FC24 would
+# leave (raw-stubs 2026-10-30).
+at $0299D2
+
+case as_spinmine_spawndown

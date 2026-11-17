@@ -1,0 +1,17 @@
+# Spr_ReleaseFrame: a release that finds the art with no user (ruling 5, 2), at its first call:
+# frame -$3C0 (the RAM entry $A3A4, where every bank in the ROM starts: Op6_InitBankFrames' FC40)
+# names handle $8002, whose descriptor $AA44 is cached (refcount 0, on the release ring), so the
+# raised refcount is positive and is cleared again ($00803C). A real state, one step on from
+# 007EB8.syn's two_users: a bank loaded over a handle in use clears the handle and drops one
+# reference, and the sprites still showing the old bank keep frame words that now name the new
+# bank's entries (same offsets, handles reset to 0). Once a new sprite acquires one of those handles
+# (refcount -1), an old sprite's release takes the count to 0 under the new user, and the new
+# user's own release then finds 0: this path.
+
+case release_cached
+reg d2 = $FC40
+w $FFFFA3A4 = $8002
+w $FFFF8002 = $AA44
+b $FFFFAA44 = 0
+b $FFFFAA45 = 1
+w $FFFFAA46 = $8F00

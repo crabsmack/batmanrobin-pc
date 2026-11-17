@@ -1,0 +1,11 @@
+# BossMeter_Defeated with no meter object (ruling 5, 2), at its first call (a boss's defeat:
+# Op2_CallNative in its script, e.g. $0199FA): g_BossMeterObj 0, so it only clears g_BossEnergy
+# and returns ($011B30), without the exit script or HUD_UnlockJoin. A real state: BossMeter_Show
+# spawns the meter with Obj_SpawnEnemy (BossMeter_SpawnObject) and on a failed spawn returns the
+# nonzero result without storing a handle (BossMeter_Spawn $011B04); the boss scripts call Show
+# with Op2_CallNative, which ignores d0, so the fight goes on without a meter. The object pool
+# does run out in real play (Obj_Spawn's failure `rts` $008F1C ran in the TAS and fuzz-73800-s2);
+# no corpus boss met it at its Show.
+
+case no_meter
+w $FFFFED8A = 0

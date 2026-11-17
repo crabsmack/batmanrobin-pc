@@ -1,0 +1,11 @@
+# Item_BoxPlayer: the found box's owner not player 1 (ruling 5, 2), at its first call (a pickup
+# touched: a1 = g_FoundBox, its owner object handle at +$2E, owner id $58). p2: owner id 2
+# (player 2 collects; two-player games, scenario-two-player-exit has player 2 alone after the
+# continue). other: owner id 3 (a player's weapon object: the ids 3/4 credit player 1/2, as
+# g_StruckBox's +$1A): no player, so it drops the native's return and returns to its caller.
+
+case p2
+w {a1 + $2E} + $58 = 2
+
+case other
+w {a1 + $2E} + $58 = 3

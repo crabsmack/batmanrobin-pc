@@ -1,0 +1,15 @@
+# Boss_JokerBalloon_SpawnThrown: no corpus run reaches the balloon boss's throws (ruling 5, 2). Its
+# one caller is Boss_JokerBalloon_ThrowByArg (bsr), whose verify cases run it as generated code. These
+# run it directly at Boss_JokerBalloon_LandSound's first call ($01C5EE, the boss's own script: TAS
+# f19339), d4/d5 as they are there (any 16.16 position), d6 the kind x 4 (the first, a middle and the
+# last of the 11).
+at $01C5EE
+
+case kind_0
+reg d6 = 0
+
+case kind_5
+reg d6 = $14
+
+case kind_10
+reg d6 = $28

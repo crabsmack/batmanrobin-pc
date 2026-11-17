@@ -1,0 +1,7 @@
+# Boss_Hatter_RoadCmdGosub: no corpus run calls it (ruling 5, 2). Its caller: Boss_Hatter_RoadCmdTbl_Gosub's bra.s. The case runs at
+# Boss_Hatter_RoadCmdGoto's first corpus call ($03DD02), a call of the same kind with the same contract (d4/d5 the
+# position, the caller's other registers), so the state is one a caller naming $03DCF4 would
+# leave (raw-stubs 2026-10-30).
+at $03DD02
+
+case as_hatter_roadcmdgoto

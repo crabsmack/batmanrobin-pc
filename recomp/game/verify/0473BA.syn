@@ -1,0 +1,29 @@
+# Stage4_ConeUpdate on a closing cone (mode 3), the gas orb's escape path (ruling 5, 2), at its first
+# call. Op2_BranchOffScrX ($0421C6) sends an orb that leaves the screen sideways to $042208, which
+# runs Stage4_ConeSetInline `00 03 0000 0000` at $042214 (keep colour, mode 3, target width and
+# length 0) and then loops on ConeUpdate ($042222) for up to $1E0 frames: the length shrinks by
+# $1F a frame and, at 0, the slot is freed (Stage4_ConeFree). The corpus's orbs never left the
+# screen. The slot is set as the orb's would be: slot 0 owned, mode 3, targets 0, sweep angle +$A
+# 0 (Stage4_ConeAlloc zeroes it and mode 0's spin clears it every frame). closing: length $100,
+# still open after this frame's step (the sweep path $047462); closed: length $10 reaches 0 this
+# frame (the free at $047426).
+
+case closing
+w a6 + $1E = $F444
+b $FFFFF444 = $FF
+b $FFFFF445 = 3
+w $FFFFF44E = 0
+w $FFFFF45A = 0
+w $FFFFF45C = 0
+w $FFFFF45E = $8C0
+w $FFFFF460 = $100
+
+case closed
+w a6 + $1E = $F444
+b $FFFFF444 = $FF
+b $FFFFF445 = 3
+w $FFFFF44E = 0
+w $FFFFF45A = 0
+w $FFFFF45C = 0
+w $FFFFF45E = $40
+w $FFFFF460 = $10

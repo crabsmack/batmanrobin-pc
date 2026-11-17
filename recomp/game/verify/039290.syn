@@ -1,0 +1,8 @@
+# ToyRing_SpawnSixC: no corpus run calls it (ruling 5, 2). Its callers are the wave spawn entries at
+# $034CBC and $034CC4 (VM5_SpawnEntry's `jsr (a0)` at $007016), in the wave whose $034CCC names
+# ToyRing_SpawnSixB, which widescreen_gameplay=1 reaches (ws-fix 2026-10-30). The case runs at
+# ToyRing_SpawnSix's first call (TAS f109008), a call from the same VM5_SpawnEntry `jsr (a0)` with
+# the same contract, so the state is one a wave entry naming $039290 would leave.
+at $0391E4
+
+case as_six

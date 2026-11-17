@@ -1,0 +1,17 @@
+# Boss_Harley_StepPole: the 130 px cap ($01A1EC), Harley killed near the top of a pole rise
+# (ruling 5, 2), at its first call (the Harley boss: a6 its object, $10(a6) the pole block). The
+# state: the death script's Boss_Harley_SetPoleTarget ($019A10: target $3C, acceleration $1800,
+# negated because the pole is above $3C) came while the pole still rose fast toward $78 (velocity
+# not reset), and nine frames of coasting later it passes 130 px. A real state: the TAS's rise
+# from $46 to $78 (TAS f5783-5822, the pole block $FFC488) is ~40 frames long and the TAS lands
+# hits on Harley during it (g_BossEnergy $0370 -> $02F0); a final hit in its frames 5818-5822
+# (any later rise of the pattern loop at $019538 too) leaves the pole at height $0081F41E with
+# velocity $000174C9 after nine death frames (from 5820's dump, stepped as the asm does: scratchpad
+# cov13_polesim.py), so the next step gives 131.3 px and the cap. The TAS's own last hit came
+# during a descent (f5966); the corpus never killed Harley in that window.
+
+case killed_rising
+l {a6 + $10} = $003C0000
+l {a6 + $10} + 4 = $0081F41E
+l {a6 + $10} + 8 = $000174C9
+l {a6 + $10} + $C = $FFFFE800

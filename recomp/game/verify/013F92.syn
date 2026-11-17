@@ -1,0 +1,8 @@
+# WeaponDrop_FromTopRandom: no corpus run takes the director branch that calls it (ruling 5, 2). Its
+# caller is Op2_CallNativeRel at $01406E in the weapon-drop director script, a2 at the dc.l spawner
+# right after it ($014072: Item_SpawnPowerUpFalling), as WeaponDrop_FromRight's calls. The case runs
+# at WeaponDrop_FromRight's first call (scenario-level-skip), a2 moved to that operand.
+at $013F7C
+
+case as_director
+reg a2 = $014072

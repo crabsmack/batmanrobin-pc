@@ -1,0 +1,6 @@
+# Boss_Freeze_ShotRecoilUp: no corpus run calls it (ruling 5, 2). Its caller: Op2_Native at $0468F2 in Mr. Freeze's firing animation. The case runs at
+# Boss_Freeze_ShotRecoilRight's first corpus call ($04682A), a call of the same kind (a native the same VM enters with
+# the object's registers), so the state is one that caller would leave (raw-stubs 2026-10-30).
+at $04682A
+
+case as_called

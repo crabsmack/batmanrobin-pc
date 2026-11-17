@@ -1,0 +1,9 @@
+# Player_HurtFixed: the fixed $20 hurt taking the player's last life (ruling 5, 2), at its first
+# call (TAS f92483, stage 3: a6 = the player object, +$1E its record): health (record +4) $10, so
+# it reaches 0, and no lives left (record +6 = 0), so Player_LoseLife puts the player out
+# (HUD_PlayerOut) and the native despawns the player. A real state: any player on the last life
+# with under $20 health when the hazard hits (the TAS takes this hurt with lives to spare).
+
+case last_life
+w [a6 + $1E] + 4 = $10
+w [a6 + $1E] + 6 = 0

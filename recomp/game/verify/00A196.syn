@@ -1,0 +1,8 @@
+# Pad_CheckStart: Start newly pressed on pad 2 only (ruling 5, 2), at its first call: pad 1's
+# new-press byte $F626 without bit 7, pad 2's $F62A with it, as the pad reader leaves them when
+# player 2 presses Start on the continue screen (a two-player game; no corpus run continues
+# with pad 2), so g_StartPad = 2.
+
+case pad2_start
+b $FFFFF626 = 0
+b $FFFFF62A = $80

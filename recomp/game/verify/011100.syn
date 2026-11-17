@@ -1,0 +1,10 @@
+# HUD_PlayerJoined: a player joining with the last credit while the other player is out (ruling 5,
+# 2): the other panel switches to the zero-credit loop $10FBE. A state the game can be in: one
+# player has lost every life (HUD_PlayerOut) and the other presses Start with one credit left
+# (Player_JoinOrSpawn takes it: g_Credits 1 -> 0 before this call). At its first call (a join,
+# scenario-two-player f1239), both records' in-play bit (+$25 bit 0) clear, g_Credits 0.
+
+case last_credit_other_out
+b $FFFFF675 = 0
+b $FFFFF6B5 = 0
+w $FFFFF64E = 0

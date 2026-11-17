@@ -1,0 +1,6 @@
+# Obj_SpawnScriptedOrQuit: the spawn failing (ruling 5, 2), at its first call: the object pool
+# has no free block (g_ObjPoolFree = 0), so Obj_SpawnScripted fails and it returns to its
+# caller's caller.
+
+case pool_empty
+b $FFFFF4B0 = 0

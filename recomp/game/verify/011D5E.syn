@@ -1,0 +1,32 @@
+# Coll_MoveBlockMap's ceiling hits moving up (ruling 5, 2; $012054-$01208A), at
+# Stage1_SpawnGiftBox's first call (TAS f13247, the truck scene: g_LayerA holds the truck's 294x15
+# block map, the one of TAS RAM dump f13500), each case an airborne mover's call as
+# Coll_MoveAirborneBlockMap makes it (d1/d2 the move, d4/d5 the position, d6/d7 the masks: moving up
+# only bit 0 counts, so 1). The positions are the map's own ceilings (scratchpad cov17_ceil.py).
+# Reachability undetermined (NOTES, Open questions: cov13's "Coll_MoveBlockMap / Coll_WalkBlockMap":
+# the ceiling hit ran once in the TAS, never at a block-row boundary, with x steps left; not
+# judged): a mover jumping into these ceilings from below is not excluded by anything known.
+at $020792
+
+# The hit at a block-row boundary ($012054-$01207A): the 1-px wall in column 0 of block (90,11)
+# (cell $0408, mask 1, span 00-0F) ends at y 191 with block (90,12) open below; a mover at
+# (1440, 192) moving straight up 2 px hits its bottom pixel, row 15 of the block above, and is put
+# back at row 0 of its own block.
+case boundary_hit
+reg d1 = 0
+reg d2 = -2
+reg d4 = 1440
+reg d5 = 192
+reg d6 = 1
+reg d7 = 1
+
+# The hit with x steps left, moving left ($01207C-$01208A, on into Coll_WalkBlockMapLeft): the
+# 1-px platform at row 7 of blocks (239,7)-(246,7) (y 119; cells $0010-$0028, mask 1); a mover at
+# (3880, 120) moving up 6 and left 2 hits it on its first (major, y) step with both x steps to go.
+case hit_moving_left
+reg d1 = -2
+reg d2 = -6
+reg d4 = 3880
+reg d5 = 120
+reg d6 = 1
+reg d7 = 1

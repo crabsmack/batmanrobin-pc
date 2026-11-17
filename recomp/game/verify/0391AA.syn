@@ -1,0 +1,10 @@
+# ToyRing_SpawnSixB: no corpus run calls it at 4:3 (ruling 5, 2). Its callers are the wave spawn
+# entries at $0344B4, $0344BC and $034CCC (VM5_SpawnEntry's `jsr (a0)` at $007016). The 4:3 corpus
+# never reaches those wave steps; widescreen_gameplay=1 does (scenario-level-skip, sync 8391; ws-fix
+# 2026-10-30). The case runs at ToyRing_SpawnSix's first call (TAS f109008), which comes from the
+# same VM5_SpawnEntry `jsr (a0)` with the same contract (d4/d5 the entry's position plus the
+# spawner's base, a6 the wave object). A wave entry naming $0391AA there leaves this state, so the
+# state is a real one.
+at $0391E4
+
+case six_b_at_six

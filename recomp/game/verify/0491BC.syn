@@ -1,0 +1,9 @@
+# Continue_BranchHasCredits with no credits left (ruling 5, 2), at its first call: g_Credits = 0, so
+# the continue controller takes the no-credit script tail $0491C6 (the fast countdown and NO
+# CREDITS REMAINING) instead of Scr2_0491D6. A real state: a game starts with 6 credits (RAM of
+# scenario-continue: g_Credits 6, 5 after its one continue), each continue takes one; a scenario
+# that spends all six would idle through six continue cycles (~10,000 frames each), so a
+# synthetic case instead.
+
+case no_credits
+w $FFFFF64E = 0

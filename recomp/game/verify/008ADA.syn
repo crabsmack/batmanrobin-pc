@@ -1,0 +1,41 @@
+# VIntObj_RunList with more than 3 objects on the V-int list (ruling 5, 2; $008AFE-$008B1E: the
+# walk's 5th to 8th unrolled units and the loop back), at its first call: 8 more objects are made
+# as 8 VIntObj_NewIdle calls would make them (each pops the pool head, takes handler
+# VIntObj_IdleHandler $8BEC and is linked before the tail sentinel g_VIntListTail;
+# g_ObjPoolFree - 8), so the list is the run's own objects (none at the TAS's first V-int), the
+# 8, the sentinel. An idle handler is the object's state until its creator stores its own (the
+# V-int can land between), and stands in for whatever handlers a longer list holds. The reference never had more than 3
+# (Stage2_RunLift's flush + lift scroll + a VM6 job); every VIntObj_New / NewIdle site is one-shot
+# per scene except the VM6 clear/blit jobs, freed only by their own end, so a longer list needs
+# VM6 jobs started while others are in flight: undetermined (NOTES, Open questions: cov10
+# "VIntObj_RunList", cov12). The lines below are cov17_vint.py 8 (scratchpad).
+
+case eight_more
+w {$FFFFDEA8} + 6 = {$FFFFAD52}
+w {$FFFFAD52} + 4 = {$FFFFDEA8}
+w {$FFFFAD52} + 6 = {{$FFFFAD52}}
+w {{$FFFFAD52}} + 6 = {{{$FFFFAD52}}}
+w {{{$FFFFAD52}}} + 6 = {{{{$FFFFAD52}}}}
+w {{{{$FFFFAD52}}}} + 6 = {{{{{$FFFFAD52}}}}}
+w {{{{{$FFFFAD52}}}}} + 6 = {{{{{{$FFFFAD52}}}}}}
+w {{{{{{$FFFFAD52}}}}}} + 6 = {{{{{{{$FFFFAD52}}}}}}}
+w {{{{{{{$FFFFAD52}}}}}}} + 6 = {{{{{{{{$FFFFAD52}}}}}}}}
+w {{{{{{{{$FFFFAD52}}}}}}}} + 6 = $FFFFDEA4
+w {{$FFFFAD52}} + 4 = {$FFFFAD52}
+w {{{$FFFFAD52}}} + 4 = {{$FFFFAD52}}
+w {{{{$FFFFAD52}}}} + 4 = {{{$FFFFAD52}}}
+w {{{{{$FFFFAD52}}}}} + 4 = {{{{$FFFFAD52}}}}
+w {{{{{{$FFFFAD52}}}}}} + 4 = {{{{{$FFFFAD52}}}}}
+w {{{{{{{$FFFFAD52}}}}}}} + 4 = {{{{{{$FFFFAD52}}}}}}
+w {{{{{{{{$FFFFAD52}}}}}}}} + 4 = {{{{{{{$FFFFAD52}}}}}}}
+w $FFFFDEA8 = {{{{{{{{$FFFFAD52}}}}}}}}
+w $FFFFAD52 = {{{{{{{{{$FFFFAD52}}}}}}}}}
+b $FFFFF4B0 = {$FFFFF4AF} - 8
+l {{{{{{{{$FFFFDEA8} + 4} + 4} + 4} + 4} + 4} + 4} + 4} = $8BEC
+l {{{{{{{$FFFFDEA8} + 4} + 4} + 4} + 4} + 4} + 4} = $8BEC
+l {{{{{{$FFFFDEA8} + 4} + 4} + 4} + 4} + 4} = $8BEC
+l {{{{{$FFFFDEA8} + 4} + 4} + 4} + 4} = $8BEC
+l {{{{$FFFFDEA8} + 4} + 4} + 4} = $8BEC
+l {{{$FFFFDEA8} + 4} + 4} = $8BEC
+l {{$FFFFDEA8} + 4} = $8BEC
+l {$FFFFDEA8} = $8BEC

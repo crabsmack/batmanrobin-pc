@@ -1,0 +1,16 @@
+# BossMeter_Init: no VRAM block or no art descriptor free (ruling 5, 2), at its first call (a boss
+# fight starting: a6 = the meter object, its art handle g_BossMeterArt empty). ArtCache_Acquire
+# then fails (-1 / -2) and the native returns 1, which Scr2_011B3E's switch answers by yielding
+# and calling it again the next frame ($011B46 Op2_YieldGoto). A real state: the blocks and the
+# descriptors are shared with every sprite's frame art (Spr_SwapFrameArt / Spr_InitBankFrames
+# take them; g_ArtBlocksFree and g_ArtDescsFree count the cached ones too), and the script's
+# retry loop is the game's own answer to a full cache. No corpus boss fight finds it full.
+
+case no_block             # g_ArtBlocksFree 0: Acquire's -1 path
+w $FFFFED82 = 0
+b $FFFFA770 = 0
+
+case no_descriptor        # a block free, g_ArtDescsFree 0: Acquire's -2 path
+w $FFFFED82 = 0
+b $FFFFA770 = 4
+b $FFFFA772 = 0

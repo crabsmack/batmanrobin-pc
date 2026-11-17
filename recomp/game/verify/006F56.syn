@@ -1,0 +1,32 @@
+# VM5_CloseGroup with the wave's kill group still open at the wave's end (ruling 5, 2), at its
+# first call (VM5_EndWave, a6 = the wave). A group is open until as many members have spawned as
+# its target, and a failed spawn (a full pool: the TAS reaches VM4_SpawnChild's full-pool rts
+# $006154) leaves it short; a wave's last group is followed by a population wait and Op5_End
+# (Tbl_0166EA's `6F0A 0006 ... 6FBC 0005 ... 6AC4 03C0 6ED2`), and a wave also ends early when a
+# newer wave runs Op5_EndOlderWaves (VM5_RunObject ends it once g_WaveGen passes its serial: the
+# next wave starts at a camera trigger, while this one may still be spawning). The case allocates
+# the group as ObjPool_Alloc would (the free list's head popped, g_ObjPoolFree one less): members 6,
+# spawned 5; all_dead: the 5 are dead, so the block is freed; alive: 3 still alive, so it stays
+# for them (their SpawnAction_GroupCountGone frees it at the target 5).
+
+case all_dead
+w a6 + $32 = {$FFFFAD52}
+w $FFFFAD52 = {{$FFFFAD52}}
+b $FFFFF4B0 = {$FFFFF4AF} - 1
+w {a6 + $32} = 6
+w {a6 + $32} + 2 = 1
+w {a6 + $32} + 4 = $16
+w {a6 + $32} + 6 = 5
+w {a6 + $32} + 8 = 5
+l {a6 + $32} + $A = 0
+
+case alive
+w a6 + $32 = {$FFFFAD52}
+w $FFFFAD52 = {{$FFFFAD52}}
+b $FFFFF4B0 = {$FFFFF4AF} - 1
+w {a6 + $32} = 6
+w {a6 + $32} + 2 = 4
+w {a6 + $32} + 4 = $16
+w {a6 + $32} + 6 = 5
+w {a6 + $32} + 8 = 2
+l {a6 + $32} + $A = 0

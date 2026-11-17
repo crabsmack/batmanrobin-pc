@@ -1,0 +1,7 @@
+# Enemy_BombDropper_DropBomb: the bomb not spawned (ruling 5, 2), at its first call: the object
+# pool has no free block (g_ObjPoolFree = 0), so Enemy_BouncingBomb_Spawn fails and the native
+# drops its saved d0/a0 and returns -1. A full pool is a state the game handles; the corpus never
+# fills it.
+
+case pool_empty
+b $FFFFF4B0 = 0

@@ -1,0 +1,15 @@
+# Boss_JokerBalloon_ThrowByArg (and Boss_JokerBalloon_SpawnThrown through it): no corpus run reaches
+# the balloon boss's throws (ruling 5, 2). Its caller is Op2_CallNativeRel at $01D842 in the boss's
+# script, a6 = the boss. The cases run at Boss_JokerBalloon_LandSound's first call ($01C5EE, another
+# native of the same script: TAS f19339, a6 = the boss), with g_VM2Arg0's high word at the first,
+# a middle and the last of the 11 throws.
+at $01C5EE
+
+case throw_0
+l $FFFFDECE = $00000000
+
+case throw_5
+l $FFFFDECE = $00050000
+
+case throw_10
+l $FFFFDECE = $000A0000

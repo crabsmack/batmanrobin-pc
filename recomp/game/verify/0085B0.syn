@@ -1,0 +1,44 @@
+# ArtCache_Acquire: no VRAM block or no art descriptor free (ruling 5, 2), as its only static
+# caller BossMeter_Init calls it (011D04.syn: a0 = g_BossMeterArt, empty; d1 = 1 block), at that
+# native's first call. A real state: the blocks and descriptors are shared with every sprite's
+# frame art and count the cached ones too, and the meter script retries on the failure
+# (011D04.syn); no corpus run finds the cache full.
+at $011D04
+
+case no_block             # g_ArtBlocksFree 0: -1, the count restored
+reg a0 = $FFFFED82
+reg d1 = 1
+w $FFFFED82 = 0
+b $FFFFA770 = 0
+
+case no_descriptor        # g_ArtDescsFree 0: -2, the block count restored, the descriptor count 0
+reg a0 = $FFFFED82
+reg d1 = 1
+w $FFFFED82 = 0
+b $FFFFA770 = 4
+b $FFFFA772 = 0
+
+# The acquire finding the meter's art still held (ruling 5, 2; $0085F0, $0085F4-$0085F6: refcount
+# negative, one more user, d0 = 1): BossMeter_Show with a live meter restarts Scr2_011B3E (011ACA.syn),
+# whose Init acquires g_BossMeterArt again while the first acquire's user is still counted
+# (descriptor $AA44 at refcount $FF, one user, one block, not on the release ring). Reachability
+# undetermined (NOTES, Open questions: cov12 "ArtCache_Acquire's in-use path", cov16).
+case in_use
+reg a0 = $FFFFED82
+reg d1 = 1
+w $FFFFED82 = $AA44
+b $FFFFAA44 = $FF
+b $FFFFAA45 = 1
+w $FFFFAA46 = 0
+
+# The same with refcount $80, 128 users ($0085F2: the decrement to $7F is undone). A count is 0 or
+# minus its users and a positive byte is cleared by the release that makes it, so only $80 gets
+# here; the meter's art has one acquirer, so this needs 128 restarts of a live meter, each
+# acquiring again: not bounded, reachability undetermined (NOTES: cov12, cov16).
+case users_128
+reg a0 = $FFFFED82
+reg d1 = 1
+w $FFFFED82 = $AA44
+b $FFFFAA44 = $80
+b $FFFFAA45 = 1
+w $FFFFAA46 = 0

@@ -1,0 +1,7 @@
+# Op2_SetOscX: no oscillator block in the field (ruling 5, 2), at its first call: the a6 field named
+# by the operand (a6 + {a2}) = 0, so the op skips its four words. A real state: Op2_AllocOsc
+# ($005046) leaves the field 0 when ObjPool_Alloc fails on a full pool (bne to NEXT), and the
+# script's SetOscX then finds it empty.
+
+case no_block
+w a6 + {a2} = 0

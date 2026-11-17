@@ -1,0 +1,19 @@
+# Spr_ChangeFrame: a ROM frame (Tbl_1DDB60, >= 0) and a RAM frame (negative, indexed from
+# g_ArtRelRingWr) naming the same art handle, so the change swaps no art (ruling 5, 2), at its first
+# call. The only RAM frames whose handle a ROM frame shares are the Hatter road bank's
+# (Op6_InitBankFrames at FC40, block $0A4BB0: frame $FEB6 has handle $8080, its entry at
+# $A764 - $14A = $A61A; drawn by the road script's Op2_DrawSpr sites $03D708-$03D77A), and the ROM
+# frames with handle $8080 are $000A-$00A0 (the dead Debug_DrawHexBytes' digits, cov16_shared.py).
+# Whether any draw source shows both on one sprite is undetermined (NOTES, Open questions: cov16's
+# "Spr_ChangeFrame's cross-table equal handles"; a row needs every live source of ROM frames
+# $000A-$0122 kept out of the road), so the cases use the one pair the data allows.
+
+case rom_new_ram_old      # $007F42-$007F44: d1 ROM, d2 RAM, equal handles
+reg d1 = $000A
+reg d2 = $FFFFFEB6
+w $FFFFA61A = $8080
+
+case ram_new_rom_old      # $007F5A-$007F5C: d1 RAM, d2 ROM, equal handles
+reg d1 = $FFFFFEB6
+reg d2 = $000A
+w $FFFFA61A = $8080

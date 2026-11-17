@@ -1,0 +1,7 @@
+# ToyRing_SpawnBigB: no corpus run calls it (ruling 5, 2). Its caller is the wave spawn entry at
+# $03491E (x $14A, y $E070; VM5_SpawnEntry's `jsr (a0)` at $007016). The case runs at
+# ToyRing_SpawnBig's first call (TAS f109594), a call from the same VM5_SpawnEntry `jsr (a0)` with
+# the same contract, so the state is one a wave entry naming $039018 would leave.
+at $03904E
+
+case as_big

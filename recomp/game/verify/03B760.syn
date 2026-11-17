@@ -1,0 +1,12 @@
+# Boss_CatHead_SwayPoint: no corpus run calls it (ruling 5, 2). Its caller: the bsr.b at $03B7D2 of the
+# four eye natives. The cases run at Boss_CatHead_DriverSettle's first corpus call ($03BAB4), in the
+# cat-head arena (g_SceneVars = CatHeadArena), with d0/d1 an eye point as Boss_CatHead_EyeFxAt passes
+# it (raw-stubs 2026-10-30).
+at $03BAB4
+
+case as_called
+
+case negative_shear      # the sway leaning the other way: the extra -(shear x 32) lift ($03B76E)
+reg d0 = $000000BE
+reg d1 = $00000059
+w $FFFFF504 = $FFE8

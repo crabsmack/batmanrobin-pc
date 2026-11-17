@@ -1,0 +1,7 @@
+# Enemy_VentTank_SpawnRandomSpeed: no corpus run calls it (ruling 5, 2). Its caller: the lab wave's spawn entries at $0417A8 / $0417B0. The case runs at
+# Enemy_VentTank_SpawnFast's first corpus call ($045A02), a call of the same kind with the same contract (d4/d5 the
+# position, the caller's other registers), so the state is one a caller naming $04592C would
+# leave (raw-stubs 2026-10-30).
+at $045A02
+
+case as_venttank_spawnfast

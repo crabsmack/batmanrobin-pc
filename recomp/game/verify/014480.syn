@@ -1,0 +1,9 @@
+# TextMap_PutDigit: a nonzero leading digit (ruling 5, 2), at its first call (TextMap_CmdNumber /
+# TextMap_CmdNumberPlus1 printing a number: a5/d6/a6 the text map state): d0 = the divu result 1
+# (quotient 1, remainder 0), d1 = 0 (no digit yet), so it writes the digit tile. A real state: the
+# options screen's music test 10-16 and sound test 10-58 ($F60A max $F, $F60C max $39, shown plus
+# one: TextMap_CmdNumberPlus1); scenario-options never steps them past 9.
+
+case digit_1
+reg d0 = $00000001
+reg d1 = 0

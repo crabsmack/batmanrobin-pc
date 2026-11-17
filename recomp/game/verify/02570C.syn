@@ -1,0 +1,6 @@
+# Enemy_PoleThug_SpawnE: no corpus run spawns it (ruling 5, 2). Its callers (the spawner longs named in its header)
+# make the call Enemy_PoleThug_SpawnA gets from its own entries, the same contract (lea script / jsr Obj_SpawnEnemyOrQuit / jmp Stage2_SetSpawnVarsFromEntry(pc) as its siblings).
+# The case runs at Enemy_PoleThug_SpawnD's first call ($0256BE: scenario-sec-2100), the same kind of call.
+at $0256BE
+
+case as_called

@@ -1,0 +1,7 @@
+# ToyFigure_SpawnShed: no corpus run calls it (ruling 5, 2). Its caller: Op2_CallNative Spawn_AtAnchor's dc.l at $03A946 (ToyFigure_SpawnWithDrop's script). The case runs at
+# ToyFigure_SpawnWithDrop's first corpus call ($03A91C), a call of the same kind with the same contract (d4/d5 the
+# position, the caller's other registers), so the state is one a caller naming $03A952 would
+# leave (raw-stubs 2026-10-30).
+at $03A91C
+
+case as_spawnwithdrop

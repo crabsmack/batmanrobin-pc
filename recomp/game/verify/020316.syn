@@ -1,0 +1,11 @@
+# Stage1_LaunchBalloonC: no corpus run spawns the launcher whose script calls it (ruling 5, 2). Its
+# callers are Op2_CallNativeRel at $02024A / $020254 / $02025E, a launcher's timed launches, the call
+# Stage1_LaunchBalloonA/B get from the two other launchers (a6 = the launcher, $1E its height cursor).
+# The cases run at Stage1_LaunchBalloonA's first call: as called, and with the cursor at the end
+# marker of its table, so the wrap to Tbl_020388 is taken.
+at $02029A
+
+case as_called
+
+case wraps
+l a6 + $1E = $020368

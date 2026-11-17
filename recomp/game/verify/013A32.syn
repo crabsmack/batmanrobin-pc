@@ -1,0 +1,7 @@
+# Item_SpawnWeapon2FromHit: no corpus run spawns it (ruling 5, 2). Spawn action 13 of Tbl_012EF0, a FromHit
+# spawner: called by SpawnAction_Run as an object is struck (d4/d5 the position, g_StruckBox the box
+# whose knockback Item_LaunchFromHit halves). The case runs at Item_SpawnRapidChargeFromHit's first
+# call ($01388A, spawn action 22: TAS f6969), the same call.
+at $01388A
+
+case as_called

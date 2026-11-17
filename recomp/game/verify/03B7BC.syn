@@ -1,0 +1,7 @@
+# Boss_CatHead_EyeShotRight: no corpus run calls it (ruling 5, 2). Its caller: Op2_CallNativeRel at $03C476 in the cat-head's attack coroutines. The case runs at
+# Boss_CatHead_DriverSettle's first corpus call ($03BAB4), a call of the same kind (a native the same VM enters with
+# the object's registers), so the state is one that caller would leave (raw-stubs 2026-10-30).
+at $03BAB4
+
+case as_called
+reg a2 = $0003C47A

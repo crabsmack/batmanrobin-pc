@@ -1,0 +1,7 @@
+# Boss_Hatter_RoadCmdTbl_Spawn2: no corpus run calls it (ruling 5, 2). Its caller: Boss_Hatter_RoadCmdNext's jmp (pc,d0.w) with command 10. The case runs at
+# Boss_Hatter_RoadCmdTbl_Spawn0's first corpus call ($03DD42), a call of the same kind with the same contract (d4/d5 the
+# position, the caller's other registers), so the state is one a caller naming $03DD46 would
+# leave (raw-stubs 2026-10-30).
+at $03DD42
+
+case as_hatter_roadcmdtbl_spawn0

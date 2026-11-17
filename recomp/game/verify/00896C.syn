@@ -1,0 +1,16 @@
+# Obj_NewMulti_ClearRun: the clear run's entries for 1-3 block objects ($896C/$896E/$8970,
+# `jmp $896A(pc,d1.w)` with d1 = 2 x blocks), which no state enters: every Obj_NewMulti /
+# Obj_NewMultiUnlinked call passes 4 blocks or more (Obj_Spawn's and Obj_SpawnUnlinked's callers
+# set d7 = 4 (Obj_SpawnEnemy, Obj_SpawnEnemyUnlinked*, Obj_SpawnBoss*), 5 ($03904E $039176
+# $0391E4 $03925C, $0370DC), 6 ($02658E $02785E $0278B2 $0278CE), 7 (Boss_JokerBalloon_Spawn,
+# $0208BE) or 8 ($01E70A); one-block objects use Obj_NewClear). The case gives the file its
+# checked call (ruling 5, 2, as 015730.syn's debug code; cov6 2026-10-28): at Obj_Spawn's first
+# call, a1 = +8 of the pool's free head block (unused while free), a2 = that head, d0 = 0, as
+# Obj_NewMulti_FillHandles would leave them for a 1-block object.
+
+at $008F0E
+
+case one_block
+reg d0 = 0
+reg a1 = {$FFFFAD52} + 8
+reg a2 = {$FFFFAD52}

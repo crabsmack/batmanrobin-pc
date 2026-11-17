@@ -1,0 +1,7 @@
+# Enemy_PropToy_SpawnChain5RightC: no corpus run calls it (ruling 5, 2). Its caller: the wave spawn entries at $035106 / $03510E / $035116 / $03511E. The case runs at
+# Enemy_PropToy_SpawnChain6Right's first corpus call ($03AA88), a call of the same kind with the same contract (d4/d5 the
+# position, the caller's other registers), so the state is one a caller naming $03ABE2 would
+# leave (raw-stubs 2026-10-30).
+at $03AA88
+
+case as_proptoy_spawnchain6right

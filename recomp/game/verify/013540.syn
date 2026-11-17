@@ -1,0 +1,15 @@
+# Item_CollectSmallHealth: no corpus run collects a small health pickup (ruling 5, 2). Its one
+# caller is the small pickup's touch coroutine ($13536: sound $12, Op2_CallNativeRel), the same call
+# as Item_CollectBigHealth's from the large pickup's ($13436). The cases run at Item_CollectBigHealth's
+# first call (TAS f7565, player 1 collecting: g_Player1 +4 health), with the health set below and
+# near the cap.
+
+at $013440
+
+case as_called
+
+case near_full
+w $FFFFF654 = $F8
+
+case low
+w $FFFFF654 = $20

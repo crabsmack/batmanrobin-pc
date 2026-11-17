@@ -1,0 +1,14 @@
+# Debug_FreeCamScroll (Debug_FreeCamStep's tail when the cursor is right of the centre): the debug
+# free camera, which no real state turns on (015730.syn). Ruling 5 (2), at Frame_RunWorld's first
+# call: d0 = the cursor's distance right of the centre.
+at $009BC0
+
+case step_2               # under the 4-px cap
+reg d0 = 2
+
+case capped               # 9 px: capped at 4
+reg d0 = $FFFF0009
+
+case wraps_negative       # the camera x goes past $7FFF: the long cleared
+reg d0 = 3
+l $FFFFDFC4 = $7FFE8000

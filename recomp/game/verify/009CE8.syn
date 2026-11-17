@@ -1,0 +1,8 @@
+# Scene_EndAfterDelay: the scene already ending with result 1 (ruling 5, 2), at its first call:
+# g_SceneResult = 1, as the native itself leaves it for a script asking result 1 (the continue
+# screen's Continue_UseCredit script $049206: result 1 after 30 frames), so a second end request
+# in those frames (the screen's other scripts end it with result 0, e.g. $0494EC) is skipped
+# and the result kept.
+
+case already_ending
+w $FFFFF608 = 1

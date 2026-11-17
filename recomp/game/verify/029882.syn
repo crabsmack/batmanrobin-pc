@@ -1,0 +1,12 @@
+# Boss_BeamShip_BoltFrameByHeading: the fifth case (ruling 5, 2), at its first call: the bolt's
+# heading $2A(a6) at or below $1F4 (more than 3 steps of $8 off due left, $200), so a4 steps past
+# all four tests to the last case word. The heading is the bolt's flight angle (10-bit, masked
+# with $3FE); the corpus's bolts all flew within $1F6-$20E+ of due left (cases 1-4), the fifth
+# case is the same tilt one step further (the bolt's sprite for it is in the script's case table,
+# inferred: an aim at a player further off the ship's line than any corpus run stood).
+
+case heading_1F0
+w a6 + $2A = $01F0
+
+case heading_100
+w a6 + $2A = $0100

@@ -1,0 +1,8 @@
+# ToyChain_MakeChild7C: no corpus run calls it at 4:3 (ruling 5, 2). Its caller is the Op2_SpawnChild at $039786
+# in ToyChain_Spawn7C's script (itself reached only through a wave step the 4:3 corpus never runs; the gameplay
+# mode's widened windows may: ws-tail 2026-10-30). The case runs at ToyChain_MakeChild10's first call
+# (TAS f86799), made by the same Op2_SpawnChild with the same contract (a6 the base, the inline
+# arguments after the jsr), so the state is one a base naming $039A66 would leave.
+at $039A06
+
+case as_child10

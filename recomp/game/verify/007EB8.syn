@@ -1,0 +1,24 @@
+# Spr_InitBankFrames: a bank loaded over a handle that still holds art (ruling 5, 2), at its first
+# call (Op6_InitBankFrames, handle base $8002): the first frame's handle ($FFFF8002 + its offset
+# word at a0+2) is given a descriptor at $AA44 (one of ArtCache_Init's descriptor slots: the TAS's
+# truck handle used it), so the loop sets its owner to the dummy handle $8000 and releases it
+# (ArtCache_Release) before clearing the handle. A real state: two scripts of one scene load banks
+# at the same frame-table offset FC40 with the same handle base, e.g. the truck's loader
+# (Scr6_01FE32, $01FE82) and the Joker balloon's ($01FE8A, started by the boss script's
+# Op2_StartA6Script at $01C500, $01FEC0). In the TAS handle $8002 holds the truck bank's art with
+# two users from f13620 to f13980 (descriptor $A9AE, refcount $FE) and is evicted by f14040, five
+# thousand frames before the balloon's load (f18900); a play where those users live on, or the
+# released art stays cached (eviction is on demand: ArtCache_Alloc), reaches this loop. Both
+# forms: cached (refcount 0: ArtCache_Release returns 2) and still in use (two users: returns 1).
+
+case cached_art
+w {a0 + 2} + $FFFF8002 = $AA44
+b $FFFFAA44 = 0
+b $FFFFAA45 = 1
+w $FFFFAA46 = $8F00
+
+case two_users
+w {a0 + 2} + $FFFF8002 = $AA44
+b $FFFFAA44 = $FE
+b $FFFFAA45 = 1
+w $FFFFAA46 = 0

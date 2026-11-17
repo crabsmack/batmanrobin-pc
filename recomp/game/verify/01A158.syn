@@ -1,0 +1,7 @@
+# Boss_Harley_RollFrame: script variable 0 with bits 0 and 1 set (ruling 5, 2), at its first call
+# (the Harley cart): the wheel frame alternates with g_FrameParity. A real state: Scr2_01963A starts
+# with Op2_OrVar0 3 ($01963A, $0196BE), the part of the cart's script the stepped runner reaches
+# (001872.syn) and the timed corpus does not.
+
+case var0_3
+w a4 + $22 = 3

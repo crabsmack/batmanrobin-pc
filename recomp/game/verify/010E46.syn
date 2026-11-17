@@ -1,0 +1,7 @@
+# Coll_FlatFloorRest: a move that starts below the flat floor (ruling 5, 2), at its first call (TAS
+# f10670 on, a mover against the scene's alternative terrain): the start y d5 = g_FloorY + $10, so
+# no contact (d7 = 0) and the y just moves on (add.w d2,d5). A real state: a mover below the floor
+# line at a frame's start, e.g. pushed or spawned under it.
+
+case below_floor
+reg d5 = {$FFFFEA22} + $10

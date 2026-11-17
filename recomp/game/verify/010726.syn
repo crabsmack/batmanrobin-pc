@@ -1,0 +1,22 @@
+# EnemyAtk_HitScriptSpark: no corpus run calls it (ruling 5, 2). Its one caller is the claw fight's
+# falling debris (a4 script $01ECF2: Op4_BranchTouchPlayer, then Op4_CallNative dc.l $010726 with
+# dc.w $20, dc.l Scr4_010964 at $01ED10). The cases run at EnemyAtk_HitTouch's first call, the same
+# shape of call (an a4 object's Op4_BranchTouchPlayer then Op4_CallNative, $1ABA2-$1ABAC: a2 = the
+# player's struck box, a6 = the attacker, d4-d7 = the touch rectangle), with a4 at the debris
+# script's operands.
+
+at $0106A8
+
+case hit
+reg a4 = $01ED10
+b a2 + $3C = 0
+b {{a2 + $2E} + $C} + $16 = 0
+
+case already_struck
+reg a4 = $01ED10
+b a2 + $3C = 1
+
+case invulnerable
+reg a4 = $01ED10
+b a2 + $3C = 0
+b {{a2 + $2E} + $C} + $16 = $78

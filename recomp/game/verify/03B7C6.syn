@@ -1,0 +1,13 @@
+# Boss_CatHead_EyeFxAt: no corpus run calls it (ruling 5, 2). Its callers: the bra.s of the eye spark
+# natives and the fall-through of Boss_CatHead_EyeShotAt, which hand it d0 = the eye's x offset and
+# a0 = the a4 script. The case runs at Boss_CatHead_DriverSettle's first corpus call ($03BAB4), a
+# native the same VM enters with the object's registers, with what Boss_CatHead_EyeSparkLeft passes
+# on: d0 = -$1E, a0 = Scr4_03B7F2, a2 = the operand of its Op2_CallNativeRel at $03C44C. Without a0
+# set, Fx_RunScript ran the code bytes at $03BAB4 as a script, and the two runs' last RTS differed
+# (the generated SwayPoint's vs the C call's own; 2026-10-30). raw-stubs 2026-10-30.
+at $03BAB4
+
+case as_spark_left
+reg d0 = $0000FFE2
+reg a0 = $0003B7F2
+reg a2 = $0003C450

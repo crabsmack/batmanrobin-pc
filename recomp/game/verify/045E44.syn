@@ -1,0 +1,7 @@
+# Enemy_GunTank_SpawnLow: no corpus run calls it (ruling 5, 2). Its caller: the wave spawn entries at $041402 / $04140A. The case runs at
+# Enemy_GunTank_SpawnTough's first corpus call ($045ED2), a call of the same kind with the same contract (d4/d5 the
+# position, the caller's other registers), so the state is one a caller naming $045E44 would
+# leave (raw-stubs 2026-10-30).
+at $045ED2
+
+case as_guntank_spawntough

@@ -1,0 +1,8 @@
+# Enemy_GasOrb_SpawnBossTripleJets: no corpus run calls it (ruling 5, 2). Its callers are the spawner
+# longs at $046FF4 / $04701E in the Freeze fight scripts, the same calls that name its sibling
+# Enemy_GasOrb_SpawnBossPairJets $043ACC with the same contract (d4/d5 the position, a4/a6 the
+# caller's). The case runs at $043ACC's first call, so the state is one a Freeze script naming
+# $043BA0 would leave (corpus-p6 2026-10-30).
+at $043ACC
+
+case as_boss_pair

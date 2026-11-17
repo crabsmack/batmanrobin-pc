@@ -1,0 +1,16 @@
+# Camera_TrackPlayersY: the two-player cases (ruling 5, 2), at its first call (a section whose
+# camera follows the players vertically). both: players 1 and 2 in play (+$25 bit 0 of g_Player1
+# and g_Player2): the camera aims at the mean of their y ($F682, $F6C2). p2_only: player 1 out,
+# player 2 in play: player 2's y. Real states: player 2 joins with Start in any section
+# (scenario-two-player, scenario-two-player-exit), and either player can be out while the other
+# plays on; the corpus's two-player runs never reach a vertically tracked section.
+
+case both
+b $FFFFF675 = 1
+b $FFFFF6B5 = 1
+l $FFFFF6C2 = [$FFFFF682] + $00200000
+
+case p2_only
+b $FFFFF675 = 0
+b $FFFFF6B5 = 1
+l $FFFFF6C2 = [$FFFFF682]

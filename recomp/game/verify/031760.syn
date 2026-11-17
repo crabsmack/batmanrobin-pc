@@ -1,0 +1,7 @@
+# Enemy_Missile_SpawnTurning: no corpus run calls it (ruling 5, 2). Its caller: Op2_CallNative Spawn_AtOwnOfs's dc.l at $031756 (the launch subroutine $031752, itself unnamed). The case runs at
+# Enemy_Missile_SpawnAgile's first corpus call ($03165E), a call of the same kind with the same contract (d4/d5 the
+# position, the caller's other registers), so the state is one a caller naming $031760 would
+# leave (raw-stubs 2026-10-30).
+at $03165E
+
+case as_missile_spawnagile

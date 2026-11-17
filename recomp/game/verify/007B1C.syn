@@ -1,0 +1,6 @@
+# Spr_AddBack: the display list full (ruling 5, 2), at its first call: g_SprNodesFree = 0 (80
+# entries from Spr_ResetList each frame, every Spr_Add* takes one), so nothing is added and the
+# count is clamped at 0.
+
+case list_full
+b $FFFFF4AE = 0

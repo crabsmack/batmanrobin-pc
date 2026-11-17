@@ -1,0 +1,14 @@
+# Debug_PlacePlayerAtCursor: the debug pause menu's free camera turning off, which no real state
+# reaches (ruling 5, 2, as 015730.syn: g_DebugPause has no writer but the boot clear). At
+# Frame_RunWorld's first call (a stage in play, player 1's record in play), the cursor set.
+
+at $009BC0
+
+case in_play              # player 1 in play: its object moved to the cursor
+reg a1 = $FFFFF650
+l $FFFFF41A = $01230000
+l $FFFFF41E = $00450000
+
+case not_in_play          # player 2's record, not in play: nothing moved
+reg a1 = $FFFFF690
+b $FFFFF6B5 = 0

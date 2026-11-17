@@ -1,0 +1,20 @@
+# VM4_SpawnChild: a spawn op with a nonzero failure offset on a full pool (ruling 5, 2). The pool
+# does run out in real play: the TAS and fuzz-73800-s2 reach the failure path's rts ($006154, an
+# op with failure offset 0), so 140 blocks are not always enough. The ops with a nonzero offset
+# are the effect spawners of Scr4_014612, Scr4_01A388, Scr4_01F0DC and the bank bombing's
+# explosion row Scr4_020E5C (scratchpad cov10_spawnops.py: every word-aligned $5606 / $560E with
+# offset 6 or 8 below $60000 that is followed by Op4_CounterKillOut), and each is followed by
+# Op4_CounterKillOut ($54B0), whose 9 uses in the ROM all sit right after such a spawn ($014E52,
+# $01A412, $01A5C2, $01F232, $01F2B8, $020E82, $020E96, $020EAC, $020EC0): offset 6 lands on it,
+# 8 on the op after it. So at Op4_CounterKillOut's first call the object and its script are the
+# ones that just ran the spawn: the case puts the script back on that spawn's operands (a4 - 8,
+# past the op word), pushes the op's return as its `bsr` did (Op4_Spawn's $00560A; the failure
+# path drops it unread), and empties the pool, so Obj_New fails and the script takes the
+# failure offset (the counter op, or the op after it) on the same object.
+at $0054B0
+
+case pool_full_fail_offset
+reg a4 = a4 - 8
+l a7 - 4 = $0000560A
+reg a7 = a7 - 4
+b $FFFFF4B0 = 0

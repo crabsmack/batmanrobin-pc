@@ -1,0 +1,7 @@
+# Boss_JokerBalloon_StartSplit: the V-int object refused (ruling 5, 2), at its first call (TAS
+# f18840: the Joker balloon boss starting its screen split): g_ObjPoolFree = 0 (140 blocks at
+# scene init, every Obj_New / ObjPool_Alloc* takes one), so VIntObj_NewIdle fails and the native
+# returns 1 (no split this time). A busy boss scene can hold every block (008BB8.syn).
+
+case pool_empty
+b $FFFFF4B0 = 0

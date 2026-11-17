@@ -1,0 +1,6 @@
+# VM6_StartClearJob: the V-int job object failing to allocate (ruling 5, 2), at its first call:
+# the object pool has no free block (g_ObjPoolFree = 0), so VIntObj_NewIdle fails and the job
+# sets g_A6ResumeHook to retry itself next frame.
+
+case pool_empty
+b $FFFFF4B0 = 0

@@ -1,0 +1,10 @@
+# HUD_DrawLifeRing: the clamps no corpus frame needs (ruling 5, 2), at its first call (a6 = a
+# player record). negative: health +$4 below 0 (a hit larger than what was left, before the
+# death check: Player_AddStats floors it the same way). many_lives: lives +$6 at 10 (extra
+# lives add to it; the digit shows at most 9).
+
+case negative
+w a6 + 4 = $FFF0
+
+case many_lives
+w a6 + 6 = 10

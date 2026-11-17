@@ -1,0 +1,11 @@
+# Boss_Hatter_RoadHazardHit when Hitbox_CanHitTarget refuses the hit (ruling 5, 2), at its first
+# call (fuzz-113400-s2, the one corpus hit): the rts at $03DE6C. blinking: the struck player is
+# still invulnerable from an earlier hit (its sprite block's +$16 nonzero), as a player is for a
+# while after any hit, when a hazard reaches it; struck: the player box was already struck this
+# frame (+$3C bit 0, set by the first accepted hit: two hazards side by side on the road).
+
+case blinking
+b {{a2 + $2E} + $C} + $16 = $20
+
+case struck
+b a2 + $3C = 1

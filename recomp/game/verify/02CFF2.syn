@@ -1,0 +1,6 @@
+# Enemy_Missile_SpawnStraightFast: no corpus run spawns it (ruling 5, 2). Its callers (the spawner longs named in its header)
+# make the call Enemy_Missile_SpawnFromJet gets from its own entries, the same contract (lea script / jsr Obj_SpawnEnemyOrQuit / jmp Enemy_Missile_InitFromArgs(pc) as its siblings).
+# The case runs at Enemy_Missile_SpawnFromJet's first call, the same call.
+at $029DCC
+
+case as_called

@@ -1,0 +1,6 @@
+# Continue_DrawNoCreditsText: no corpus run calls it (ruling 5, 2). Its caller: Op2_Native at $049234 (coroutine 1 of the continue screen, no credits left). The case runs at
+# Continue_DrawCreditsText's first corpus call ($049212), a call of the same kind (a native the same VM enters with
+# the object's registers), so the state is one that caller would leave (raw-stubs 2026-10-30).
+at $049212
+
+case as_called

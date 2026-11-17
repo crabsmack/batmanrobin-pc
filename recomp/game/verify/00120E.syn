@@ -1,0 +1,11 @@
+# Op2_AllocSubBlock: the two paths no corpus call takes (ruling 5, 2), at its first call.
+# pool_empty: the object pool has no free block (g_ObjPoolFree = 0: 140 blocks at scene init,
+# every ObjPool_Alloc* takes one), so ObjPool_Alloc fails and the op backs a2 up and yields to
+# retry next frame. owned: the handle word a6+offset already holds a block (the op reached again
+# on an object that kept its block): no allocation, Op2_ClearNewBlock on that block.
+
+case pool_empty
+b $FFFFF4B0 = 0
+
+case owned
+w a6 + {a2} = {$FFFFAD52}

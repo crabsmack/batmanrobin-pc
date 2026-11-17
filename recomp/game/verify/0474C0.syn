@@ -1,0 +1,9 @@
+# Stage4_ConeSetInline for an object with no cone (ruling 5, 2), at its first call: $1E(a6) = 0,
+# so it skips its 6 argument bytes ($0474F4). A real state: the gas orb's escape path ($042208,
+# taken by Op2_BranchOffScrX at $0421C6 when the orb leaves the screen sideways) runs the
+# SetInline at $042214 (mode 3, close) whether or not the orb has a cone, and an orb gets one only
+# from coroutine 1 after its first hit ($04224E), and not even then when the three slots are full
+# (047336.syn). The corpus's orbs never left the screen.
+
+case no_cone
+w a6 + $1E = 0

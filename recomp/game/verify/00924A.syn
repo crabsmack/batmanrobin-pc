@@ -1,0 +1,17 @@
+# Arc_HeadAtMark: no corpus run calls it (ruling 5, 2). Its callers are Op4_CallNative's dc.l at
+# $0298DA and $02996E in stage 2 a4 spawn scripts, run right after Op2_FxMarkPlayerTarget has stored
+# the player's x/y in g_ArcTargetX/Y. The cases run at Arc_PlanToMark's first call: the same kind of
+# call (an a4 object's Op4_CallNative with that object in a6 and a mark set by the a2 op $5378),
+# with the mark moved to each side of the object.
+
+at $00926C
+
+case as_marked
+
+case mark_left_above
+w $FFFFDF96 = {a6 + $2E} - $40
+w $FFFFDF9A = {a6 + $32} - $30
+
+case mark_right_below
+w $FFFFDF96 = {a6 + $2E} + $90
+w $FFFFDF9A = {a6 + $32} + $10

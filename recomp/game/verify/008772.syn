@@ -1,0 +1,5 @@
+# ObjPool_HasFree: fewer free blocks than asked (ruling 5, 2), at its first call: the object pool
+# empty (g_ObjPoolFree = 0) against the caller's d0 (Player_JoinOrSpawn asks for 3), so d0 = -1.
+
+case short
+b $FFFFF4B0 = 0

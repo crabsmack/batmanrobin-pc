@@ -1,0 +1,7 @@
+# ToyChain_MakeBox10C: no corpus run calls it (ruling 5, 2). Its caller: Op2_SpawnChild $2A at $039C72 (Enemy_GiftBox_SpawnStay10C's coroutine 0). The case runs at
+# ToyChain_MakeBox10A's first corpus call ($03A2C0), a call of the same kind with the same contract (d4/d5 the
+# position, the caller's other registers), so the state is one a caller naming $03A326 would
+# leave (raw-stubs 2026-10-30).
+at $03A2C0
+
+case as_makebox10a

@@ -1,0 +1,7 @@
+# Enemy_HoverPod_Spawn4D: no corpus run calls it (ruling 5, 2). Its caller: the Freeze fight scripts' Op2_CallNative Spawn_AtScreenCentre dc.l at $046FB6 (and $047046, $047056, $0470E4, $047122). The case runs at
+# Enemy_GasOrb_SpawnBossPairJets's first corpus call ($043ACC), a call of the same kind with the same contract (d4/d5 the
+# position, the caller's other registers), so the state is one a caller naming $044418 would
+# leave (raw-stubs 2026-10-30).
+at $043ACC
+
+case as_gasorb_spawnbosspairjets

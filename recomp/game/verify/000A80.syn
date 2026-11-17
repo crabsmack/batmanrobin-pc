@@ -1,0 +1,7 @@
+# Op2_AwardScoreToPlayers: player 2 in play (ruling 5, 2), at its first call: bit 0 of g_Player2
+# +$25 ($FFF6B5, the in-play flag Player_JoinOrSpawn sets when pad 2 joins) set, so the object's
+# points also go to player 2's score (+0). A two-player game; no corpus run has player 2 in play
+# when such an object dies. The flag was clear at every corpus call, so + 1 sets only bit 0.
+
+case p2_in_play
+b $FFFFF6B5 = {$FFFFF6B4} + 1

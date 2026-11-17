@@ -1,0 +1,3 @@
+[submodule "recomp/engine"]
+	path = recomp/engine
+	url = https://github.com/crabsmack/segagenesisrecomp.git

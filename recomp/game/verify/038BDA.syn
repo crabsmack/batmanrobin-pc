@@ -1,0 +1,7 @@
+# ToyFigure_SpawnE: no corpus run calls it (ruling 5, 2). Its caller: the dc.l operand of Op2_CallNative $008D52 at $038A04 (ws-fix 2026-10-30;
+# widescreen_gameplay=1 reaches ToyFigure_SpawnG from a ring's break-up). The case runs at
+# ToyFigure_Spawn's first call, made through the same Spawn_* natives with the same contract, so the
+# state is one such a call naming $038BDA would leave.
+at $038CA4
+
+case as_spawn

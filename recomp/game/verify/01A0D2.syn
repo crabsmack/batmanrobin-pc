@@ -1,0 +1,8 @@
+# Boss_Harley_PickDir8: the attack pick by screen half (ruling 5, 2), at its first call (the Harley
+# cart, a6/a4 its object and script block): a pick request other than 0/1 in $26(a4) with the cart
+# left of the screen centre ($3E(a6) - g_CameraX < $A0): case 1. The corpus's picks come with the
+# cart on the right; the cart drives across the whole screen.
+
+case left_half
+w a4 + $26 = 2
+w a6 + $3E = {$FFFFDFC4} + $40

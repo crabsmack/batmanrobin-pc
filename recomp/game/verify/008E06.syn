@@ -1,0 +1,6 @@
+# Obj_SpawnEnemyUnlinkedOrQuit: the spawn failing (ruling 5, 2), at its first call: the object
+# pool has no free block (g_ObjPoolFree = 0), so Obj_SpawnUnlinked fails and it returns to its
+# caller's caller (addq.l #4,a7).
+
+case pool_empty
+b $FFFFF4B0 = 0

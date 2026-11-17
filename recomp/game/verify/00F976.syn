@@ -1,0 +1,26 @@
+# Span_DrawTriangle with a vertex exactly on a boundary line (ruling 5, 2), at its first call (a
+# stage 4 cone drawn by Stage4_DrawCones: apex g_TriX0/Y0 = the orb's screen point, the far edge
+# g_TriX1/Y1 and X2/Y2 = two 3D points rotated and projected, Rot3D_ProjectPoint, plus the apex).
+# flat_top: the top two vertices on one line inside the screen (top part 0 lines: $00FB50).
+# top_clipped_at_0: the top vertex above the screen and the middle one exactly on line 0 (the
+# clipped top part ends on the first line: $00FA8A). Real states: the vertices are integer screen
+# points that move every frame with the cone's angles and the orb, so two of them share a line, or
+# the middle one lands on line 0, whenever the projection rounds that way; the corpus's cones did
+# both kinds of thing (the flat-top setup $00F9D4 and the clipped top $00FA34 ran: TAS, fuzz-117000)
+# but never these two combinations.
+
+case flat_top
+w $FFFFE5F8 = 100
+w $FFFFE5FA = 20
+w $FFFFE5FC = 140
+w $FFFFE5FE = 20
+w $FFFFE600 = 120
+w $FFFFE602 = 80
+
+case top_clipped_at_0
+w $FFFFE5F8 = 100
+w $FFFFE5FA = -8
+w $FFFFE5FC = 140
+w $FFFFE5FE = 0
+w $FFFFE600 = 120
+w $FFFFE602 = 60

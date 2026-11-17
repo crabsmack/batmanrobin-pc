@@ -1,0 +1,7 @@
+# Boss_Hatter_SpawnRoadDriftLeft: no corpus run calls it (ruling 5, 2). Its caller: Boss_Hatter_RoadCmdSpawn4's lea at $03DD72 (a1 for Boss_Hatter_RoadCmdSpawnInLane's jsr (a1)). The case runs at
+# Boss_Hatter_SpawnRoadHazard's first corpus call ($03FB0E), a call of the same kind with the same contract (d4/d5 the
+# position, the caller's other registers), so the state is one a caller naming $03FDC2 would
+# leave (raw-stubs 2026-10-30).
+at $03FB0E
+
+case as_hatter_spawnroadhazard

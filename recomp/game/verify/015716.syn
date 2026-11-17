@@ -1,0 +1,7 @@
+# Debug_CentreCursor: the debug pause menu turning the free camera on, which no real state reaches
+# (ruling 5, 2, as 015730.syn: g_DebugPause has no writer but the boot clear). At
+# Frame_RunWorld's first call (a stage in play: the camera set), no input.
+
+at $009BC0
+
+case centre

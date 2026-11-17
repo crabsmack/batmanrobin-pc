@@ -1,0 +1,7 @@
+# Op2_AnimHoldByVelY: an object moving up (ruling 5, 2), at its first call: the y velocity
+# $1C(a3) = -16 px a frame, so vy + ay + bias is negative and the op takes its first case. A real
+# state: the rising half of any jump or throw arc (Op2_Jump sets a negative y velocity); the
+# corpus's users of this op only run it while falling.
+
+case rising
+l a3 + $1C = $FFF00000

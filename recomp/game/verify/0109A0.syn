@@ -1,0 +1,21 @@
+# Weapon_KeepShotArtOne: a second weapon change within 20 frames of the first (ruling 5, 2), at its
+# first call (Weapon_KeepShotArt, player 1: a6 = g_Player1, a5 = its slot in g_ShotArtSlots). The
+# state: player 1 on foot with weapon type 0 (shot frame $238C) took a type 1 pickup 10 frames ago
+# (slot +0 = $247C, countdown +2 = 10, +4 = $238C still held) and now a type 2 pickup (record +$28
+# = 2, level 0: frame $251C). The slot's countdown is running, so the frame held from the first
+# change ($238C) is released now and the one just replaced ($247C) waits its 20 frames ($0109E6).
+# A real state: Item_CollectWeapon changes +$28/+$2A at each pickup touched, and pickups can lie
+# side by side (enemies and boxes drop them where they fall: Item_SpawnWeapon*); the corpus never
+# took two within 20 frames. (Whether $238C's art is resident at this call does not matter here:
+# Spr_ReleaseFrame returns at once for a handle with no art.)
+
+case second_change
+reg a6 = $FFFFF650
+reg a5 = $FFFFEA0E
+w $FFFFEA08 = 1
+b $FFFFF675 = 1
+w $FFFFF678 = 2
+w $FFFFF67A = 0
+w $FFFFEA0E = $247C
+w $FFFFEA10 = 10
+w $FFFFEA12 = $238C

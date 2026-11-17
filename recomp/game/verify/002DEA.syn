@@ -1,0 +1,15 @@
+# Op2_SwapPlayerTarget: an enemy switching its target to the other player (ruling 5, 2), at its
+# first call (an enemy holding a player target, $10(a4) = the record). A two-player game, both
+# players targetable (record +$3A nonzero): the target moves to the other record and that record's
+# attacker count +$38 rises. Player 2 joins with Start in any section (scenario-two-player,
+# scenario-two-player-exit); the corpus's enemies there never run this op with both players in.
+
+case p1_to_p2             # targeting player 1, player 2 targetable
+w a4 + $10 = $F650
+b $FFFFF68A = 1
+b $FFFFF6CA = 1
+
+case p2_to_p1             # targeting player 2, player 1 targetable
+w a4 + $10 = $F690
+b $FFFFF68A = 1
+b $FFFFF6CA = 1

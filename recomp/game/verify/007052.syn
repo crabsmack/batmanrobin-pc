@@ -1,0 +1,7 @@
+# VM5_AfterSpawn: a wave's spawn quota reached (ruling 5, 2), at its first call (a wave object a6
+# after a spawn): the spawn count $C(a6) equal to the one-player quota $E(a6) (the TAS is
+# one-player), so the wave switches to its after-quota script $16(a6) and clears $2E. A real state:
+# a wave that spawns its full quota; no corpus wave gets there.
+
+case quota_reached
+w a6 + $C = {a6 + $E}

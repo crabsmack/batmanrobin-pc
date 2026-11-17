@@ -1,0 +1,12 @@
+# Mot_DirToPlayer: two geometries no corpus call has (ruling 5, 2), at its first call (TAS f1571:
+# a0 = the targeted player's record, d2/d3 = the aiming object's x/y, d4 directions). same_x: the
+# object exactly above or below the player (dx = 0, taken as 1). steep_down_left: the player 8 px
+# left of the object and $50 px below the aim point (dx < 0, dy >= 0, |dx| < dy: the octant
+# between down and down-left). Both are positions any aimer can stand at.
+
+case same_x
+reg d2 = {a0 + $2E}
+
+case steep_down_left
+reg d2 = {a0 + $2E} + 8
+reg d3 = {a0 + $32} - $40

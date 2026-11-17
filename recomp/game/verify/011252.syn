@@ -1,0 +1,5 @@
+# Player_AddStats: a negative health (ruling 5, 2), at its first call (a0 = a player record):
+# health +$4 below 0 (a hit larger than what was left, before the death check) folds in as 0.
+
+case negative
+w a0 + 4 = $FFF0

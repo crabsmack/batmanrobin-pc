@@ -1,0 +1,9 @@
+# HUD_InitPanel: an absent player's panel with no credits left (ruling 5, 2), at its first call (a
+# stage's HUD init, a0 = a player record): the record not in play (+$25 bit 0 clear) and g_Credits
+# 0, so the panel gets GAME OVER and the zero-credit loop $10FB6. A real state: a stage started
+# with the other player out after the last credit was spent (a continue takes one, $0491FC; a join
+# takes one, Player_JoinOrSpawn).
+
+case no_credits
+b a0 + $25 = 0
+w $FFFFF64E = 0

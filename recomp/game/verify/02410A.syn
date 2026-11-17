@@ -1,0 +1,11 @@
+# Stage2_LiftUpdate's arrival at the top (ruling 5, 2), at its first call (the lift scene running,
+# its V-int object installed): the map scroll 1/16 px above the top with the lift at full speed
+# up, so this frame's move takes g_MapScrollY negative: Stage2_LiftArriveTop (the boss arena and
+# the boss), Shake_Start and the three clears. The real game reaches it once per lift ride (TAS
+# f32065, fuzz-30600/34200): verify samples those calls out (a call after an entry's 2000th is
+# compared 1 in 64, and an entry gets no probe for new instructions), so a case pins it.
+
+case arrive
+l $FFFFE00E = $00001000
+l $FFFFE006 = $FFFF0000
+l $FFFFDFFE = $FFFF0000

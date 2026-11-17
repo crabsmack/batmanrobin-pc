@@ -1,0 +1,13 @@
+# Op4_BranchCrossY with the last y at the line (ruling 5, 2), at its first call: $58(a6) = the
+# line word. The op compares the line with the object's last y $58 to pick the side; nothing in
+# the a4 spawn (VM4_SpawnChild_InitMotion sets $8, $14, $24, $26-$55; VM4_SpawnChild_Init $1C-$22)
+# writes $56/$58, so a new effect starts with whatever its pool block's previous user left there.
+# The op itself leaves the line value in $58 when it fires (`move.w d0,d5 / move.w d5,$58(a6)`),
+# and the pool is LIFO (ObjPool_Free pushes the block on g_ObjPoolHead, Obj_New pops it): a
+# debris piece that crossed its line and was killed (Op4_Kill frees its block) hands $58 = the
+# line to the next a4 object spawned, typically the next piece of the same burst with the same
+# line ($01E36C / $01E376: two lines $B4 in Scr4_01E1CE). In the corpus every call took the
+# `bgt` (the last y above the line), so the `cmp.w d5,d0` side never ran.
+
+case last_y_on_line
+w a6 + $58 = {a4}

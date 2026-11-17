@@ -1,0 +1,6 @@
+# Fx_RideTubeScroll: no corpus run calls it (ruling 5, 2). Its caller: Op4_Native at $042918 in the tunnel effect script $042900. The case runs at
+# Boss_Hatter_LittleHatFollow's first corpus call ($03D914), a call of the same kind (a native the same VM enters with
+# the object's registers), so the state is one that caller would leave (raw-stubs 2026-10-30).
+at $03D914
+
+case as_called

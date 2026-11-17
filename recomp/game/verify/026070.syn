@@ -1,0 +1,13 @@
+# Boss_Stage2_MoveHullRunTurrets' -500 clamp (ruling 5, 2; $026086), at its first call (the stage 2
+# arena boss's first frame, a6 = the boss): the hull's y $42 at -499 (16.16 $FE0D0000) while the
+# floor rolls at 3.0 a frame (g_SceneVars2+$12 = $30000, the top of Stage2_UpdateScroll's 0..3.0
+# ramp), so y - 3/4 of the roll is -501.25 and is clamped to -500. The hull only rises while the
+# floor turns, by 3/4 of the roll, and its own seek brings it back to -$28: a phase-1 tilt lifts it
+# about 90 px and the return takes about 180 frames, so -500 needs about five phase-1 tilts in a
+# row; the tilts look scheduled by the attack script (two dodge probes got exactly the idle run's
+# one tilt), so reachability is undetermined (NOTES, Open questions: cov11's and cov13's
+# "Boss_Stage2_MoveHullRunTurrets' -500 clamp"; not settled).
+
+case clamp
+l a6 + $42 = $FE0D0000
+l $FFFFF5B0 = $30000

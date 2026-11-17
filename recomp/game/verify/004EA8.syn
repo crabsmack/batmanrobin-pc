@@ -1,0 +1,8 @@
+# Op2_TestAttackBoxAtDrawn: the attack pause running (ruling 5, 2), at its first call: $1(a4) = 15,
+# as Boss_Hatter_RoadHazardHit ($03DE62) leaves it after the road hazard (Scr2_03DE22, one of
+# the op's two users) hits a player, so the op counts it down and skips the test. A real state
+# (fuzz-113400-s2 runs that hit callback), but on the Hatter road an H-int lands in every call
+# and verify skips them (docs/NOTES.md "verify can hardly check the Hatter road").
+
+case paused
+b a4 + 1 = $F

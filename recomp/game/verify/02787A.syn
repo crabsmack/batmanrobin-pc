@@ -1,0 +1,6 @@
+# Enemy_LadderThug_SpawnD: no corpus run spawns it (ruling 5, 2). Its callers (the spawner longs named in its header)
+# make the call Enemy_LadderThug_SpawnC gets from its own entries, the same contract (lea script / move.w #6,d7 / jsr Obj_SpawnEnemyNOrQuit / jmp Enemy_LadderThug_InitLadder(pc) as Enemy_LadderThug_SpawnC).
+# The case runs at Enemy_LadderThug_SpawnC's first call, the same call.
+at $02785E
+
+case as_called

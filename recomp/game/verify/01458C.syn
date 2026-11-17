@@ -1,0 +1,10 @@
+# Menu_Update: Left on a setting at 0 wraps to its maximum (ruling 5, 2), at its first call (the
+# options screen, Tbl_049994: credits $F612 max 6, music $F60A max $F, sound $F60C max $39): every
+# setting 0 and Left newly pressed on pad 1 ($F626 bit 2), whichever item the cursor is on. A
+# real state: the player pressing Left on any option still at 0 (scenario-options presses Right).
+
+case left_at_zero
+w $FFFFF612 = 0
+w $FFFFF60A = 0
+w $FFFFF60C = 0
+b $FFFFF626 = $04

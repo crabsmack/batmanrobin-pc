@@ -1,0 +1,28 @@
+# Debug_PauseMenu: the debug pause menu, which no real state enters (ruling 5, 2, as 015730.syn):
+# Pause_Update jumps here only while g_DebugPause ($F60E) is nonzero, and its one writer
+# ($009E02) stores 0. The cases run at Pause_Update's first call (a stage in play), a0 = pad 1's
+# live record ($F62C), the button already newly pressed (+2), so the poll loop exits at once.
+
+at $009C50
+
+case slow_motion          # A: g_SlowMotion toggled
+reg a0 = $FFFFF62C
+b $FFFFF62E = $40
+
+case freecam_on           # B with the free camera off: on, then Debug_CentreCursor
+reg a0 = $FFFFF62C
+b $FFFFF62E = $10
+b $FFFFF4F1 = 0
+
+case freecam_off          # B with the free camera on: off, both players placed at the cursor
+reg a0 = $FFFFF62C
+b $FFFFF62E = $10
+b $FFFFF4F1 = $FF
+
+case end_section          # C: g_FrameCallback's high word 1, Scene_FadeOutExit
+reg a0 = $FFFFF62C
+b $FFFFF62E = $20
+
+case resume               # Start
+reg a0 = $FFFFF62C
+b $FFFFF62E = $80

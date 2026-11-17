@@ -1,0 +1,12 @@
+# Obj_SetAttackBoxes: a box allocation failing (ruling 5, 2). Run at the first call of
+# Op2_SetAttackBox ($003784, `moveq #1,d7 / bsr Obj_SetAttackBoxes`: a2 = its one inline box
+# spec, a4/a6 the object), with d7 = 1 as that op sets it; the object's first attack-box handle
+# ($C(a4)) is 0 (a box set growing past the boxes it had) and the object pool has no free block
+# (g_ObjPoolFree = 0), so ObjPool_Alloc fails and the remaining specs are skipped (loc_00380E)
+# before the count is stored.
+at $003784
+
+case pool_empty
+reg d7 = 1
+w a4 + $C = 0
+b $FFFFF4B0 = 0

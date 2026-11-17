@@ -1,0 +1,11 @@
+# Op2_ClearMotionBlock: no script runs it: its handler word $5078 is nowhere in the ROM outside
+# LZ-compressed blocks (scratchpad scan of every word-aligned occurrence, cov6 2026-10-28), so no
+# real state reaches it; the case gives the file its checked call (ruling 5, 2, as 015730.syn's
+# debug code). At Op2_StartCoroutine1Here's first call (an object running its a2 script; that
+# op has no operand, so a2 is at the next op word) with the coroutine stored as that op would:
+# the script as if ClearMotionBlock followed StartCoroutine1Here.
+
+at $00237C
+
+case clear
+l a4 + $3C = a2

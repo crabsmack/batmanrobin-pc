@@ -1,0 +1,7 @@
+# ToyChain_MakeDropIn12B: no corpus run calls it (ruling 5, 2). Its caller: Op2_SpawnChild $2A at $039B5C, in the script of the unreferenced raw stub $039B50. The case runs at
+# ToyChain_MakeDropIn12's first corpus call ($039BD4), a call of the same kind with the same contract (d4/d5 the
+# position, the caller's other registers), so the state is one a caller naming $039BC6 would
+# leave (raw-stubs 2026-10-30).
+at $039BD4
+
+case as_makedropin12

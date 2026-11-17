@@ -1,0 +1,6 @@
+# Enemy_BlackDrone_SpawnHoverRandomA: no corpus run spawns it (ruling 5, 2). Its callers (the spawner longs named in its header)
+# make the call Enemy_BlackDrone_SpawnWaypointsC gets from its own entries, the same contract (lea script / jsr Obj_SpawnEnemyOrQuit / jmp Spawn_SetTimer1FromEntry(pc) as its siblings).
+# The case runs at Enemy_BlackDrone_SpawnHoverA's first call ($029FF8: scenario-sec-2300/2400, level-skip), the same kind of call.
+at $029FF8
+
+case as_called

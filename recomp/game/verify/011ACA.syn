@@ -1,0 +1,13 @@
+# BossMeter_Show while the meter lives (ruling 5, 2; $011ADC-$011AEC: g_BossMeterObj set, so the
+# meter object's script is restarted at Scr2_011B3E instead of a new one spawned), at
+# Op2_SetBossEnergy's first call: a boss script's a2 op running on the boss (a6 = the boss, +$52
+# its energy) with its meter on screen (fuzz-05400-s1: the stage 1 balloon fight, TAS f4560-6000,
+# g_BossMeterObj set). The case changes nothing in that state: it is the state of a boss whose
+# script calls Show a second time, or a second boss's Show before the first's Defeated. 12 Show
+# sites and 11 Defeated sites, each read by a reference run but $03B330; which Defeated closes which
+# Show is not traced, and the cat head's second Show ($03B32E) follows Op2_GotoVector0 with no word
+# pointing at it, so reachability is undetermined (NOTES, Open questions: cov12, cov13, cov16
+# "BossMeter_Show with a live meter").
+at $003A4A
+
+case meter_live

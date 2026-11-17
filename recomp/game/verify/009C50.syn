@@ -1,0 +1,16 @@
+# Pause_Update's jump to the debug pause menu (dead code, ruling 5, 2, as 01569C.syn), at its first
+# call (a stage in play): g_DebugPause ($F60E) set, which no real state does (its one writer,
+# Main_Start $009E02, stores 0: the Unreachable row), and pad 1's live record ($F62C) with Start
+# newly pressed (+2) and released (+3), so the pause starts, its release wait exits at once and
+# Debug_PauseMenu (the same press: Start) resumes. The first call can come in a scene's fade-in
+# or before player 1 is in play, so the case also makes it a stage frame as a pause sees it:
+# g_SectionId $1100 (stage 1's first gameplay section), g_FadeLevelVInt 0 (no fade), player 1 in
+# play (bit 0 of g_Player1+$25).
+
+case debug_pause
+w $FFFFF602 = $1100
+b $FFFFF704 = 0
+b $FFFFF675 = 1
+w $FFFFF60E = 1
+b $FFFFF62E = $80
+b $FFFFF62F = $80

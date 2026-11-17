@@ -1,0 +1,9 @@
+# Never commit the game: supply your own dump (build.py checks its SHA-1)
+*.bin
+*.md.rom
+*.smd
+*.gen
+build/
+*.p
+*.lst
+__pycache__/

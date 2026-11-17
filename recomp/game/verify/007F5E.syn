@@ -1,0 +1,36 @@
+# Spr_SwapFrameArt: no art descriptor free (ruling 5, 2), at its first call (a sprite changing to
+# a frame whose art is not resident): g_ArtDescsFree 0 with blocks to spare, so the swap fails
+# and the old frame stays (a0 = old entry, d1 = d2). A real state: 50 descriptors (ArtCache_Init)
+# count the cached art too, and scenes give the cache up to 60 blocks (+$D from
+# ArtCache_AddBlocksInline), so 50 resident or cached arts of one block each use them all; the
+# blocks-short path next to it ($007FEE) runs in the corpus.
+
+case no_descriptor
+b $FFFFA770 = $40
+b $FFFFA772 = 0
+
+# The old frame's release finding its art with no user (ruling 5, 2): the frame change to 0 (d1 = 0,
+# only the release, as Weapon_KeepShotArtOne's change to no shot frame) from a frame whose handle
+# ({a1}: the old entry's handle word) holds a cached descriptor $AA44 (refcount 0, on the release
+# ring), so the raised refcount is positive and cleared again ($007FCA). The real state is
+# 008000.syn's: after a bank is loaded over a handle in use (007EB8.syn), an old sprite's release
+# takes a new user's count to 0 and the new user's own release, here through a frame change,
+# finds 0.
+case release_cached
+reg d1 = 0
+w {a1} = $AA44
+b $FFFFAA44 = 0
+b $FFFFAA45 = 1
+w $FFFFAA46 = $8F00
+
+# The new frame's art resident with refcount $80, i.e. 128 users (ruling 5, 2; $007FE6-$007FE8:
+# the decrement to $7F is undone and the swap goes on to the release). A descriptor's count is 0
+# (cached) or minus its users, and a positive byte is cleared by the release that makes it, so only
+# $80 gets here: 128 objects showing one art. Not bounded, reachability undetermined (NOTES, Open
+# questions: cov12's "Spr_SwapFrameArt $007FE6", the most frame words that can name one art: the
+# $8C-block pool plus HUD and weapon slots). The new entry's handle ({a0}) is given descriptor $AA44.
+case users_128
+w {a0} = $AA44
+b $FFFFAA44 = $80
+b $FFFFAA45 = 1
+w $FFFFAA46 = 0

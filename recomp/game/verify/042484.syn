@@ -1,0 +1,6 @@
+# Enemy_JetTrooper_SteerEighthTurn: no corpus run calls it (ruling 5, 2). Its caller: Op2_Native at $042482 (coroutine 2 of a jetpack trooper). The case runs at
+# Player_CopyPadToVar2's first corpus call ($04D342), a call of the same kind (a native the same VM enters with
+# the object's registers), so the state is one that caller would leave (raw-stubs 2026-10-30).
+at $04D342
+
+case as_called

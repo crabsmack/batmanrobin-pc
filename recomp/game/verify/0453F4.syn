@@ -1,0 +1,7 @@
+# Enemy_JetTrooper_SpawnHoverOnJitter: no corpus run calls it (ruling 5, 2). Its caller: no known caller (the four longs $000453F4 in ROM are a4-script words); its siblings' wave-entry call. The case runs at
+# Enemy_JetTrooper_SpawnHoverOn's first corpus call ($045454), a call of the same kind with the same contract (d4/d5 the
+# position, the caller's other registers), so the state is one a caller naming $0453F4 would
+# leave (raw-stubs 2026-10-30).
+at $045454
+
+case as_jettrooper_spawnhoveron

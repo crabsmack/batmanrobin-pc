@@ -1,0 +1,6 @@
+# Op2_CruiseRightNow: a negative x cruise speed (ruling 5, 2), at its first call: $30(a3) < 0, so
+# the op takes its magnitude for the target speed and the velocity. Real scripts set negative cruise
+# speeds (00180E.syn's list); the corpus never runs this op while one holds.
+
+case negative_cruise
+l a3 + $30 = $FFFF8000

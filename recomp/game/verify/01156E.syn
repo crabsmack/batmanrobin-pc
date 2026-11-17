@@ -1,0 +1,5 @@
+# HUD_DrawScore: the 999,999 cap (ruling 5, 2), at its first call: the player's score (+0 long)
+# at 1,000,000 (scores only grow: every kill and item adds to it, nothing caps the long itself).
+
+case capped
+l a6 = 1000000

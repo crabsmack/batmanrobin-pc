@@ -1,0 +1,29 @@
+# ArtCache_Release: an empty handle (ruling 5, 2), as BossMeter_Free calls it, at that native's
+# first call: g_BossMeterArt 0, so the release returns -1 and frees nothing. A real state: the
+# meter's Init retries every frame while the cache is full (011D04.syn), and BossMeter_Defeated
+# switches the meter to its exit script (Scr2_011B8E, which calls BossMeter_Free) whatever its
+# Init got, so a boss beaten while the cache stayed full frees a handle that was never filled.
+at $011D4E
+
+case empty_handle
+reg a0 = $FFFFED82
+w $FFFFED82 = 0
+
+# The two releases Spr_InitBankFrames makes when a bank is loaded over a handle that still holds
+# art (007EB8.syn says when): the handle's descriptor cached (refcount 0: the release finds no user,
+# clears the byte it just raised and returns 2) or in use by two sprites (refcount $FE: returns 1).
+# These are that caller's inputs (a0 = a handle, its descriptor); the entry state is
+# BossMeter_Free's, since a case's callee gets no coverage from its caller's case.
+case cached_art
+reg a0 = $FFFFED82
+w $FFFFED82 = $AA44
+b $FFFFAA44 = 0
+b $FFFFAA45 = 1
+w $FFFFAA46 = $8F00
+
+case two_users
+reg a0 = $FFFFED82
+w $FFFFED82 = $AA44
+b $FFFFAA44 = $FE
+b $FFFFAA45 = 1
+w $FFFFAA46 = 0

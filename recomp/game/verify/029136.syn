@@ -1,0 +1,7 @@
+# Boss_TurretPod_SpawnTurret3 with the object pool out of blocks (ruling 5, 2), at its first call
+# (TAS f45122): its spawner $02F07C (Obj_SpawnBossUnlinked) finds no free block and fails (Z
+# clear), so the pod skips the turret (bne $029154: no var 0, no handle). A full pool is a state
+# the game handles; the corpus never fills it (140 blocks).
+
+case pool_empty
+b $FFFFF4B0 = 0

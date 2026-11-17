@@ -1,0 +1,8 @@
+# Op2_BounceY: the bounce settling (ruling 5, 2), at its first call (an object landing): half the
+# landing move $3C(a3) not above the y acceleration $28(a3), so the y velocity and target speed
+# are cleared instead of reversed. A real state: every bounce loses speed until it settles; the
+# corpus's bouncers leave before they do.
+
+case settle
+l a3 + $28 = $00001000
+l a3 + $3C = $00001000
