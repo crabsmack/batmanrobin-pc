@@ -887,7 +887,7 @@ Spawners: `ToyChain_Spawn5/6/7/8` (charge cycle $0380B8, random shed delay), `..
 (+ `Charging`, `StopHop`, `RandCharge` variants). **Drop carriers** (`Enemy_DropCarrier_Spawn*`,
 shared body $035AA6, other range): fly across at screen y $84 and drop white-rabbit hoppers
 ($035CF2, seen at f111900) or toy figures. Never run at 4:3, converted 2026-10-30 because
-widescreen_gameplay=1 reaches them or their wave (ws-fix; each named by a static caller, checked
+widescreen=16:9-gameplay reaches them or their wave (ws-fix; each named by a static caller, checked
 by a .syn case at its sibling's first call): `ToyRing_SpawnSixB` $0391AA, `ToyRing_SpawnSixC`
 $039290, `ToyRing_SpawnBigB` $039018 (wave spawn entries), `ToyFigure_SpawnB`-`G` $038AF8,
 $038B80, $038BBC, $038BDA, $038CF4, $038D48 (Op2_CallNative Spawn_AtAnchor / Spawn_AtOwnOfs
@@ -2195,10 +2195,10 @@ setting, read from the runner's own `--options --json` (`cartridge`): the kit no
 every native run that names no options (phase 5's checks included), in the plain
 `artifacts/recomp/native/` dir; any other options or diagnostics land in `native-o<hash>/`.
 
-- **Options** (`recomp/platform/native/options.{h,cpp}`, record `g_opt`): `widescreen` 0|16:9,
-  `widescreen_gameplay` 0|1, `high_fps` 0|120|144|165|240 (any 61-1000), `unlimited_sprites` 0|1,
+- **Options** (`recomp/platform/native/options.{h,cpp}`, record `g_opt`): `widescreen` 0|16:9|16:9-gameplay
+  (R23, 2026-11-17: one setting; it was `widescreen` 0|16:9 plus `widescreen_gameplay` 0|1), `high_fps` 0|120|144|165|240 (any 61-1000), `unlimited_sprites` 0|1,
   `music_voices` 1|0 (default 1, R13; cartridge 0), `fm_ladder` 1|0 (1 = the cartridge's ladder),
-  `fm_filter` 0|1. Set by `--options K=V,...` on any run and by `settings.ini` `[options]` beside
+  `fm_filter` 0|1, `weapon_level` 0-6 (R24: Main_Start's g_StartWeaponLvl through dk_opts.h). Set by `--options K=V,...` on any run and by `settings.ini` `[options]` beside
   the exe (the command line wins); `--options --json` lists default, values, cartridge, value,
   what, and the effective values (no ROM needed; `dkit genesis recomp options` checks the settings
   file read back). Played runs: F9 high_fps off/on (144 if none given), F10 widescreen.
@@ -2678,7 +2678,7 @@ only while a frame is drawn, or the name tables (masked from `game_crc32` by the
   the frame's end the checks see the streamed margins. Counted as `margin_cells_given_back` in
   the ws JSON. For hfps-p6: VRAM now changes per line inside the window (reclaim, reshift), and
   the capture copies VRAM once at hf_display_begin.
-- **The gameplay mode (R4)**: `WS_ACT()` = 40 with widescreen_gameplay=1 on a wide screen:
+- **The gameplay mode (R4)**: `WS_ACT()` = 40 with widescreen=16:9-gameplay on a wide screen:
   Trigger_RunX's window to camera + $140 + 40, the a4 kill windows (00555A Op4_KillOffScreen,
   006776 x2, 0370DC ToyFigure_FxSpinOrKill: g_OnScreenLeft - 40, width $170 + 80) and Op2_Native's
   kill boxes (x margin + 40). The render camera keeps the view on the map in both modes.
@@ -3000,7 +3000,7 @@ only while a frame is drawn, or the name tables (masked from `game_crc32` by the
     in the presentation pass and R21's pass. No new corpus run was needed: the native movie
     already fights Harley with the fire frozen.
 - **R20: the gameplay mode widens the spawns and the players' area (ws-play, 2026-10-30)**. With
-  widescreen=16:9 and widescreen_gameplay=1 only: every hook is 0 in the PC modes, with widescreen
+  widescreen=16:9 and widescreen=16:9-gameplay only: every hook is 0 in the PC modes, with widescreen
   off and in the presentation mode (E3's game-state equality and phase 5 see the original;
   scenario-sec-2100-s1 16:9 and 4:3 rows byte-identical to main's binary).
   - **The wide view, for the game (widescreen.cpp `view_extent`)**: [left, right) in the 4:3 view's
@@ -3450,6 +3450,59 @@ kit's subprocess.run drains it; a hand harness must send stdout to a file.
 **Not changed:** the stepped runners' watchdog (the kit template's spec.c) still counts wall
 seconds without a sync point. Their passes are unrendered (the pause interval well under a
 second), and they have the hardware-read guard; none has stopped falsely so far.
+
+## Phase 6: the weapon-level poke and sec-4401-freeze-lv6 (R24, 2026-11-17)
+
+**`@poke ADDR VALUE`** (kit 0.11.9): a scenario line that writes a word to work RAM between two
+frames. The reference writes it, trace.json records it (`"pokes": [[frame, addr, word]]`), the
+timed runner's .input gets `WRITE_RAM16` after the WAITs that add up to that frame, the stepped
+runners' at the start of the sync interval holding it (sync k in a frame <= t, sync k+1 after),
+and the native runner applies WRITE_RAM8/16/32 as the engine's runner does (input_script.cpp,
+through dk_mem.h at the word's width). A poke run plays alone, never as a branch (the branch seek
+refuses a script that writes RAM). **Exactness** (scenario-sec-4401-freeze-lv6, `@poke $F616 6`
+after frame 363): the timed runner equals the reference on all 18,991 frames; frame 363's RAM row
+is the unpoked sec-4401-freeze's, frame 364's differs (921d1bea against fa5f6e6a) on both. Sync
+342 is in frame 363: on the timed runner, stepped-gen and native it equals the unpoked run's
+(2f917d5a), and sync 343 holds the same new CRC on all three (e1b13cb4 against 89f34934).
+stepped-gen == native on all 16,196 rows; timed and stepped-gen part at sync 459 (frame 536),
+as the unpoked control does (the frame-synchronous machine's known difference).
+
+**g_StartWeaponLvl** ($F616): Main_Start writes 0 at frame 3, the player's spawn ($101A8) copies
+it into the record at frame 583, once a run (func_frames of level-skip and sec-4401-freeze); a
+poke between them gives level 6 through every later section. A lost life drops the level by 3
+(6 -> 3 -> 1 measured in $4401).
+
+**Level 6 is not the TAS's whole advantage.** At the spawn-aligned frame (TAS f128916 = ours
+13279) Freeze's objects ($AE08, $B31A, $B374) equal the TAS's but for his energy, and the TAS's
+player record has +$26 = $180: the rapid-charge timer (`Item_CollectRapidCharge`, picked up in the
+hall), so its shots are charged. Replaying the TAS's fight inputs from frame 13140 with a test
+poke of +$26 ($F676 = $20B, the TAS's timer at that frame) follows the TAS exactly (same player
+x/y, Freeze's energy 12,208 / 11,248 / 10,528 ... as the TAS's) until a 1-px subpixel difference
+(+$40) adds up and our player dies near 13,700; without the timer the same inputs do a third of
+the damage. Seeded play (FIGHT, seed 1, 3,600 frames) did 2,300 damage and lost a life.
+
+**A route found on the reference does not carry over to the frame-synchronous machine.** A greedy
+reference bot (12-frame chords, 72-frame lookahead, damage less health; ffb3e96's play file) got
+Freeze to 15 % (1,834 of 12,288) at frame 18,787, `Shake_Start` 18,863, `Boss_Freeze_DropStep`
+18,863-18,910 (48 frames, as the TAS's f130401-130448), no life lost. On the native runner the
+same pads (one sync point a frame in the fight, one lag frame) part within 500 frames (Freeze
+10,726 against 10,700 at frame 13,740), the player loses both lives, Freeze ends at 8,192.
+
+**The run** (E4 measures the native runner, so its fight was searched there;
+tools/corpus_play/sec-4401-freeze-lv6.txt's header says how): a greedy bot on the native runner,
+each candidate a native replay from power-on with RAM dumped at its last sync (31 at a time,
+~9 s a 12-frame step), scored as the reference bot plus the distance from where the reference's
+hits landed (level with Freeze, 50-150 px to his side: without it the bot idled 600 frames at
+10,230). The chords map one reference frame per runner frame (the play starts a frame early,
+PLAYED), corrected once through the run's own D1 sync frames (one lag frame at play frame 4,297):
+the stepped input then equals the searched one on all 5,243 compared runner frames. **Native
+(== stepped-gen, all 15,728 rows): 15 % (1,794) at sync 15,472, g_ShakeY 4 6 6 4 . . 2 3 1 at syncs
+15,532-15,540 (g_ViewY with it), one life lost (level 6 -> 3).** The reference's own play of these
+pads parts from the native's (10,230 against 10,490 at frame 14,340) and ends at 8,508, level 1:
+the reference run does not reach the break; the timed runner equals it on all 18,523 frames.
+**E4** (merged with R23/R25, 2026-11-17): PASS, 21 scroll sections interpolated, "reached with
+per-line scroll and no motion: none"; $4401 in this run: 18 moving frames, 12 interpolated at
+144 Hz (16 / 8 at 120 Hz), the shake. sec-4401-freeze and level-skip still count 0 there.
 
 ## Open questions
 

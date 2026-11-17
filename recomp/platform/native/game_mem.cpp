@@ -34,6 +34,8 @@ extern "C" uint16_t nm_ram_read16(uint32_t a)
 }
 
 extern "C" void nm_ram_write8(uint32_t a, uint8_t v) { *AT68(u8, 0xFF0000u | (a & 0xFFFFu)) = v; }
+extern "C" void nm_ram_write16(uint32_t a, uint16_t v) { *AT68(u16, 0xFF0000u | (a & 0xFFFEu)) = v; }
+extern "C" void nm_ram_write32(uint32_t a, uint32_t v) { *AT68(u32, 0xFF0000u | (a & 0xFFFEu)) = v; }
 
 /* A branch snapshot: the arena keeps its own copy, values and tags (one snapshot at a time, as the
    runner's branch plans take them). */

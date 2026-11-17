@@ -70,13 +70,13 @@ batmanrobin_native.exe --options --json      # every option, its values and defa
 
 | Option | Values | What it does |
 |---|---|---|
-| `widescreen` | `0`, `16:9` | A 16:9 view. The game itself plays exactly as in 4:3; the extra margins are drawn from the level. **F10** toggles it in game. |
-| `widescreen_gameplay` | `0`, `1` | With `widescreen`: enemies and objects become active across the whole wide view, and the players can walk into the margins. Fights play slightly differently from the original. |
+| `widescreen` | `0`, `16:9`, `16:9-gameplay` | A 16:9 view. `16:9`: the game itself plays exactly as in 4:3; the extra margins are drawn from the level, and enemies appear about 40 px inside them, where the original creates them. `16:9-gameplay`: enemies and objects become active across the whole wide view and the players can walk into the margins; fights play slightly differently from the original. **F10** toggles it in game. |
 | `high_fps` | `0`, `120`, `144`, `165`, `240`, or any 61-1000 | The display rate in Hz, with sprites and scrolling interpolated between the game's 60 Hz frames. **F9** toggles it in game. |
 | `unlimited_sprites` | `0`, `1` | No sprite flicker: no per-line sprite limit and no 80-sprite cap. |
 | `music_voices` | `1`, `0` | The music gets sound chips of its own, so sound effects no longer cut its notes. `0` = shared chips, as on the cartridge. |
 | `fm_ladder` | `1`, `0` | `0` turns off the YM2612's "ladder effect" distortion (the cartridge has it). |
 | `fm_filter` | `0`, `1` | `1` = a cleaner output low-pass than the console's. |
+| `weapon_level` | `0`-`6` | Every player starts with this weapon level (the original starts at 0 and raises it with pickups). Changes the game. |
 
 ## Check the recompilation against the original
 

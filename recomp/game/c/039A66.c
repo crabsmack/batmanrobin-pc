@@ -8,7 +8,7 @@ static constexpr uint32_t ToyChainArgs_039A6A = 0x039A6Au;
  * In:  a6 = the base (ToyChain_Spawn7C, field $2A); inline dc.w 7, dc.l $039AE0, dc.l $039A74
  * Out: d0 = 0 and the chain object, or nonzero (pool full)
  * Evidence: jsr ToyChain_SpawnInline + `0007 00039AE0 00039A74`; Op2_SpawnChild 002A at $039786 (the script
- *           of ToyChain_Spawn7C); no corpus run calls it at 4:3; widescreen_gameplay=1 may (ws-tail
+ *           of ToyChain_Spawn7C); no corpus run calls it at 4:3; widescreen=16:9-gameplay may (ws-tail
  *           2026-10-30); 039A66.syn checks it; ToyChain_SpawnInline pops the return address as its
  *           argument pointer and returns to this function's caller
  */

@@ -66,6 +66,8 @@ void     nm_ram_init(void);               /* the arena at power-on: zeroed, ever
 uint8_t  nm_ram_read8(uint32_t a);        /* work RAM ($FFxxxx), as the 68000 reads it */
 uint16_t nm_ram_read16(uint32_t a);
 void     nm_ram_write8(uint32_t a, uint8_t v);
+void     nm_ram_write16(uint32_t a, uint16_t v);   /* a word / long stored at its own width (a script poke) */
+void     nm_ram_write32(uint32_t a, uint32_t v);
 size_t   nm_ram_save(void *dst, size_t cap);   /* work RAM's whole state (NULL: its size) */
 int      nm_ram_load(const void *src, size_t len);
 
@@ -78,6 +80,7 @@ void nm_stuck(const char *why);                   /* "[stepped] ...: stuck", the
 /* ---- input_script.cpp ---- */
 int      ns_load(const char *path);
 int      ns_active(void);
+int      ns_mutates_state(void);                  /* the script writes RAM (WRITE_RAM*) */
 void     ns_tick(uint64_t frame);
 uint16_t ns_player_mask(int player);
 uint32_t ns_vpad_count(void);

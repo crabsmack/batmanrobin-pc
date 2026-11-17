@@ -65,7 +65,7 @@ void Main_Start(uint32_t d1, uint32_t d3, uint32_t d4, uint32_t d5, uint32_t d6,
     g_StartLives = 2;
     g_StartCredits = 6;
     g_StartWeaponType = 0;
-    g_StartWeaponLvl = 0;
+    g_StartWeaponLvl = OPT_START_WEAPON_LVL(0);   /* 0; the native runner's weapon_level option (R24) */
     g_UnkStart_F61A = 1;
     g_UnkStart_F61C = 1;
     g_StartEnemyScale = 0x100;                    /* x1.0 */

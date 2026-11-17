@@ -521,7 +521,7 @@ static void branch_mark(const char *what, const char *arg)
 
 static void branch_script_seek(const char *script, uint32_t frame)
 {
-    if (!ns_load(script)) {
+    if (!ns_load(script) || ns_mutates_state()) {
         fprintf(stderr, "[branch] %s: not an input-only script\n", script);
         exit(2);
     }

@@ -8,13 +8,15 @@
 #pragma once
 
 struct NativeOptions {
-    int widescreen;           /* 0 = 4:3, 1 = 16:9 (R4, R5) */
-    int widescreen_gameplay;  /* 1 = objects activate across the wide view (R4's second mode) */
+    int widescreen;           /* 0 = 4:3, 1 = 16:9 (R4, R5): the option widescreen = 16:9 or 16:9-gameplay */
+    int widescreen_gameplay;  /* 1 = objects activate across the wide view (R4's second mode, R20):
+                                 widescreen = 16:9-gameplay (R23: one setting) */
     int high_fps;             /* 0 = off, else the present rate in Hz (R3) */
     int unlimited_sprites;    /* 1 = no per-line limits, no 80-entry cap (R10) */
     int music_voices;         /* 1 = the music on a sound machine of its own (R13, R14) */
     int fm_ladder;            /* 1 = the YM2612's ladder effect (the cartridge), 0 = removed (R15) */
     int fm_filter;            /* 0 = the cartridge's output low-pass, 1 = the cleaner one (R15) */
+    int weapon_level;         /* 0 = the cartridge's start weapon level, 1-6 = start at it (R24) */
 };
 
 extern NativeOptions g_opt;

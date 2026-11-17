@@ -9,3 +9,4 @@
 #include "types.h"
 #include "funcs.h"
 #include "dk_ws.h"
+#include "dk_opts.h"

@@ -11,7 +11,7 @@ static constexpr uint32_t Scr2_039782 = 0x039782u;
  * Evidence: Scr2_039782: Op2_SpawnChild $2A, Op2_StartChildCoroutine3Rel $2A $0385B4,
  *           Op2_StartChildCoroutine0Rel $2A $0385F0, Goto the base loop Scr2_0379BC; named by the wave
  *           spawn entries at $035014 (x -$28, y $E0C2) and $03501C (x $168, y $E0C2) (VM5_SpawnEntry's
- *           jsr (a0) $007016). No corpus run calls it at 4:3; widescreen_gameplay=1 may reach its wave
+ *           jsr (a0) $007016). No corpus run calls it at 4:3; widescreen=16:9-gameplay may reach its wave
  *           step (ws-tail 2026-10-30); 039776.syn checks it
  */
 void ToyChain_Spawn7C(uint16_t *d1, uint16_t x, uint16_t y, uint32_t *d7, uint32_t *script, uint32_t *a3,

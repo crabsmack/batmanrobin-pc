@@ -13,7 +13,7 @@ enum { TOYRING_BLOCKS = 5 };   /* pool blocks for the ring: the usual 4 (Obj_Spa
  * Evidence: the spawner stub of its siblings ToyRing_SpawnRandom / ToyRing_SpawnSix; named by the
  *           wave spawn entries at $0344B4, $0344BC and $034CCC (VM5_SpawnEntry's jsr (a0) $007016);
  *           its script = Scr2_0391F4 less Op2_SetSpawnAction $25, coroutine 2 $0393CA for $03941E.
- *           No corpus run reaches it at 4:3; widescreen_gameplay=1 does (scenario-level-skip,
+ *           No corpus run reaches it at 4:3; widescreen=16:9-gameplay does (scenario-level-skip,
  *           sync 8391). Checked by 0391AA.syn.
  */
 void ToyRing_SpawnSixB(uint16_t *d1, uint16_t x, uint16_t y, uint16_t *blocks, uint32_t *script, uint32_t *a3,

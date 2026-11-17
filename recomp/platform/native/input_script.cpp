@@ -6,8 +6,11 @@
  *   VPAD <p1> [<p2>]     one more reference frame's pads for this runner frame's later V-ints
  *   WAIT <n>             hold for n frames
  *   PLAYER N / HOLD B / RELEASE [B] / PRESS B n, EXIT [code]
- * Anything that reads or writes game state (ASSERT_/WAIT_/WRITE_RAM*, states, dumps, screenshots)
- * is refused: the native runner takes only input from a script.
+ *   WRITE_RAM8/16/32 <addr> <value>   (hex) a work-RAM write where the tick reaches it, as the
+ *                        engine's runner applies it: a scenario's `@poke` (kit 0.11.9, ruling R24),
+ *                        stored at its own width through dk_mem.h as the C stores (game_mem.cpp)
+ * Anything else that reads or writes game state (ASSERT_/WAIT_RAM*, states, dumps, screenshots) is
+ * refused, and a branch's script must be input-only (runner.cpp branch_script_seek, as main.c's).
  *
  * Adapted from segagenesisrecomp (runner/input_script.c), PolyForm Noncommercial License 1.0.0,
  * Copyright (c) 2026 Matthew Stan (https://polyformproject.org/licenses/noncommercial/1.0.0).
@@ -24,7 +27,8 @@
 
 namespace {
 
-enum Op { OP_WAIT, OP_HOLD, OP_RELEASE, OP_PADS, OP_PRESS, OP_EXIT, OP_VPAD };
+enum Op { OP_WAIT, OP_HOLD, OP_RELEASE, OP_PADS, OP_PRESS, OP_EXIT, OP_VPAD, OP_WRITE_RAM8, OP_WRITE_RAM16,
+          OP_WRITE_RAM32 };
 
 struct ScriptOp {
     Op op;
@@ -125,6 +129,18 @@ int parse_line(char *line, int line_no)
     } else if (ieq(tok, "EXIT")) {
         o.op = OP_EXIT;
         o.arg32 = n >= 2 ? (uint32_t)strtoul(a1, nullptr, 0) : 0u;
+    } else if ((ieq(tok, "WRITE_RAM8") || ieq(tok, "WRITE_RAM16") || ieq(tok, "WRITE_RAM32")) && n >= 3) {
+        o.op = ieq(tok, "WRITE_RAM8") ? OP_WRITE_RAM8 : ieq(tok, "WRITE_RAM16") ? OP_WRITE_RAM16 : OP_WRITE_RAM32;
+        char *e1, *e2;
+        unsigned long a = strtoul(a1, &e1, 16), v = strtoul(a2, &e2, 16);
+        unsigned width = o.op == OP_WRITE_RAM8 ? 1u : o.op == OP_WRITE_RAM16 ? 2u : 4u;
+        /* work RAM only ($E00000-$FFFFFF, its mirrors): the native machine has no other writable state
+           a script could reach the way the engine's bus does; a word or long at an even address */
+        if (*e1 || *e2 || (a & 0xFFFFFFu) < 0xE00000u || (width > 1 && (a & 1u)) ||
+            ((a & 0xFFFFu) + width > 0x10000u) || (width < 4 && v >> (8 * width)))
+            goto bad;
+        o.arg32 = (uint32_t)(0xFF0000u | (a & 0xFFFFu));
+        o.arg32b = (uint32_t)v;
     } else {
         fprintf(stderr, "input_script: line %d: %s: the native runner takes input-only scripts\n", line_no, p);
         return 0;
@@ -167,6 +183,15 @@ extern "C" int ns_load(const char *path)
 }
 
 extern "C" int ns_active(void) { return s_active; }
+
+/* 1 when the loaded script writes RAM (input_script.c input_script_mutates_state): a branch's seek
+   ticks its script through the shared frames, which would apply every earlier write at once. */
+extern "C" int ns_mutates_state(void)
+{
+    for (const ScriptOp &o : s_ops)
+        if (o.op == OP_WRITE_RAM8 || o.op == OP_WRITE_RAM16 || o.op == OP_WRITE_RAM32) return 1;
+    return 0;
+}
 
 extern "C" void ns_tick(uint64_t frame)
 {
@@ -227,6 +252,17 @@ extern "C" void ns_tick(uint64_t frame)
             fprintf(stderr, "[input_script] EXIT %d at frame %llu\n", s_exit_code, (unsigned long long)frame);
             s_pc++;
             return;
+        case OP_WRITE_RAM8:
+        case OP_WRITE_RAM16:
+        case OP_WRITE_RAM32:
+            if (o.op == OP_WRITE_RAM8) nm_ram_write8(o.arg32, (uint8_t)o.arg32b);
+            else if (o.op == OP_WRITE_RAM16) nm_ram_write16(o.arg32, (uint16_t)o.arg32b);
+            else nm_ram_write32(o.arg32, o.arg32b);
+            fprintf(stderr, "[input_script] WRITE_RAM%d at frame %llu ($%06X=$%0*X)\n",
+                    o.op == OP_WRITE_RAM8 ? 8 : o.op == OP_WRITE_RAM16 ? 16 : 32, (unsigned long long)frame,
+                    (unsigned)o.arg32, o.op == OP_WRITE_RAM8 ? 2 : o.op == OP_WRITE_RAM16 ? 4 : 8, (unsigned)o.arg32b);
+            s_pc++;
+            break;
         }
     }
 }

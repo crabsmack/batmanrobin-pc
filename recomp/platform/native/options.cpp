@@ -28,7 +28,7 @@
 
 NativeOptions g_opt = {
     /* widescreen */ 0, /* widescreen_gameplay */ 0, /* high_fps */ 0, /* unlimited_sprites */ 0,
-    /* music_voices */ 1, /* fm_ladder */ 1, /* fm_filter */ 0,
+    /* music_voices */ 1, /* fm_ladder */ 1, /* fm_filter */ 0, /* weapon_level */ 0,
 };
 
 struct OptDef {
@@ -40,11 +40,9 @@ struct OptDef {
 };
 
 static OptDef s_defs[] = {
-    { "widescreen", { "0", "16:9", nullptr }, "0",
-      "the 16:9 view (R4, R5): presentation only unless widescreen_gameplay; 0 = 4:3", "0" },
-    { "widescreen_gameplay", { "0", "1", nullptr }, "0",
-      "with widescreen: objects activate across the wide view and the camera keeps it inside the level "
-      "(R4's second mode); 0 = the game plays as in 4:3", "0" },
+    { "widescreen", { "0", "16:9", "16:9-gameplay", nullptr }, "0",
+      "the 16:9 view (R4, R5, R23): 16:9 = the game plays exactly as in 4:3; 16:9-gameplay = objects "
+      "activate across the wide view and the players' area widens (R4's second mode, R20); 0 = 4:3", "0" },
     { "high_fps", { "0", "120", "144", "165", "240", nullptr }, "0",
       "the display rate in Hz with frames interpolated toward each logic frame (R3), 0 = off; any 61-1000", "0" },
     { "unlimited_sprites", { "0", "1", nullptr }, "0",
@@ -56,6 +54,8 @@ static OptDef s_defs[] = {
       "the YM2612's ladder effect (the cartridge's); 0 = the ladder-free chip (R15)", "1" },
     { "fm_filter", { "0", "1", nullptr }, "0",
       "1 = a cleaner output low-pass than the cartridge's (R15)", "0" },
+    { "weapon_level", { "0", "1", "2", "3", "4", "5", "6", nullptr }, "0",
+      "the weapon level every player starts with, 1-6 (changes the game, R24); 0 = the cartridge's", "0" },
 };
 static const int NDEFS = (int)(sizeof s_defs / sizeof s_defs[0]);
 static std::string s_ini_path;
@@ -130,14 +130,19 @@ static void read_ini(void)
 
 static void apply(void)
 {
-    g_opt.widescreen = find("widescreen")->value == "16:9";
-    g_opt.widescreen_gameplay = find("widescreen_gameplay")->value == "1";
+    const std::string &ws = find("widescreen")->value;
+    g_opt.widescreen = ws != "0";
+    g_opt.widescreen_gameplay = ws == "16:9-gameplay";
     g_opt.high_fps = atoi(find("high_fps")->value.c_str());
     g_opt.unlimited_sprites = find("unlimited_sprites")->value == "1";
     g_opt.music_voices = find("music_voices")->value == "1";
     g_opt.fm_ladder = find("fm_ladder")->value == "1";
     g_opt.fm_filter = find("fm_filter")->value == "1";
+    g_opt.weapon_level = atoi(find("weapon_level")->value.c_str());
 }
+
+/* the game's native branch reads it (recomp/game/include/dk_opts.h, Main_Start) */
+extern "C" int opt_weapon_level(void) { return g_opt.weapon_level; }
 
 static std::string json_str(const std::string &s)
 {
@@ -188,9 +193,14 @@ void options_toggle_high_fps(void)
 
 void options_toggle_widescreen(void)
 {
-    g_opt.widescreen = !g_opt.widescreen;
-    find("widescreen")->value = g_opt.widescreen ? "16:9" : "0";
-    fprintf(stderr, "[native] F10: widescreen=%s\n", g_opt.widescreen ? "16:9" : "0");
+    /* between 0 and the 16:9 value the run had (R23: 16:9 when it started at 0); the gameplay
+       mode's widening follows the view, as when both were set at start */
+    static std::string on = "16:9";
+    std::string &v = find("widescreen")->value;
+    if (v != "0") { on = v; v = "0"; }
+    else v = on;
+    apply();
+    fprintf(stderr, "[native] F10: widescreen=%s\n", v.c_str());
 }
 
 /* Removes --options and its argument from argv (main parses the rest); exits after --options --json. */
