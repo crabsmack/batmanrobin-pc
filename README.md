@@ -5,6 +5,14 @@ Drive, and a native PC port built from it, with optional widescreen, high frame 
 flicker and cleaner music. It was built mostly by AI agents (Claude Code), each step checked
 against the original game.
 
+| | |
+|---|---|
+| ![Batman fighting thugs on a Gotham street, in 16:9](docs/media/street.png) | ![Flying through the clouds among jets, in 16:9](docs/media/flight.png) |
+| ![Closing in on an airship, in 16:9](docs/media/airship.png) | ![A fight in a movie studio, in 16:9](docs/media/studio.png) |
+
+*Screenshots from the port in its 16:9-gameplay mode (the original is 4:3; the screens between
+stages and a few boss arenas stay 4:3).*
+
 **No game data is in this repository.** You need your own dump of the cartridge (USA), SHA-1
 `1da4b3fc92a6572e70d748ebad346aeb291f89f3`. The build and the port check it and refuse anything else.
 
