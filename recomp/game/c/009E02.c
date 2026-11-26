@@ -98,7 +98,7 @@ Main_Title:
     PlayerSelect_Run(&d1, &d3, &d4, &d5, &d6, &a2, &a3, &a4, &a5, &a6);
     g_MusicLock = 0;
     g_StartPad = 0;
-    g_SectionId = 0;
+    g_SectionId = OPT_START_SECTION(0);           /* 0; the native runner's start_stage option */
     a1 = Player_NewGameSetup();
 
 Main_PlayLoop:

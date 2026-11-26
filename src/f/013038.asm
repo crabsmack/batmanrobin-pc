@@ -29,7 +29,7 @@ Drop_HealthA3:
 ; Drop_HealthA5 - spawn action 39: drops five A-style health pickups (Scr4_0130D0)
 ; In:  d4/d5 = position
 ; Out: as Fx_RunScriptNoParent
-; Evidence: Tbl_012EF0 entry 39; five forks of the $13252 pickup; executed in the TAS. Entry 40 ($13060, never run) is nine (Scr4_0130B0)
+; Evidence: Tbl_012EF0 entry 39; five forks of the $13252 pickup; executed in the TAS. Entry 40 is nine (Drop_HealthA9, Scr4_0130B0)
 ; ---------------------------------------------------------------------------
 Drop_HealthA5:
 	lea.l	(Scr4_0130D0).l,a4

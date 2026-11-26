@@ -1,0 +1,10 @@
+# Drop_RandomHealthA: no corpus run calls it (ruling 5, 2; converted 2026-11-17, fix-spawn-table-gaps). Spawn action 48, Drop_RandomHealthB's code with the A pickups; the
+# cases run at B's first call ($01300E, spawn action 49: 26 TAS runs), the same call (d4/d5 the position, a4/a6 the caller's): the cooldown still
+# running (subq, bpl rts) and run out (re-armed at random, a pickup case).
+at $01300E
+
+case cooling
+w $FFFFF370 = 5
+
+case rearmed
+w $FFFFF370 = 0

@@ -54,6 +54,7 @@ static const uint32_t dk_game_functions[] = {
     0x000E3Eu,  /* Op2_SetTimer3RandYield3 */
     0x000F2Eu,  /* Op2_LoopTimer0 */
     0x000F80u,  /* Op2_SetTimer1 */
+    0x000F88u,  /* Op2_SetTimer1Rand */
     0x000F9Au,  /* Op2_TickTimer1Branch */
     0x001000u,  /* Op2_LoopTimer1 */
     0x00105Au,  /* Op2_SetTimer2 */
@@ -102,6 +103,8 @@ static const uint32_t dk_game_functions[] = {
     0x002020u,  /* Op2_DecVar0Loop */
     0x00208Eu,  /* Op2_SwitchVar0Bits */
     0x0020F2u,  /* Op2_DecVar1Loop */
+    0x002130u,  /* Op2_BranchVar1Ne */
+    0x002140u,  /* Op2_BranchVar1Gt */
     0x002150u,  /* Op2_BranchVar1Lt */
     0x002180u,  /* Op2_SetVar2 */
     0x0021D2u,  /* Op2_BranchVar2Any */
@@ -138,6 +141,7 @@ static const uint32_t dk_game_functions[] = {
     0x003434u,  /* Op2_BranchPlayerInBox */
     0x0034A6u,  /* Mot_StorePlayerWindow */
     0x003714u,  /* Op2_BranchTouchBox */
+    0x003756u,  /* Op2_BranchTouchBox_KindC */
     0x00375Au,  /* Op2_BranchTouchBox_Players */
     0x003798u,  /* Obj_SetAttackBoxes */
     0x00385Au,  /* Obj_SetBodyBoxes */
@@ -169,13 +173,19 @@ static const uint32_t dk_game_functions[] = {
     0x004898u,  /* Op2_DrawSprAtDrawnDepth */
     0x004AB4u,  /* Op2_DrawSprAtDrawnBack */
     0x004B74u,  /* Op2_StepVelocity */
+    0x004C5Eu,  /* Op2_ApplyMoveBranchAtY */
+    0x004C9Au,  /* Op2_ApplyMoveLandAtY */
     0x004CDAu,  /* Op2_MoveTerrain */
     0x004DECu,  /* Hitbox_TestAttackBox */
     0x004DF4u,  /* Hitbox_TestAttackBoxAt */
+    0x004E2Eu,  /* Hitbox_KindAllEnemies */
     0x004E32u,  /* Hitbox_HitFirstPlayerBox */
+    0x004E4Au,  /* Hitbox_HitAllEnemyBoxes */
     0x004E52u,  /* Hitbox_Strike */
     0x004EA8u,  /* Op2_TestAttackBoxAtDrawn */
+    0x004F42u,  /* Hitbox_LinkByKind_AllPlayers */
     0x004F46u,  /* Hitbox_LinkByKind_Enemy */
+    0x004F4Au,  /* Hitbox_LinkByKind_AllEnemies */
     0x004F4Eu,  /* Op2_PlaceBodyBoxes_Off */
     0x005078u,  /* Op2_ClearMotionBlock */
     0x0050A2u,  /* Op2_StopOsc */
@@ -227,6 +237,7 @@ static const uint32_t dk_game_functions[] = {
     0x005FAAu,  /* Op4_ChildRangeAccelY */
     0x00607Cu,  /* Op4_ForkOrBranch */
     0x00609Eu,  /* Op4_Fork */
+    0x0060BCu,  /* Op4_ForkAndEnd */
     0x0060C2u,  /* Op4_ForkRestAndEnd */
     0x0060C4u,  /* VM4_Fork */
     0x00613Au,  /* VM4_SpawnChild */
@@ -439,9 +450,16 @@ static const uint32_t dk_game_functions[] = {
     0x00AEA4u,  /* VInt_ScrollModeTbl28 */
     0x00AEBCu,  /* VInt_BusyScroll */
     0x00AEC4u,  /* VInt_BusyScrollTbl */
+    0x00AEC8u,  /* VInt_BusyMode04 */
     0x00AECCu,  /* VInt_BusyScrollTbl8 */
+    0x00AED8u,  /* VInt_BusyMode14 */
+    0x00AEDCu,  /* VInt_BusyMode18 */
+    0x00AEE0u,  /* VInt_BusyMode1C */
+    0x00AEE8u,  /* VInt_BusyMode24 */
     0x00AEECu,  /* VInt_BusyScrollTbl28 */
+    0x00AEF4u,  /* VInt_BusyMode30 */
     0x00AEF8u,  /* VInt_BusyScrollTbl34 */
+    0x00AF00u,  /* VInt_BusyMode3C */
     0x00AF04u,  /* VInt_ScrollDisplayOn */
     0x00AF84u,  /* VInt_ScrollLinesARaster */
     0x00AFDAu,  /* VInt_BusyRearmRaster */
@@ -546,9 +564,17 @@ static const uint32_t dk_game_functions[] = {
     0x012ED0u,  /* SpawnAction_Run */
     0x012FB8u,  /* Item_FoundBoxPlayer */
     0x012FBCu,  /* Item_BoxPlayer */
+    0x012FE4u,  /* Drop_RandomHealthA */
+    0x013006u,  /* Drop_RandomHealthA_case0 */
+    0x013008u,  /* Drop_RandomHealthA_case2 */
+    0x01300Au,  /* Drop_RandomHealthA_case4 */
+    0x01300Cu,  /* Drop_RandomHealthA_case6 */
     0x01300Eu,  /* Drop_RandomHealthB */
+    0x013032u,  /* Drop_RandomHealthB_case2 */
     0x013034u,  /* Drop_RandomHealthB_case4 */
+    0x013036u,  /* Drop_RandomHealthB_case6 */
     0x013038u,  /* Drop_HealthA1 */
+    0x013060u,  /* Drop_HealthA9 */
     0x01306Au,  /* Drop_HealthARow */
     0x013288u,  /* Drop_RunFxScript */
     0x0132BEu,  /* Item_LaunchFromHit */

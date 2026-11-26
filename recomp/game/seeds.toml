@@ -22,6 +22,7 @@ extra = [
   0x000E3E,  # Op2_SetTimer3RandYield3
   0x000F2E,  # Op2_LoopTimer0
   0x000F80,  # Op2_SetTimer1
+  0x000F88,  # Op2_SetTimer1Rand
   0x000F9A,  # Op2_TickTimer1Branch
   0x001000,  # Op2_LoopTimer1
   0x00105A,  # Op2_SetTimer2
@@ -70,6 +71,8 @@ extra = [
   0x002020,  # Op2_DecVar0Loop
   0x00208E,  # Op2_SwitchVar0Bits
   0x0020F2,  # Op2_DecVar1Loop
+  0x002130,  # Op2_BranchVar1Ne
+  0x002140,  # Op2_BranchVar1Gt
   0x002150,  # Op2_BranchVar1Lt
   0x002180,  # Op2_SetVar2
   0x0021D2,  # Op2_BranchVar2Any
@@ -106,6 +109,7 @@ extra = [
   0x003434,  # Op2_BranchPlayerInBox
   0x0034A6,  # Mot_StorePlayerWindow
   0x003714,  # Op2_BranchTouchBox
+  0x003756,  # Op2_BranchTouchBox_KindC
   0x00375A,  # Op2_BranchTouchBox_Players
   0x003798,  # Obj_SetAttackBoxes
   0x00385A,  # Obj_SetBodyBoxes
@@ -137,13 +141,19 @@ extra = [
   0x004898,  # Op2_DrawSprAtDrawnDepth
   0x004AB4,  # Op2_DrawSprAtDrawnBack
   0x004B74,  # Op2_StepVelocity
+  0x004C5E,  # Op2_ApplyMoveBranchAtY
+  0x004C9A,  # Op2_ApplyMoveLandAtY
   0x004CDA,  # Op2_MoveTerrain
   0x004DEC,  # Hitbox_TestAttackBox
   0x004DF4,  # Hitbox_TestAttackBoxAt
+  0x004E2E,  # Hitbox_KindAllEnemies
   0x004E32,  # Hitbox_HitFirstPlayerBox
+  0x004E4A,  # Hitbox_HitAllEnemyBoxes
   0x004E52,  # Hitbox_Strike
   0x004EA8,  # Op2_TestAttackBoxAtDrawn
+  0x004F42,  # Hitbox_LinkByKind_AllPlayers
   0x004F46,  # Hitbox_LinkByKind_Enemy
+  0x004F4A,  # Hitbox_LinkByKind_AllEnemies
   0x004F4E,  # Op2_PlaceBodyBoxes_Off
   0x005078,  # Op2_ClearMotionBlock
   0x0050A2,  # Op2_StopOsc
@@ -195,6 +205,7 @@ extra = [
   0x005FAA,  # Op4_ChildRangeAccelY
   0x00607C,  # Op4_ForkOrBranch
   0x00609E,  # Op4_Fork
+  0x0060BC,  # Op4_ForkAndEnd
   0x0060C2,  # Op4_ForkRestAndEnd
   0x0060C4,  # VM4_Fork
   0x00613A,  # VM4_SpawnChild
@@ -407,9 +418,16 @@ extra = [
   0x00AEA4,  # VInt_ScrollModeTbl28
   0x00AEBC,  # VInt_BusyScroll
   0x00AEC4,  # VInt_BusyScrollTbl
+  0x00AEC8,  # VInt_BusyMode04
   0x00AECC,  # VInt_BusyScrollTbl8
+  0x00AED8,  # VInt_BusyMode14
+  0x00AEDC,  # VInt_BusyMode18
+  0x00AEE0,  # VInt_BusyMode1C
+  0x00AEE8,  # VInt_BusyMode24
   0x00AEEC,  # VInt_BusyScrollTbl28
+  0x00AEF4,  # VInt_BusyMode30
   0x00AEF8,  # VInt_BusyScrollTbl34
+  0x00AF00,  # VInt_BusyMode3C
   0x00AF04,  # VInt_ScrollDisplayOn
   0x00AF84,  # VInt_ScrollLinesARaster
   0x00AFDA,  # VInt_BusyRearmRaster
@@ -514,9 +532,17 @@ extra = [
   0x012ED0,  # SpawnAction_Run
   0x012FB8,  # Item_FoundBoxPlayer
   0x012FBC,  # Item_BoxPlayer
+  0x012FE4,  # Drop_RandomHealthA
+  0x013006,  # Drop_RandomHealthA_case0
+  0x013008,  # Drop_RandomHealthA_case2
+  0x01300A,  # Drop_RandomHealthA_case4
+  0x01300C,  # Drop_RandomHealthA_case6
   0x01300E,  # Drop_RandomHealthB
+  0x013032,  # Drop_RandomHealthB_case2
   0x013034,  # Drop_RandomHealthB_case4
+  0x013036,  # Drop_RandomHealthB_case6
   0x013038,  # Drop_HealthA1
+  0x013060,  # Drop_HealthA9
   0x01306A,  # Drop_HealthARow
   0x013288,  # Drop_RunFxScript
   0x0132BE,  # Item_LaunchFromHit

@@ -1,0 +1,5 @@
+# Drop_HealthA9: no corpus run calls it (ruling 5, 2; converted 2026-11-17, fix-spawn-table-gaps). Spawn action 40 of Tbl_012EF0, called by SpawnAction_Run like
+# Drop_HealthA1 (spawn action 36: 39 TAS runs); the case runs at A1's first call, the same call (d4/d5 the position, a4/a6 the caller's).
+at $013038
+
+case as_called

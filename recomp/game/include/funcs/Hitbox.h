@@ -39,3 +39,7 @@ void Hitbox_TestBox(uint32_t *d0, uint16_t d4, uint16_t d5, uint16_t d6, uint16_
 void Hitbox_TestBoxOfId(uint32_t *d0, uint16_t d3, uint16_t d4, uint16_t d5, uint16_t d6, uint16_t d7, uint32_t *a2, dk::Flags *ccr);	/* $008CD0 regs(&d0,d3,d4,d5,d6,d7,&a2,&ccr) ccout(NZVC) */
 void Hitbox_ScanDone(void);	/* $008CB4 regs() */
 void Hitbox_ScanOfIdDone(void);	/* $008CF0 regs() */
+void Hitbox_KindAllEnemies(uint32_t *d0, uint32_t *d1, uint32_t *d2, uint32_t *d3, uint32_t *d4, uint32_t *d5, uint32_t *d6, uint32_t *d7, uint32_t a0, uint32_t *a1, uint32_t a3, uint32_t *a4, uint32_t a5, uint32_t *a6);	/* $004E2E regs(&d0,&d1,&d2,&d3,&d4,&d5,&d6,&d7,a0,&a1,a3,&a4,a5,&a6) clobbers(a0,a2) */
+void Hitbox_HitAllEnemyBoxes(uint32_t *d0, uint32_t *d1, uint32_t *d2, uint32_t *d3, uint32_t *d4, uint32_t *d5, uint32_t *d6, uint32_t *d7, uint32_t a0, uint32_t *a1, uint32_t *a2, uint32_t a3, uint32_t *a4, uint32_t a5, uint32_t *a6);	/* $004E4A regs(&d0,&d1,&d2,&d3,&d4,&d5,&d6,&d7,a0,&a1,&a2,a3,&a4,a5,&a6) clobbers(a0) */
+void Hitbox_LinkByKind_AllPlayers(uint32_t a0, uint32_t a1);	/* $004F42 regs(a0,a1) ccout(NZVC) */
+void Hitbox_LinkByKind_AllEnemies(uint32_t a0, uint32_t a1);	/* $004F4A regs(a0,a1) ccout(NZVC) */

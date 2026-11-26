@@ -1,0 +1,5 @@
+# Hitbox_LinkByKind_AllEnemies: no corpus run calls it (ruling 5, 2; converted 2026-11-17, fix-spawn-table-gaps). Kind $C of Hitbox_LinkByKind's jsr table, the same branch as kind
+# 8; the case runs at Hitbox_LinkByKind_Enemy's first call ($004F46), a0 = the box being linked.
+at $004F46
+
+case as_kind8

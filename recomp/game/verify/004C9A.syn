@@ -1,0 +1,32 @@
+# Op2_ApplyMoveLandAtY: no corpus run calls it (ruling 5, 2; converted 2026-11-18, raw-reach-check). The case runs at Op2_SetTimer1's first call ($000F80): one
+# operand word (the floor), the object in a6, a3 and d1/d2 as they stand.
+# The other cases set y ($42(a6), 16.16) beside the floor (the script word at a2), the move d2 and
+# a3 = the object (a RAM block for the contact word and the y velocity), so each of the op's four
+# paths runs: from above or below the floor, landing or not.
+at $000F80
+
+case as_called
+
+case above_lands
+w a6+$42 = {a2}-1
+w a6+$44 = 0
+reg d2 = $20000
+reg a3 = a6
+
+case above_short
+w a6+$42 = {a2}-2
+w a6+$44 = 0
+reg d2 = $10000
+reg a3 = a6
+
+case below_lands
+w a6+$42 = {a2}+1
+w a6+$44 = 0
+reg d2 = $FFFE0000
+reg a3 = a6
+
+case below_short
+w a6+$42 = {a2}+2
+w a6+$44 = 0
+reg d2 = $FFFF0000
+reg a3 = a6

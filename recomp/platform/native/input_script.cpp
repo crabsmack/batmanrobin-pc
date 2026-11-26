@@ -6,6 +6,8 @@
  *   VPAD <p1> [<p2>]     one more reference frame's pads for this runner frame's later V-ints
  *   WAIT <n>             hold for n frames
  *   PLAYER N / HOLD B / RELEASE [B] / PRESS B n, EXIT [code]
+ *   OPTION <name> <value> an option changed where the tick reaches it (a played session's F9/F10,
+ *                        from a crash report's inputs.input: crash_report.h, ruling R27)
  *   WRITE_RAM8/16/32 <addr> <value>   (hex) a work-RAM write where the tick reaches it, as the
  *                        engine's runner applies it: a scenario's `@poke` (kit 0.11.9, ruling R24),
  *                        stored at its own width through dk_mem.h as the C stores (game_mem.cpp)
@@ -23,12 +25,16 @@
 
 #include <vector>
 
+#include <string>
+#include <utility>
+
 #include "native_machine.h"
+#include "options.h"
 
 namespace {
 
 enum Op { OP_WAIT, OP_HOLD, OP_RELEASE, OP_PADS, OP_PRESS, OP_EXIT, OP_VPAD, OP_WRITE_RAM8, OP_WRITE_RAM16,
-          OP_WRITE_RAM32 };
+          OP_WRITE_RAM32, OP_OPTION };
 
 struct ScriptOp {
     Op op;
@@ -39,6 +45,7 @@ struct ScriptOp {
 
 const int PLAYERS = 4, BUTTONS = 12;
 std::vector<ScriptOp> s_ops;
+std::vector<std::pair<std::string, std::string>> s_options;   /* OPTION lines: arg32 indexes it */
 size_t s_pc;
 int s_active;
 uint64_t s_wait_until;
@@ -126,6 +133,11 @@ int parse_line(char *line, int line_no)
         o.op = OP_PRESS;
         o.arg32 = s_parse_player;
         o.arg32b = (uint32_t)strtoul(a2, nullptr, 0);
+    } else if (ieq(tok, "OPTION") && n >= 3) {
+        /* a played session's F9/F10 change where it happened (crash_report.h, ruling R27) */
+        o.op = OP_OPTION;
+        o.arg32 = (uint32_t)s_options.size();
+        s_options.emplace_back(a1, a2);
     } else if (ieq(tok, "EXIT")) {
         o.op = OP_EXIT;
         o.arg32 = n >= 2 ? (uint32_t)strtoul(a1, nullptr, 0) : 0u;
@@ -157,6 +169,7 @@ bad:
 extern "C" int ns_load(const char *path)
 {
     s_ops.clear();
+    s_options.clear();
     s_pc = 0;
     s_active = 0;
     s_wait_until = 0;
@@ -246,6 +259,13 @@ extern "C" void ns_tick(uint64_t frame)
             }
             s_pc++;
             break;
+        case OP_OPTION: {
+            const auto &kv = s_options[o.arg32];
+            if (!options_set_now(kv.first.c_str(), kv.second.c_str()))
+                fprintf(stderr, "[input_script] OPTION %s %s: not an option value\n", kv.first.c_str(), kv.second.c_str());
+            s_pc++;
+            break;
+        }
         case OP_EXIT:
             s_exit_pending = 1;
             s_exit_code = (int)o.arg32;
@@ -353,3 +373,50 @@ extern "C" uint16_t ns_player_mask(int player)
 
 extern "C" int ns_should_exit(void) { return s_exit_pending; }
 extern "C" int ns_exit_code(void) { return s_exit_code; }
+
+/* Where the script is (rewind.cpp, headless tests): a rewind step replays a frame with the script
+   where it stood then (its pads, its VPAD queue, what ns_peek reads ahead). The ops stay loaded. */
+namespace {
+struct Pos {
+    uint64_t pc, wait_until, tick_frame;
+    uint16_t held[PLAYERS];
+    int32_t exit_pending, exit_code;
+    uint64_t press_until[PLAYERS][BUTTONS];
+};
+}  // namespace
+
+extern "C" size_t ns_position_save(void *dst)
+{
+    size_t n = sizeof(Pos) + s_vq.size() * sizeof(uint16_t);
+    if (!dst) return n;
+    Pos p;
+    memset(&p, 0, sizeof p);
+    p.pc = s_pc;
+    p.wait_until = s_wait_until;
+    p.tick_frame = s_tick_frame;
+    memcpy(p.held, s_held, sizeof p.held);
+    p.exit_pending = s_exit_pending;
+    p.exit_code = s_exit_code;
+    memcpy(p.press_until, s_press_until, sizeof p.press_until);
+    memcpy(dst, &p, sizeof p);
+    if (!s_vq.empty()) memcpy((uint8_t *)dst + sizeof p, s_vq.data(), s_vq.size() * sizeof(uint16_t));
+    return n;
+}
+
+extern "C" int ns_position_load(const void *src, size_t len)
+{
+    if (len < sizeof(Pos) || (len - sizeof(Pos)) % sizeof(uint16_t)) return 0;
+    Pos p;
+    memcpy(&p, src, sizeof p);
+    if (p.pc > s_ops.size()) return 0;
+    s_pc = (size_t)p.pc;
+    s_wait_until = p.wait_until;
+    s_tick_frame = p.tick_frame;
+    memcpy(s_held, p.held, sizeof s_held);
+    s_exit_pending = p.exit_pending;
+    s_exit_code = p.exit_code;
+    memcpy(s_press_until, p.press_until, sizeof s_press_until);
+    s_vq.resize((len - sizeof p) / sizeof(uint16_t));
+    if (!s_vq.empty()) memcpy(s_vq.data(), (const uint8_t *)src + sizeof p, s_vq.size() * sizeof(uint16_t));
+    return 1;
+}

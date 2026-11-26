@@ -22,6 +22,9 @@
  *   --render-from F    (--benchmark) no picture before runner frame F (a probe's fast lead-in)
  *   --audio-hash       (--benchmark) the sound output made headless and hashed (audio counters)
  *   --suppress-sfx     (--benchmark) the effect window's writes dropped (E6's reference run)
+ *   --record-inputs F  (played) the session's pads written to F at its end, as an input script that
+ *                      replays it (crash_report.h); with BR_CAPTURE / BR_WAV a replay renders it to
+ *                      a video and the sound's stems at any options (capture.cpp)
  *   At exit: [dkit] options {...} (the effective values) and [dkit] enhance {...} (enhance.h).
  * Environment: DKIT_SYNC_CSV (the sync rows), DKIT_STACK_LOW, DKIT_SYNC_DUMP + DKIT_DUMP_DIR,
  * DKIT_STEPPED_HANG_S, DKIT_EXPORT_SELFTEST (export.cpp), as spec.c reads them.
@@ -33,13 +36,27 @@
  * (the flow runtime makes an unknown code address fatal, and nothing interprets: both are 0).
  *
  * The ROM is the user's (ruling R2): its SHA-1 is checked before anything runs; any other file is
- * refused (exit 2).
+ * refused (exit 2). The dump's form is found by its bytes, never its name: plain (.md/.bin/.gen), a
+ * 512-byte copier header, SMD or MGD interleave (rom_check).
+ *
+ * The front door (the X-Men 2 harvest, docs/NOTES.md "The front door"): a played run (no --benchmark)
+ * closes the console window a double-click opened (alone on its console: FreeConsole), and says what a
+ * player must know in message boxes (--no-messagebox, BR_NO_MESSAGEBOX=1, GENESIS_NO_LAUNCHER=1 or a
+ * dummy video driver print them instead). Started with no ROM: the launcher (launcher.cpp; not with
+ * --no-launcher, [launcher] show = 0, an input script or GENESIS_NO_LAUNCHER=1; --launcher always),
+ * which hands back the ROM; else settings.ini's [rom] path, a dump beside the exe, or a file picker.
+ *   BR_PAD_SELFTEST=1     the controllers' slots and bindings with virtual controllers (host_sdl.cpp)
+ *   BR_LAUNCHER_TEST=F    the launcher driven by a script, headless; BR_LAUNCHER_DRYRUN=1 prints its plan
+ *   BR_PICK_ROM_TEST=P    the file picker's answer ("" = cancelled)
  *
  * Adapted in part from segagenesisrecomp (runner/main.c's frame loop, branch plans and benchmark
  * line) and this game's spec.c, PolyForm Noncommercial License 1.0.0, Copyright (c) 2026 Matthew
  * Stan (https://polyformproject.org/licenses/noncommercial/1.0.0).
  */
+#include <algorithm>
 #include <chrono>
+#include <filesystem>
+#include <system_error>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,6 +76,12 @@ extern "C" {
 #include "options.h"
 #include "enhance.h"
 #include "present.h"
+#include "crash_report.h"
+#include "capture.h"
+#include "crc32_fast.h"
+#include "launcher.h"
+#include "rewind.h"
+#include "state.h"
 
 #ifdef _WIN32
 #include <io.h>
@@ -124,45 +147,148 @@ static void sha1_hex(const uint8_t *p, size_t n, char out[41])
     for (int k = 0; k < 5; k++) snprintf(out + 8 * k, 9, "%08x", (unsigned)h[k]);
 }
 
-static void load_rom(const char *path)
+/* The front door's ROM check (the kit's playbook/porting.md, "The player's front door"): a dump is
+   the cartridge when its bytes are, whatever its name or extension. The forms dumps come in, each
+   tried and the one whose SHA-1 is the cartridge's taken: the plain image (.md, .bin, .gen), the
+   image after a 512-byte copier header, the Super Magic Drive's interleave (.smd: a 512-byte header,
+   then 16 KB blocks, each the odd bytes' 8 KB then the even bytes'; also without the header), and
+   the Multi Game Doctor's (.md from some tools: all the odd bytes, then all the even ones). Files
+   far from 2 MB are refused before reading. */
+#define DK_ROM_MAX_FILE (DK_ROM_SIZE + 0x4000u)
+
+static void smd_deinterleave(const uint8_t *in, size_t n, uint8_t *out)
+{
+    for (size_t b = 0; b + 0x4000 <= n; b += 0x4000)
+        for (size_t i = 0; i < 0x2000; i++) {
+            out[b + 2 * i + 1] = in[b + i];
+            out[b + 2 * i] = in[b + 0x2000 + i];
+        }
+}
+
+static void mgd_deinterleave(const uint8_t *in, size_t n, uint8_t *out)
+{
+    size_t h = n / 2;
+    for (size_t i = 0; i < h; i++) {
+        out[2 * i + 1] = in[i];
+        out[2 * i] = in[h + i];
+    }
+}
+
+/* "" if PATH holds the cartridge (its bytes then in out, DK_ROM_SIZE of them; *form says which form),
+   else why not, with "SHA-1" in it for a file that is read and is not the game */
+static std::string rom_check(const char *path, std::vector<uint8_t> *out, const char **form = nullptr)
 {
     FILE *f = fopen(path, "rb");
-    if (!f) {
-        fprintf(stderr, "[native] cannot open the ROM %s\n", path);
+    if (!f) return std::string("cannot open the ROM ") + path;
+    std::vector<uint8_t> file;
+    uint8_t buf[65536];
+    size_t n;
+    while ((n = fread(buf, 1, sizeof buf, f)) > 0) {
+        file.insert(file.end(), buf, buf + n);
+        if (file.size() > DK_ROM_MAX_FILE) break;
+    }
+    fclose(f);
+    char first[41] = "";
+    sha1_hex(file.data(), file.size(), first);
+    std::vector<uint8_t> img(DK_ROM_SIZE);
+    auto is_game = [&](const uint8_t *p) {
+        char got[41];
+        sha1_hex(p, DK_ROM_SIZE, got);
+        return !strcmp(got, DK_ROM_SHA1);
+    };
+    const char *how = nullptr;
+    if (file.size() == DK_ROM_SIZE && is_game(file.data())) {
+        how = "plain";
+        memcpy(img.data(), file.data(), DK_ROM_SIZE);
+    } else if (file.size() == DK_ROM_SIZE + 512u && is_game(file.data() + 512)) {
+        how = "copier header";
+        memcpy(img.data(), file.data() + 512, DK_ROM_SIZE);
+    } else if (file.size() == DK_ROM_SIZE + 512u && (smd_deinterleave(file.data() + 512, DK_ROM_SIZE, img.data()), is_game(img.data()))) {
+        how = "SMD interleaved";
+    } else if (file.size() == DK_ROM_SIZE && (smd_deinterleave(file.data(), DK_ROM_SIZE, img.data()), is_game(img.data()))) {
+        how = "SMD interleaved, no header";
+    } else if (file.size() == DK_ROM_SIZE && (mgd_deinterleave(file.data(), DK_ROM_SIZE, img.data()), is_game(img.data()))) {
+        how = "MGD interleaved";
+    }
+    if (!how) {
+        char why[600];
+        snprintf(why, sizeof why, "%s is not %s (USA): its SHA-1 is %s (%zu%s bytes), not %s, in any form a dump "
+                                  "comes in (plain, copier header, SMD or MGD interleave). A zipped ROM must be "
+                                  "unzipped first; another version of the cartridge is refused. Use your own dump of "
+                                  "the cartridge.", path, DK_TITLE, first, file.size(),
+                 file.size() > DK_ROM_MAX_FILE ? "+" : "", DK_ROM_SHA1);
+        return why;
+    }
+    if (form) *form = how;
+    if (out) out->swap(img);
+    return "";
+}
+
+std::string rom_check_path(const char *path) { return rom_check(path, nullptr); }   /* the launcher's */
+
+static int s_played_messages;   /* played (no --benchmark): a refusal is also a message box */
+
+static void load_rom(const char *path)
+{
+    std::vector<uint8_t> img;
+    const char *form = "plain";
+    std::string why = rom_check(path, &img, &form);
+    if (!why.empty()) {
+        fprintf(stderr, "[native] %s: refusing to run.\n", why.c_str());
+        fflush(stderr);
+        if (s_played_messages) host_message_error(why.c_str());   /* a double-click has no console to read */
         exit(2);
     }
-    size_t n = fread(g_rom, 1, sizeof g_rom, f);
-    int more = fgetc(f) != EOF;
-    fclose(f);
-    char got[41] = "";
-    sha1_hex(g_rom, n, got);
-    if (n != DK_ROM_SIZE || more || strcmp(got, DK_ROM_SHA1)) {
-        fprintf(stderr, "[native] this ROM's SHA-1 is %s (%zu bytes), not %s (%s): refusing to run. Use your own "
-                        "dump of the cartridge.\n", got, n, DK_ROM_SHA1, DK_TITLE);
-        fflush(stderr);
-        exit(2);
+    memset(g_rom, 0, sizeof g_rom);
+    memcpy(g_rom, img.data(), DK_ROM_SIZE);
+    if (strcmp(form, "plain")) fprintf(stderr, "[native] %s: the cartridge (%s)\n", path, form);
+}
+
+/* No ROM on the command line (a double-click): settings.ini's [rom] path (the one chosen last), then
+   any file beside the runner that is the game by its bytes, then, played, a file picker (until a file
+   that is the game, or cancel); the one picked is remembered in settings.ini. "" if none. */
+static std::string find_rom(bool played)
+{
+    std::string ini = options_ini_rom();
+    if (!ini.empty() && rom_check(ini.c_str(), nullptr).empty()) return ini;
+    std::error_code ec;
+    std::vector<std::string> beside;
+    /* the names as fopen takes them (the ANSI code page on Windows, as the exe's folder); a name that
+       has no such form is skipped */
+    for (const auto &e : std::filesystem::directory_iterator(std::filesystem::path(options_exe_dir()), ec)) {
+        std::error_code ec2;
+        if (!e.is_regular_file(ec2)) continue;
+        uintmax_t sz = e.file_size(ec2);
+        if (ec2 || (sz != DK_ROM_SIZE && sz != DK_ROM_SIZE + 512u)) continue;
+        try { beside.push_back(e.path().string()); } catch (...) {}
+    }
+    std::sort(beside.begin(), beside.end());   /* the same choice every time */
+    for (const std::string &p : beside)
+        if (rom_check(p.c_str(), nullptr).empty()) return p;
+    if (!played) return "";
+    char path[4096];
+    for (;;) {
+        if (!host_pick_rom(path, sizeof path)) {
+            host_message("The Adventures of Batman and Robin needs your ROM of the cartridge (USA). Put it in the "
+                         "game's folder, or start the game with it: drag the ROM onto the program, or run  "
+                         "batmanrobin_native path\\to\\rom.md  (Linux: ./batmanrobin path/to/rom.md).");
+            return "";
+        }
+        std::string why = rom_check(path, nullptr);
+        if (why.empty()) {
+            if (!options_remember_rom(path)) fprintf(stderr, "[native] could not write the ROM's path to settings.ini\n");
+            return path;
+        }
+        host_message_error(why.c_str());   /* and the picker again */
     }
 }
 
 /* ======================================================================== */
 /* Sync rows (spec.c, DK_NATIVE: from the exporter's image only) */
 
-static uint32_t s_crc_table[256];
+static void crc_init(void) { (void)crc32_fast_tables(); }
 
-static void crc_init(void)
-{
-    for (uint32_t i = 0; i < 256; i++) {
-        uint32_t c = i;
-        for (int k = 0; k < 8; k++) c = (c & 1u) ? 0xEDB88320u ^ (c >> 1) : c >> 1;
-        s_crc_table[i] = c;
-    }
-}
-
-static uint32_t crc32_update(uint32_t c, const uint8_t *p, size_t n)
-{
-    while (n--) c = s_crc_table[(c ^ *p++) & 0xFFu] ^ (c >> 8);
-    return c;
-}
+static uint32_t crc32_update(uint32_t c, const uint8_t *p, size_t n) { return crc32_fast_update(c, p, n); }
 
 static uint32_t crc32_bytes(const uint8_t *p, size_t n) { return crc32_update(0xFFFFFFFFu, p, n) ^ 0xFFFFFFFFu; }
 
@@ -306,6 +432,16 @@ static void sync_init(void)
             g_enh_flags.game_rows ? ",game_crc32,gameplay" : "", g_enh_flags.hash_centre ? ",fb_centre" : "");
 }
 
+/* `[dkit] enhance {...}`: phase 6's counters, and with quick saves and rewind on (a played run, or
+   BR_REWIND_KEYS) their own, "rewind" (rewind.cpp: saves, loads, steps, the ring's size and cost) */
+static std::string enhance_line(void)
+{
+    std::string e = enh_json(1);
+    if (rewind_on() && !e.empty() && e.back() == '}')
+        e.insert(e.size() - 1, ", \"rewind\": " + rewind_counters_json() + ", \"state_sections\": " + state_sections_json());
+    return e;
+}
+
 static void report_counters(void)
 {
     row_flush(0);
@@ -317,7 +453,7 @@ static void report_counters(void)
                     "\"sync_points\": %llu, \"a7_min\": null, \"stack_low\": %u, \"exported\": %s}\n",
             (unsigned long long)s_sync_rows, (unsigned)(s_stack_low & 0xFFFFFFu), exported);
     fprintf(stderr, "[dkit] options %s\n", options_effective_json().c_str());
-    fprintf(stderr, "[dkit] enhance %s\n", enh_json(1).c_str());
+    fprintf(stderr, "[dkit] enhance %s\n", enhance_line().c_str());
     fflush(stderr);
 }
 
@@ -449,6 +585,13 @@ static void read_pad_types(const char *exe_dir, int types[2])
 
 static uint64_t s_ticks;      /* runner frames played (the snapshot's own: restored with it) */
 static int s_types[2];
+
+/* quick saves and rewind (rewind.cpp; the runner's side below play()) */
+static int s_played_run;
+static std::vector<uint8_t> s_in_script;   /* headless: the script's place the next frame begins with */
+static std::vector<uint8_t> s_in_played;   /* played: the frame running's pads, log place, script place */
+static int s_replay;                        /* played: the next frame runs with s_replay_pads */
+static uint16_t s_replay_pads[2];
 
 static uint16_t frame_pad(int port)
 {
@@ -582,9 +725,10 @@ static void branch_tick(uint32_t *frame_num)
 static void usage(void)
 {
     fprintf(stderr, "usage: batmanrobin_native ROM [--benchmark N] [--input-script F] [--no-render] [--hash-frames K] "
-                    "[--branch-plan F] [--options K=V,...] [--present-log F] [--flip N] [--game-rows] [--hash-centre] "
-                    "[--render-from F] [--audio-hash] [--suppress-sfx]\n"
-                    "       batmanrobin_native --options --json\n");
+                    "[--branch-plan F] [--options K=V,...] [--record-inputs F] [--present-log F] [--flip N] [--game-rows] [--hash-centre] "
+                    "[--render-from F] [--audio-hash] [--suppress-sfx] [--launcher | --no-launcher] [--no-messagebox]\n"
+                    "       batmanrobin_native --options --json\n"
+                    "  (played without ROM: settings.ini's [rom] path, the ROM beside the program, or a file picker)\n");
 }
 
 static int play(void);
@@ -592,9 +736,10 @@ static int play(void);
 int main(int argc, char **argv)
 {
     options_init(&argc, argv);   /* settings.ini [options], then --options (exits after --options --json) */
-    const char *rom = nullptr, *script = nullptr, *plan = nullptr, *present_log = nullptr;
+    const char *rom = nullptr, *script = nullptr, *plan = nullptr, *present_log = nullptr, *record = nullptr;
     uint32_t benchmark = 0, hash_frames = 0;
     int no_render = 0;
+    int launcher = -1;   /* --launcher 1, --no-launcher 0, else settings.ini's [launcher] show (launcher.cpp) */
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
         if (!strcmp(a, "--benchmark") && i + 1 < argc) benchmark = (uint32_t)strtoul(argv[++i], nullptr, 0);
@@ -609,13 +754,50 @@ int main(int argc, char **argv)
         else if (!strcmp(a, "--hash-centre")) g_enh_flags.hash_centre = 1;
         else if (!strcmp(a, "--audio-hash")) g_enh_flags.audio_hash = 1;
         else if (!strcmp(a, "--suppress-sfx")) g_enh_flags.suppress_sfx = 1;
+        else if (!strcmp(a, "--record-inputs") && i + 1 < argc) record = argv[++i];   /* capture.cpp */
         else if (!strcmp(a, "--fresh-evidence")) {}
+        else if (!strcmp(a, "--launcher")) launcher = 1;          /* show it, whatever settings.ini says */
+        else if (!strcmp(a, "--no-launcher")) launcher = 0;       /* ... or not, this once */
+        else if (!strcmp(a, "--no-messagebox")) host_messages_print(1);   /* every message to stderr instead */
         else if (a[0] == '-' && a[1] == '-') fprintf(stderr, "[native] ignoring %s\n", a);
         else if (!rom) rom = a;
         else { usage(); return 2; }
     }
-    if (!rom) { usage(); return 2; }
+    if (const char *t = getenv("BR_PAD_SELFTEST"); t && *t && strcmp(t, "0")) return host_pad_selftest();
+    if (const char *t = getenv("BR_REWIND_SELFTEST"); t && *t && strcmp(t, "0")) return rewind_selftest();   /* rewind.cpp */
+    /* The front door (the kit's playbook/porting.md): a played run (no --benchmark) closes the console
+       window a double-click opened, says what went wrong in a message box, and, with no ROM given, may
+       show the launcher and find the ROM. A harness run passes a ROM and --benchmark: none of this. */
+    const int played = !benchmark;
+    s_played_messages = played;
+    if (played) host_detach_lone_console();
+    const char *play_script = getenv("BR_PLAY_SCRIPT");
+    const char *no_launcher = getenv("GENESIS_NO_LAUNCHER");
+    if (launcher < 0)   /* a double-click: no ROM, no input script, not the kit's harness, not turned off */
+        launcher = played && !rom && !script && !(play_script && *play_script) &&
+                   !(no_launcher && *no_launcher && strcmp(no_launcher, "0")) &&
+                   options_ini_get("launcher", "show", "1") != "0";
+    std::string found;
+    if (launcher && played) {
+        if (!launcher_run(rom ? std::string(rom) : find_rom(false), &found)) return 0;   /* Quit: nothing ran */
+        if (const char *d = getenv("BR_LAUNCHER_DRYRUN"); d && *d && strcmp(d, "0")) {   /* the test: the plan */
+            printf("[launcher] plan {\"rom\": \"%s\", \"options\": %s}\n", found.c_str(), options_effective_json().c_str());
+            fflush(stdout);
+            return 0;
+        }
+        rom = found.c_str();
+    }
+    if (!rom) {
+        found = find_rom(played);
+        if (found.empty()) { usage(); return 2; }
+        rom = found.c_str();
+    }
     load_rom(rom);   /* refuses anything but the cartridge (exit 2) */
+    crash_report_install(rom, !benchmark);   /* a stop leaves crash-reports/<time>/ (R27) */
+    if (record) {
+        if (benchmark) { fprintf(stderr, "--record-inputs is for played sessions (a replay has its script)\n"); return 2; }
+        crash_log_record(record);
+    }
 
     std::string exe_dir = argv[0];
     size_t cut = exe_dir.find_last_of("/\\");
@@ -643,6 +825,7 @@ int main(int argc, char **argv)
     sync_init();
     nm_power_on();
     nm_set_pad_types(s_types[0], s_types[1]);
+    capture_init();   /* BR_CAPTURE: the pictures to a video (capture.cpp) */
     if (!benchmark) return play();
 
     nm_set_render(!no_render);
@@ -657,6 +840,12 @@ int main(int argc, char **argv)
         s_br_carrier = script;
     }
     ns_tick(0);   /* directive time 0 is for frame 1 (main.c: the exact runners tick once first) */
+    rewind_init(0);   /* on only with BR_REWIND_KEYS (tools/rewindcheck.py) */
+    if (rewind_on()) {
+        if (plan) { fprintf(stderr, "BR_REWIND_KEYS and --branch-plan: one or the other\n"); return 2; }
+        s_in_script.resize(ns_position_save(nullptr));
+        ns_position_save(s_in_script.data());
+    }
     uint32_t frame_num = 0;
     auto t0 = std::chrono::steady_clock::now();
     const int timed = g_enh.present.active;   /* the render timer: with the present clock only */
@@ -669,6 +858,7 @@ int main(int argc, char **argv)
         int rendered = !no_render && !(g_enh_flags.render_from && f < (uint32_t)g_enh_flags.render_from);
         if (g_enh_flags.render_from && !no_render) nm_set_render(rendered);
         nm_set_pads(p1, frame_pad(1));
+        crash_test_frame(f);
         auto tf = timed ? std::chrono::steady_clock::now() : t0;
         nm_run_frame();
         if (g_enh_audio_frame) g_enh_audio_frame(f);   /* the sound side's (--audio-hash, the counters) */
@@ -677,6 +867,11 @@ int main(int argc, char **argv)
         if (timed)
             enh_present_frame(f, s_last_gameplay, rendered,
                               std::chrono::duration<double, std::micro>(std::chrono::steady_clock::now() - tf).count());
+        if (rendered) {   /* BR_CAPTURE (capture.cpp): nothing without it */
+            int cs, cw, ch;
+            const uint32_t *cfb = nm_framebuffer(&cs, &cw, &ch);
+            capture_frame(cfb, cs, cw, ch);
+        }
         hf_frame_done();   /* this frame's last display is R_(k-1) for the next */
         s_last_frame = ++s_ticks;
         frame_num++;
@@ -691,8 +886,18 @@ int main(int argc, char **argv)
             uint64_t hh = fb_hash(&w, &h);
             fprintf(stderr, "[FBHASH] frame=%u w=%d h=%d hash=0x%016llX\n", frame_num, w, h, (unsigned long long)hh);
         }
+        /* quick saves and rewind driven by BR_REWIND_KEYS (rewind.cpp's tests): a load moves the frame;
+           a held picture has nothing to show headless, the steps still count */
+        if (rewind_on()) {
+            int r = rewind_after_frame(true);
+            while (r == RW_HOLD) r = rewind_after_frame(false);
+            if (rewind_loaded()) s_last_frame = s_ticks = frame_num = (uint32_t)nm_frame_no();
+            s_in_script.resize(ns_position_save(nullptr));
+            ns_position_save(s_in_script.data());   /* where the next frame's input is (main_frame_input) */
+        }
     }
     double secs = std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count();
+    crash_log_finish();
     fprintf(stderr, "[DONE] %u frames completed\n", frame_num);
     printf("GENESISRECOMP_BENCHMARK {\"game\":\"BATMANROBIN\",\"frames\":%u,\"seconds\":%.9f,\"fps\":%.3f,"
            "\"ms_per_frame\":%.6f,\"requested_frames\":%u,\"complete\":%s,\"runner\":\"native\"}\n",
@@ -700,6 +905,89 @@ int main(int argc, char **argv)
            frame_num == benchmark ? "true" : "false");
     fflush(stdout);
     return 0;
+}
+
+/* ======================================================================== */
+/* Quick saves and rewind (rewind.cpp, R33): the runner's side. The input a frame began with is kept
+   with it in the rewind ring and given back for a replay: played, the pads, where the session's input
+   log stood (crash_report.h: the log follows the timeline kept) and, with BR_PLAY_SCRIPT, where the
+   script stood; headless (BR_REWIND_KEYS), where the input script stood. Beside a quick save: the whole
+   log (played), the script's place. */
+
+static void put_part(std::vector<uint8_t> &o, const std::vector<uint8_t> &p)
+{
+    uint32_t n = (uint32_t)p.size();
+    o.insert(o.end(), (const uint8_t *)&n, (const uint8_t *)&n + sizeof n);
+    o.insert(o.end(), p.begin(), p.end());
+}
+
+static bool get_part(const std::vector<uint8_t> &in, size_t *at, const uint8_t **p, size_t *n)
+{
+    uint32_t k;
+    if (in.size() - *at < sizeof k) return false;
+    memcpy(&k, in.data() + *at, sizeof k);
+    *at += sizeof k;
+    if (in.size() - *at < k) return false;
+    *p = in.data() + *at;
+    *n = k;
+    *at += k;
+    return true;
+}
+
+static std::vector<uint8_t> script_place(void)
+{
+    std::vector<uint8_t> v(ns_active() ? ns_position_save(nullptr) : 0);
+    if (!v.empty()) ns_position_save(v.data());
+    return v;
+}
+
+void main_frame_input(std::vector<uint8_t> &out) { out = s_played_run ? s_in_played : s_in_script; }
+
+void main_replay_input(const std::vector<uint8_t> &in)
+{
+    if (!s_played_run) {
+        if (!ns_position_load(in.data(), in.size())) fprintf(stderr, "[rewind] the script's place did not load\n");
+        return;
+    }
+    size_t at = 0, n[3];
+    const uint8_t *p[3];
+    for (int i = 0; i < 3; i++)
+        if (!get_part(in, &at, &p[i], &n[i])) return;
+    if (n[0] == sizeof s_replay_pads) { memcpy(s_replay_pads, p[0], sizeof s_replay_pads); s_replay = 1; }
+    crash_log_back_to(p[1], n[1]);
+    if (n[2]) ns_position_load(p[2], n[2]);
+}
+
+void main_timeline_save(std::vector<uint8_t> &out)
+{
+    out.clear();
+    if (!s_played_run) { out = script_place(); return; }
+    std::vector<uint8_t> log;
+    crash_log_copy(log);
+    put_part(out, log);
+    put_part(out, script_place());
+}
+
+void main_timeline_load(const std::vector<uint8_t> &in)
+{
+    if (!s_played_run) {
+        if (!in.empty()) ns_position_load(in.data(), in.size());
+        return;
+    }
+    size_t at = 0, n[2];
+    const uint8_t *p[2];
+    for (int i = 0; i < 2; i++)
+        if (!get_part(in, &at, &p[i], &n[i])) return;
+    crash_log_paste(std::vector<uint8_t>(p[0], p[0] + n[0]));
+    if (n[1]) ns_position_load(p[1], n[1]);
+}
+
+/* a played run's exit line: the options and the counters, rewind's with them (a player's log) */
+static void report_played(void)
+{
+    fprintf(stderr, "[dkit] options %s\n", options_effective_json().c_str());
+    fprintf(stderr, "[dkit] enhance %s\n", enhance_line().c_str());
+    fflush(stderr);
 }
 
 /* ======================================================================== */
@@ -711,30 +999,35 @@ static int play(void)
     nm_set_play(1);
     nm_set_render(1);
     hf_init();
+    s_played_run = 1;
+    rewind_init(1);   /* quick saves and rewind: F5-F7, Rewind held */
+    atexit(report_played);
     uint64_t frame = 0, clock_from = 0;
     int clock_on = 0;
     static std::vector<uint32_t> between((size_t)512 * 480);
     const double T_US = 896040.0 * 1e6 / 53693175.0;   /* one NTSC frame: the present clock's unit */
-    for (;;) {
-        uint16_t pads[2];
-        host_input(pads);   /* the pads are read when the 60 Hz build reads them: right after the last frame */
-        nm_set_pads(s_types[0] == 1 ? pads[0] : (uint16_t)(pads[0] & 0xFFu),
-                    s_types[1] == 1 ? pads[1] : (uint16_t)(pads[1] & 0xFFu));
-        nm_run_frame();
-        if (nm_game_stopped()) { fprintf(stderr, "[native] the game stopped\n"); return 1; }
-        host_audio(++frame);
-        int stride, w, h;
-        const uint32_t *fb = nm_framebuffer(&stride, &w, &h);
+    /* BR_PLAY_SCRIPT=F: the pads from an input script instead of the controllers, one script frame
+       per played frame (the crash report's log is checked against it: R27); its EXIT ends the run */
+    const char *play_script = getenv("BR_PLAY_SCRIPT");
+    if (play_script) {
+        if (!ns_load(play_script)) return 2;
+        ns_tick(0);
+    }
+    /* the picture to the window: high_fps's clock counts host frames (a rewind step or a held picture is
+       one too), so a load moves nothing on it; the interpolator's previous frame goes with a load */
+    auto show = [&](const uint32_t *fb, int stride, int w, int h) {
         if (g_opt.high_fps > 0) {
-            /* high_fps (R3): R_k is made; the clock's ticks between (k-1)T and kT show it moved back
-               toward R_(k-1) (present.cpp), then R_k at kT (host_present_at waits for each time) */
+            /* high_fps (R3, R28): R_k is made; the span (k-1)T..kT in even parts (enh_between_times)
+               shows it moved back toward R_(k-1) (present.cpp), then R_k at kT (host_present_at
+               waits for each time) */
             if (!clock_on) { clock_on = 1; clock_from = frame - 1; host_present_clock_reset(); }
             uint64_t k = frame - clock_from;
             if (k >= 2) {
-                double t0 = (double)(k - 1) * T_US, t1 = (double)k * T_US, step = 1e6 / g_opt.high_fps;
-                for (double t = (double)(long long)(t0 / step + 1.0) * step; t < t1; t += step)
-                    if (t > t0 && hf_interpolate(k, (t - t0) / T_US, between.data(), 512, w, h))
-                        host_present_at(between.data(), 512, w, h, t);
+                double t0 = (double)(k - 1) * T_US, t1 = (double)k * T_US, ts[64];
+                int nb = enh_between_times(t0, t1, g_opt.high_fps, ts, 64);
+                for (int j = 0; j < nb; j++)
+                    if (hf_interpolate(k, (ts[j] - t0) / T_US, between.data(), 512, w, h))
+                        host_present_at(between.data(), 512, w, h, ts[j]);
             }
             host_present_at(fb, stride, w, h, (double)k * T_US);
         } else {
@@ -742,5 +1035,52 @@ static int play(void)
             host_present(fb, stride, w, h);
         }
         hf_frame_done();
+    };
+    for (;;) {
+        uint16_t pads[2];
+        host_input(pads);   /* the pads are read when the 60 Hz build reads them: right after the last frame */
+        if (play_script) pads[0] = frame_pad(0), pads[1] = frame_pad(1);
+        uint16_t q1 = s_types[0] == 1 ? pads[0] : (uint16_t)(pads[0] & 0xFFu);
+        uint16_t q2 = s_types[1] == 1 ? pads[1] : (uint16_t)(pads[1] & 0xFFu);
+        if (s_replay) {   /* a rewind step: the frame's own pads again (the keys were still read) */
+            q1 = s_replay_pads[0], q2 = s_replay_pads[1];
+            s_replay = 0;
+        }
+        if (rewind_on()) {   /* what this frame begins with (main_frame_input) */
+            std::vector<uint8_t> log;
+            crash_log_position(log);
+            uint16_t q[2] = { q1, q2 };
+            s_in_played.clear();
+            put_part(s_in_played, std::vector<uint8_t>((const uint8_t *)q, (const uint8_t *)q + sizeof q));
+            put_part(s_in_played, log);
+            put_part(s_in_played, play_script ? script_place() : std::vector<uint8_t>());
+        }
+        crash_test_frame(frame + 1);
+        crash_log_frame(q1, q2);   /* the session's inputs, for a report (crash_report.h) */
+        nm_set_pads(q1, q2);
+        nm_run_frame();
+        if (play_script) ns_tick(nm_frame_no());   /* the frame run (a load moves it: rewind.cpp) */
+        if (nm_game_stopped()) {
+            fprintf(stderr, "[native] the game stopped\n");
+            crash_report_write("the game stopped (its machine ended the run)");
+            return 1;
+        }
+        host_audio(++frame, rewind_audio());   /* a rewind step's frame: backwards or silent ([rewind] sound) */
+        int stride, w, h;
+        const uint32_t *fb = nm_framebuffer(&stride, &w, &h);
+        capture_frame(fb, stride, w, h);   /* BR_CAPTURE (capture.cpp) */
+        show(fb, stride, w, h);
+        if (play_script && ns_should_exit()) {
+            fprintf(stderr, "[input_script] exiting per script directive (code=%d)\n", ns_exit_code());
+            exit(ns_exit_code());
+        }
+        /* quick saves and rewind: held at the ring's oldest frame, the picture stays and the game waits */
+        for (int r = rewind_after_frame(true); r == RW_HOLD; r = rewind_after_frame(false)) {
+            host_input(pads);
+            host_audio_silence();
+            ++frame;
+            fb = nm_framebuffer(&stride, &w, &h);
+            show(fb, stride, w, h);
+        }
     }
 }

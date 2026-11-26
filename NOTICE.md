@@ -25,11 +25,15 @@ grant any rights in the original game.
 | [SDL2](https://libsdl.org) | Window, input, audio | zlib |
 | [minicoro](https://github.com/edubart/minicoro) | The game fiber's context switch | Unlicense or MIT-0 (LuaCoco parts: MIT) |
 | [clowncommon](https://github.com/Clownacy/clowncommon), [tomlc99](https://github.com/cktan/tomlc99) | Engine helpers, TOML parsing | ISC, MIT |
+| [Dear ImGui](https://github.com/ocornut/imgui) (Omar Cornut), `recomp/platform/native/external/imgui/` | The launcher's window | MIT |
+| [librashader](https://github.com/SnowflakePowered/librashader) (chyyran and contributors) | RetroArch shader presets on the picture (`shader_preset`): its C headers vendored in `recomp/platform/native/external/librashader/`, the library loaded at run time from `librashader.dll` (Windows) or `librashader.so` (Linux) | headers MIT; the library MPL-2.0, unmodified v0.12.0 (source at the link): on Windows the upstream release, fetched by `recomp/platform/native/native.cmake`; on Linux built from the release's source (tag `librashader-v0.12.0`, commit `87e8a97b`) by `tools/librashader_linux.py` |
+| [Karla](https://github.com/googlefonts/karla), [Roboto](https://github.com/googlefonts/roboto), `recomp/platform/native/external/fonts/` | The launcher's fonts | SIL OFL 1.1, Apache 2.0 |
 | [The Macro Assembler AS](http://john.ccac.rwth-aachen.de:8000/as/) | `tools/as/`: assembles the disassembly | GPL v2 |
 | EZGames69's TAS, [TASVideos 6248M](https://tasvideos.org/6248M) | The input `recomp/verify.py` plays (not included: download it) | TASVideos' terms |
 
 The engine's own list is `recomp/engine/THIRD-PARTY-LICENSES.md`.
 
-Parts of the port's platform layer (the options, the widescreen and high-frame-rate presentation)
+Parts of the port's platform layer (the options, the widescreen and high-frame-rate presentation, the
+launcher, the controls and the ROM finder)
 were adapted from the [X-Men 2: Clone Wars PC port](https://github.com/crabsmack/xmen2-pc) by the
 same author, MIT.

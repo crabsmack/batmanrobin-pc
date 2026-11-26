@@ -20,6 +20,7 @@ addr,name,end,purpose
 000E3E,Op2_SetTimer3RandYield3,000F0E,"a2 op for coroutine 3: sets timer 3 ($20(a4)) to base + random(range) (Rand_Below), saves the next op in slot 3 ($44(a4)) and returns to the code that stepped the coroutine"
 000F2E,Op2_LoopTimer0,000F44,a2 op: counts timer 0 ($1A(a4)) down by $30(a4) and branches (back) while it is still running; at expiry clears it and continues; a timer already at 0 falls through
 000F80,Op2_SetTimer1,000F88,a2 op: sets timer 1 ($1C(a4)) from a word operand
+000F88,Op2_SetTimer1Rand,000F9A,a2 op: sets timer 1 ($1C(a4)) to a random value below a range plus a base
 000F9A,Op2_TickTimer1Branch,000FB8,a2 op: counts timer 1 ($1C(a4)) down by $30(a4) and branches when it expires this run; a timer already at 0 skips the offset
 001000,Op2_LoopTimer1,00101E,a2 op: counts timer 1 ($1C(a4)) down by $30(a4) and branches (back) while it is still running; at expiry clears it and continues; a timer already at 0 branches (zero test first)
 00105A,Op2_SetTimer2,001092,a2 op: sets timer 2 ($1E(a4)) from a word operand
@@ -68,6 +69,8 @@ addr,name,end,purpose
 002020,Op2_DecVar0Loop,00205E,a2 op: loop counter: decrements script variable 0 ($22(a4)) and branches while it is not zero
 00208E,Op2_SwitchVar0Bits,0020DC,"a2 op: bit switch on script variable 0 ($22(a4)): walks n (offset, mask) word pairs and branches by the offset of the first pair whose mask shares a bit with the variable; no match continues after the table"
 0020F2,Op2_DecVar1Loop,002130,a2 op: loop counter on script variable 1: decrements $24(a4) and branches while it is not zero
+002130,Op2_BranchVar1Ne,002140,a2 op: branches when script variable 1 ($24(a4)) differs from a word
+002140,Op2_BranchVar1Gt,002150,a2 op: branches when script variable 1 ($24(a4)) is greater than a word (signed)
 002150,Op2_BranchVar1Lt,002160,a2 op: branches when script variable 1 ($24(a4)) is less than a word (signed)
 002180,Op2_SetVar2,002192,a2 op: sets script variable 2 (word $26(a4)) to a word
 0021D2,Op2_BranchVar2Any,0021E2,a2 op: branches when script variable 2 ($26(a4)) has any of the mask's bits
@@ -104,6 +107,7 @@ addr,name,end,purpose
 003434,Op2_BranchPlayerInBox,0034A2,"a2 op: branches when the targeted player's collision box (box id = record +$3E) overlaps a rectangle given relative to the object, mirrored by its H/V flip bits"
 0034A6,Mot_StorePlayerWindow,003574,"packs a player-relative window into the motion block: halves of d0/d1 into the bytes of $14(a3), of d2/d3 into $16(a3) (Op2_HoldPlayerWindow doubles them back), then continues the script"
 003714,Op2_BranchTouchBox,003754,"a2 op: branches when any box on a collision list overlaps a rectangle relative to the object (mirrored by its H/V flip bits), remembering that box in g_FoundBox; the kind word picks the list through a jump table (0/4 = g_PlayerBoxList, 8 = g_EnemyBoxList)"
+003756,Op2_BranchTouchBox_KindC,003758,Op2_BranchTouchBox's jump-table slot for kind $C: the enemy-list case (bra.w Op2_BranchTouchBox_Enemies)
 00375A,Op2_BranchTouchBox_Players,003798,Op2_BranchTouchBox's g_PlayerBoxList case (kinds 0 and 4): Hitbox_FindPlayerBox on the prepared rectangle; also holds the shared not-found ($3760) and found ($376E) exits
 003798,Obj_SetAttackBoxes,00385A,"rebuilds the script object's attack-box set from d7 inline specs: reuses or allocates a pool block per box, stamps owner a6 (+$2E), owner id $58 (+$10), serial $56 (+4), kind and rectangle (+6..+$E), hit callback (+$30, default the rts $82C) and its argument words; frees the boxes beyond the new count"
 00385A,Obj_SetBodyBoxes,00390C,"rebuilds the script object's body-box set (the boxes it can be struck through) from d7 inline specs, as Obj_SetAttackBoxes does, also clearing each box's damage taken (+$20); surplus boxes are unlinked from their list (when +2 is set) and freed"
@@ -135,13 +139,19 @@ addr,name,end,purpose
 004898,Op2_DrawSprAtDrawnDepth,004926,draw-list op: Op2_DrawSprAtDrawn with a depth offset
 004AB4,Op2_DrawSprAtDrawnBack,004AD2,draw-list op: draws one frame at the drawn position $4E/$50(a6) behind every sorted sprite (Spr_AddBack)
 004B74,Op2_StepVelocity,004C5E,"a2 op: steps the motion block's velocity for this frame and leaves the frame's move in d1/d2 for the next op: each axis moves toward its target speed by its acceleration (copied to $38/$3C), then the decaying impulses $2/$6 are added; while the stun count $1(a3) runs the velocity part is 0"
+004C5E,Op2_ApplyMoveBranchAtY,004C9A,a2 op: adds this frame's move d1/d2 to x/y; when y reaches a word limit (from either side) it is clamped there and the script branches
+004C9A,Op2_ApplyMoveLandAtY,004CDA,"a2 op: adds this frame's move d1/d2 to x/y and lands on a floor at a word y: there y is clamped, the motion block's on-ground word $54(a3) set and its y velocity $1C(a3) cleared; off it $54(a3) is cleared"
 004CDA,Op2_MoveTerrain,004DEC,"a2 op: moves the object by d1/d2 through the scene terrain: without terrain boxes it just adds the move; box B (bit 2 of (a3)) is collided first (wall/floor results $52/$54, d3 -> $50); if B finds no floor and box A (bit 1) is on, box A is collided, clearing the x/y velocity on wall/floor contact"
 004DEC,Hitbox_TestAttackBox,004DF2,tests one attack box at the object's position: Hitbox_TestAttackBoxAt with d1/d2 = x/y $3E/$42(a6)
 004DF4,Hitbox_TestAttackBoxAt,004E2C,"tests one attack box at position d1/d2: mirrors its rectangle by the sprite's flip bits, then by its kind word looks for overlapping boxes on g_PlayerBoxList (0 = first, 4 = all) or g_EnemyBoxList (8 = first) and strikes them"
+004E2E,Hitbox_KindAllEnemies,004E30,entry $C of Hitbox_TestAttackBoxAt's kind jump table: attack-box kind $C goes to Hitbox_HitAllEnemyBoxes
 004E32,Hitbox_HitFirstPlayerBox,004E4A,"attack-box kind 0: strikes the first box on g_PlayerBoxList that overlaps the rectangle, if any"
+004E4A,Hitbox_HitAllEnemyBoxes,004E52,attack-box kind $C: strikes every box on g_EnemyBoxList that overlaps the rectangle
 004E52,Hitbox_Strike,004E7E,"one hit: tags the struck box with the attacker's owner id and runs the attack box's hit callback, then the struck box's callback"
 004EA8,Op2_TestAttackBoxAtDrawn,004F40,"a2 op: tests one attack box, chosen by index, at the object's drawn position $4E/$50(a6), unless the attack pause count $1(a4) is running"
+004F42,Hitbox_LinkByKind_AllPlayers,004F44,"Hitbox_LinkByKind entry for kind 4: appends the box to g_PlayerBoxList ($8C3C), as kind 0"
 004F46,Hitbox_LinkByKind_Enemy,004F48,Hitbox_LinkByKind entry for kind 8: appends the box to g_EnemyBoxList ($8C54)
+004F4A,Hitbox_LinkByKind_AllEnemies,004F4C,"Hitbox_LinkByKind entry for kind $C: appends the box to g_EnemyBoxList ($8C54), as kind 8"
 004F4E,Op2_PlaceBodyBoxes_Off,005078,tail of Op2_PlaceBodyBoxes while the body-box off count (a4) runs: decrements it and unlinks every linked body box (the object cannot be hit)
 005078,Op2_ClearMotionBlock,0050A2,"a2 op: zeroes the 64-byte block whose address is at $8(a6) (the motion block a3 is reset to by Op2_ResetA3), then NEXT"
 0050A2,Op2_StopOsc,0050BA,"a2 op: stops both axes of the oscillator block in an a6 field by zeroing their max speeds (+$C, +$20), so Op2_StepOsc brakes them to rest"
@@ -193,6 +203,7 @@ addr,name,end,purpose
 005FAA,Op4_ChildRangeAccelY,005FC4,"a4 op: adds base + a random [0, w) (8.8) to the child's y acceleration $52(a5) (gravity spread for debris)"
 00607C,Op4_ForkOrBranch,00608E,"a4 op: forks a child a4 object (VM4_Fork: script at operand + offset, motion from d2-d5) and continues; when the pool is full it branches instead"
 00609E,Op4_Fork,0060BC,a4 op: forks a child a4 object (VM4_Fork) running the script at operand + offset; continues with the next op (child ops then edit a5); a full pool ends this run
+0060BC,Op4_ForkAndEnd,0060C2,"a4 op: forks a child a4 object running the script at operand + offset and ends this run (Op4_Fork's child, Op4_ForkAbsAndEnd's end)"
 0060C2,Op4_ForkRestAndEnd,0060C4,"a4 op: forks a child whose script is the rest of this one (the ops after this word) and ends this run, so a parent that resumes here emits one child per frame"
 0060C4,VM4_Fork,00613A,"spawns a child a4 object with script a3: pool block on the object list (handler VM4_RunObject), owner $10 and attr $22 inherited, anim/frames/box/depth cleared, radius/heading/x/y = d2-d5, velocities and accelerations 0"
 00613A,VM4_SpawnChild,006208,spawn core of Op4_Spawn*: allocates a child a4 object and sets its script and motion from d2-d5 plus an optional 48-byte parameter table; on a full pool drops the caller's return and ends the run or takes the failure branch
@@ -405,9 +416,16 @@ addr,name,end,purpose
 00AEA4,VInt_ScrollModeTbl28,00AEBA,"jump table of the V-int scroll modes $28-$3C, which mostly end in the H-int raster setup ($B1E0)"
 00AEBC,VInt_BusyScroll,00AEC2,"the busy-path V-int's scroll step: jumps through VInt_BusyScrollTbl by g_ScrollMode, whose entries turn the display back on, and for modes $28 and $34-$3C also re-arm the H-int raster (worker 13)"
 00AEC4,VInt_BusyScrollTbl,00AEC6,jump table of the busy-path scroll modes: entry 0 branches to the display-on routine $AF04 (entries 8-$10 follow in the next file)
+00AEC8,VInt_BusyMode04,00AECA,"busy-path V-int scroll slot for mode $04: bra.w VInt_ScrollDisplayOn, so a dropped frame uploads no scroll"
 00AECC,VInt_BusyScrollTbl8,00AED6,"busy-path scroll jump table, modes 8-$10 (continues VInt_BusyScrollTbl): all three branch to VInt_ScrollDisplayOn, so a busy V-int uploads no scroll"
+00AED8,VInt_BusyMode14,00AEDA,"busy-path V-int scroll slot for mode $14: bra.w VInt_ScrollDisplayOn, so a dropped frame uploads no scroll"
+00AEDC,VInt_BusyMode18,00AEDE,"busy-path V-int scroll slot for mode $18: bra.w VInt_ScrollDisplayOn, so a dropped frame uploads no scroll"
+00AEE0,VInt_BusyMode1C,00AEE2,"busy-path V-int scroll slot for mode $1C: bra.w VInt_ScrollDisplayOn, so a dropped frame uploads no scroll"
+00AEE8,VInt_BusyMode24,00AEEA,"busy-path V-int scroll slot for mode $24: bra.w VInt_ScrollDisplayOn, so a dropped frame uploads no scroll"
 00AEEC,VInt_BusyScrollTbl28,00AEF2,"busy-path scroll jump table, modes $28-$2C: $28 re-arms the H-int raster (VInt_BusyRearmRaster), $2C only turns the display back on"
+00AEF4,VInt_BusyMode30,00AEF6,"busy-path V-int scroll slot for mode $30: bra.w VInt_ScrollDisplayOn, so a dropped frame uploads no scroll"
 00AEF8,VInt_BusyScrollTbl34,00AEFE,"busy-path scroll jump table, modes $34-$3C: re-arm the H-int raster (HInt_Rearm) so the per-line effect survives a dropped frame"
+00AF00,VInt_BusyMode3C,00AF02,"busy-path V-int scroll slot for mode $3C: bra.w HInt_Rearm, as mode $38"
 00AF04,VInt_ScrollDisplayOn,00AF56,scroll mode 0 and the common tail of every mode: turns the display back on with DMA off (VDP reg 1 = $64)
 00AF84,VInt_ScrollLinesARaster,00AFD4,"scroll mode $28: DMAs plane A's line H-scroll, then swaps and re-arms the H-int raster (per-line V-scroll)"
 00AFDA,VInt_BusyRearmRaster,00AFDC,busy-path entry for mode $28: re-arms the H-int raster on the table already shown (no swap)
@@ -512,9 +530,17 @@ addr,name,end,purpose
 012ED0,SpawnAction_Run,012EF0,"runs spawn action d0 (low byte) of Tbl_012EF0 at the object's position, preserving a2-a6"
 012FB8,Item_FoundBoxPlayer,012FBA,pickup helper: the player record of whoever owns g_FoundBox (the box the pickup touched); returns to the caller's caller when it is not a player
 012FBC,Item_BoxPlayer,012FE4,the player record of collision box a1's owner (owner id $58 = 1 or 2); otherwise pops the return address so the calling native ends
+012FE4,Drop_RandomHealthA,013006,"spawn action 48: when the random cooldown g_DropCooldown has run out, re-arms it at random and drops 1, 2, 1 or 3 A health pickups (random)"
+013006,Drop_RandomHealthA_case0,013008,jump-table case 0 of Drop_RandomHealthA: bra.s Drop_HealthA1
+013008,Drop_RandomHealthA_case2,01300A,jump-table case 2 of Drop_RandomHealthA: bra.s Drop_HealthA2
+01300A,Drop_RandomHealthA_case4,01300C,jump-table case 4 of Drop_RandomHealthA: bra.s Drop_HealthA1
+01300C,Drop_RandomHealthA_case6,01300E,jump-table case 6 of Drop_RandomHealthA: bra.s Drop_HealthA3
 01300E,Drop_RandomHealthB,013032,"spawn action 49: when the random cooldown g_DropCooldown has run out, re-arms it at random and drops 1, 2, 1 or 3 B health pickups (random)"
+013032,Drop_RandomHealthB_case2,013034,jump-table case 2 of Drop_RandomHealthB: bra.s Drop_HealthB2
 013034,Drop_RandomHealthB_case4,013036,jump-table case 4 of Drop_RandomHealthB: one B health pickup (bra Drop_HealthB1)
+013036,Drop_RandomHealthB_case6,013038,jump-table case 6 of Drop_RandomHealthB: bra.s Drop_HealthB3
 013038,Drop_HealthA1,01305E,spawn action 36: drops one A-style health pickup (a4 script Scr4_0130F0)
+013060,Drop_HealthA9,013068,spawn action 40: drops nine A-style health pickups (a4 script Scr4_0130B0)
 01306A,Drop_HealthARow,0130AE,"spawn action 41: releases five A-style health pickups one after another (delay $40 between, a different spawn argument each)"
 013288,Drop_RunFxScript,0132B2,shared tail of the Drop_ actions: runs a4 script a4 as a parentless effect at d4/d5 with radius and heading 0
 0132BE,Item_LaunchFromHit,0132D0,"shared tail of the FromHit item spawners: gives the new item an x velocity of half the knockback of the box just struck, so it flies off in the hit's direction"

@@ -20,6 +20,7 @@
 #ifndef DK_FLOW_RT_H
 #define DK_FLOW_RT_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include "dk_flow.h"
@@ -89,6 +90,10 @@ void irq_wait(void);
    frames and the run loops on it: the runtime's own state goes with it. */
 void branch_save(void);
 void branch_restore(void);
+/* ... and into a caller's buffer of state_bytes() (the native runner's quick saves and rewind) */
+size_t state_bytes(void);
+void state_save(void *dst);
+void state_load(const void *src);
 
 }  /* namespace flow */
 }  /* namespace dk */

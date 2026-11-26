@@ -14678,6 +14678,410 @@ static void dkslot_013030(void)
     dk::flow::g_left = left0;
 }
 
+void Drop_RandomHealthA(uint32_t * a0, uint16_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6, uint32_t * a7, uint32_t * a8, dk::Flags * a9)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(0, dk::to_u32(*a0), 4);
+    dk::bridge::set_reg(1, dk::to_u32(*a1), 4);
+    dk::bridge::set_reg(2, dk::to_u32(*a2), 4);
+    dk::bridge::set_reg(3, dk::to_u32(*a3), 4);
+    dk::bridge::set_reg(4, dk::to_u32(*a4), 4);
+    dk::bridge::set_reg(5, dk::to_u32(*a5), 4);
+    dk::bridge::set_reg(8, dk::to_u32(*a6), 4);
+    dk::bridge::set_reg(12, dk::to_u32(*a7), 4);
+    dk::bridge::set_reg(14, dk::to_u32(*a8), 4);
+    dk::bridge::flags_set(a9);
+    dk::flow::call(0x012FE4u);
+    *a0 = dk::from_u32<uint32_t>(dk::bridge::reg(0));
+    *a1 = dk::from_u32<uint16_t>(dk::bridge::reg(1));
+    *a2 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    *a3 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    *a4 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    *a5 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    *a6 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    *a7 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    *a8 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    dk::bridge::flags_get(a9);
+    dk::bridge::restore(saved);
+}
+
+void hc_Drop_RandomHealthA(uint32_t * a0, uint16_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6, uint32_t * a7, uint32_t * a8, dk::Flags * a9);
+static void dkslot_012FE4(void)
+{
+    dk::FnScope scope(0x012FE4u);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    uint32_t v0 = dk::from_u32<uint32_t>(dk::bridge::reg(0));
+    uint16_t v1 = dk::from_u32<uint16_t>(dk::bridge::reg(1));
+    uint32_t v2 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    uint32_t v3 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    uint32_t v4 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    uint32_t v5 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    uint32_t v6 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    uint32_t v7 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    uint32_t v8 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    dk::Flags v9; dk::bridge::flags_get(&v9);
+    try {
+        hc_Drop_RandomHealthA(&v0, &v1, &v2, &v3, &v4, &v5, &v6, &v7, &v8, &v9);
+        dk::bridge::set_reg(0, dk::to_u32(v0), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(1, dk::to_u32(v1), dk::val_bytes<uint16_t>());
+        dk::bridge::set_reg(2, dk::to_u32(v2), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(3, dk::to_u32(v3), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(4, dk::to_u32(v4), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(5, dk::to_u32(v5), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(8, dk::to_u32(v6), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(12, dk::to_u32(v7), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(14, dk::to_u32(v8), dk::val_bytes<uint32_t>());
+        dk::bridge::flags_set(&v9);
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void Drop_RandomHealthA_case0(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(2, dk::to_u32(*a0), 4);
+    dk::bridge::set_reg(3, dk::to_u32(*a1), 4);
+    dk::bridge::set_reg(4, dk::to_u32(*a2), 4);
+    dk::bridge::set_reg(5, dk::to_u32(*a3), 4);
+    dk::bridge::set_reg(8, dk::to_u32(*a4), 4);
+    dk::bridge::set_reg(12, dk::to_u32(*a5), 4);
+    dk::bridge::set_reg(14, dk::to_u32(*a6), 4);
+    dk::flow::call(0x013006u);
+    *a0 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    *a1 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    *a2 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    *a3 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    *a4 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    *a5 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    *a6 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    dk::bridge::restore(saved);
+}
+
+void hc_Drop_RandomHealthA_case0(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6);
+static void dkslot_013006(void)
+{
+    dk::FnScope scope(0x013006u);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    uint32_t v0 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    uint32_t v1 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    uint32_t v2 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    uint32_t v3 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    uint32_t v4 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    uint32_t v5 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    uint32_t v6 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    try {
+        hc_Drop_RandomHealthA_case0(&v0, &v1, &v2, &v3, &v4, &v5, &v6);
+        dk::bridge::set_reg(2, dk::to_u32(v0), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(3, dk::to_u32(v1), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(4, dk::to_u32(v2), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(5, dk::to_u32(v3), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(8, dk::to_u32(v4), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(12, dk::to_u32(v5), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(14, dk::to_u32(v6), dk::val_bytes<uint32_t>());
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void Drop_RandomHealthA_case2(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(2, dk::to_u32(*a0), 4);
+    dk::bridge::set_reg(3, dk::to_u32(*a1), 4);
+    dk::bridge::set_reg(4, dk::to_u32(*a2), 4);
+    dk::bridge::set_reg(5, dk::to_u32(*a3), 4);
+    dk::bridge::set_reg(8, dk::to_u32(*a4), 4);
+    dk::bridge::set_reg(12, dk::to_u32(*a5), 4);
+    dk::bridge::set_reg(14, dk::to_u32(*a6), 4);
+    dk::flow::call(0x013008u);
+    *a0 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    *a1 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    *a2 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    *a3 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    *a4 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    *a5 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    *a6 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    dk::bridge::restore(saved);
+}
+
+void hc_Drop_RandomHealthA_case2(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6);
+static void dkslot_013008(void)
+{
+    dk::FnScope scope(0x013008u);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    uint32_t v0 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    uint32_t v1 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    uint32_t v2 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    uint32_t v3 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    uint32_t v4 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    uint32_t v5 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    uint32_t v6 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    try {
+        hc_Drop_RandomHealthA_case2(&v0, &v1, &v2, &v3, &v4, &v5, &v6);
+        dk::bridge::set_reg(2, dk::to_u32(v0), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(3, dk::to_u32(v1), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(4, dk::to_u32(v2), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(5, dk::to_u32(v3), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(8, dk::to_u32(v4), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(12, dk::to_u32(v5), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(14, dk::to_u32(v6), dk::val_bytes<uint32_t>());
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void Drop_RandomHealthA_case4(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(2, dk::to_u32(*a0), 4);
+    dk::bridge::set_reg(3, dk::to_u32(*a1), 4);
+    dk::bridge::set_reg(4, dk::to_u32(*a2), 4);
+    dk::bridge::set_reg(5, dk::to_u32(*a3), 4);
+    dk::bridge::set_reg(8, dk::to_u32(*a4), 4);
+    dk::bridge::set_reg(12, dk::to_u32(*a5), 4);
+    dk::bridge::set_reg(14, dk::to_u32(*a6), 4);
+    dk::flow::call(0x01300Au);
+    *a0 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    *a1 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    *a2 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    *a3 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    *a4 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    *a5 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    *a6 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    dk::bridge::restore(saved);
+}
+
+void hc_Drop_RandomHealthA_case4(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6);
+static void dkslot_01300A(void)
+{
+    dk::FnScope scope(0x01300Au);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    uint32_t v0 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    uint32_t v1 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    uint32_t v2 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    uint32_t v3 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    uint32_t v4 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    uint32_t v5 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    uint32_t v6 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    try {
+        hc_Drop_RandomHealthA_case4(&v0, &v1, &v2, &v3, &v4, &v5, &v6);
+        dk::bridge::set_reg(2, dk::to_u32(v0), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(3, dk::to_u32(v1), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(4, dk::to_u32(v2), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(5, dk::to_u32(v3), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(8, dk::to_u32(v4), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(12, dk::to_u32(v5), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(14, dk::to_u32(v6), dk::val_bytes<uint32_t>());
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void Drop_RandomHealthA_case6(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(2, dk::to_u32(*a0), 4);
+    dk::bridge::set_reg(3, dk::to_u32(*a1), 4);
+    dk::bridge::set_reg(4, dk::to_u32(*a2), 4);
+    dk::bridge::set_reg(5, dk::to_u32(*a3), 4);
+    dk::bridge::set_reg(8, dk::to_u32(*a4), 4);
+    dk::bridge::set_reg(12, dk::to_u32(*a5), 4);
+    dk::bridge::set_reg(14, dk::to_u32(*a6), 4);
+    dk::flow::call(0x01300Cu);
+    *a0 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    *a1 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    *a2 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    *a3 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    *a4 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    *a5 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    *a6 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    dk::bridge::restore(saved);
+}
+
+void hc_Drop_RandomHealthA_case6(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6);
+static void dkslot_01300C(void)
+{
+    dk::FnScope scope(0x01300Cu);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    uint32_t v0 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    uint32_t v1 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    uint32_t v2 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    uint32_t v3 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    uint32_t v4 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    uint32_t v5 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    uint32_t v6 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    try {
+        hc_Drop_RandomHealthA_case6(&v0, &v1, &v2, &v3, &v4, &v5, &v6);
+        dk::bridge::set_reg(2, dk::to_u32(v0), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(3, dk::to_u32(v1), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(4, dk::to_u32(v2), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(5, dk::to_u32(v3), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(8, dk::to_u32(v4), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(12, dk::to_u32(v5), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(14, dk::to_u32(v6), dk::val_bytes<uint32_t>());
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void Drop_RandomHealthB_case2(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(2, dk::to_u32(*a0), 4);
+    dk::bridge::set_reg(3, dk::to_u32(*a1), 4);
+    dk::bridge::set_reg(4, dk::to_u32(*a2), 4);
+    dk::bridge::set_reg(5, dk::to_u32(*a3), 4);
+    dk::bridge::set_reg(8, dk::to_u32(*a4), 4);
+    dk::bridge::set_reg(12, dk::to_u32(*a5), 4);
+    dk::bridge::set_reg(14, dk::to_u32(*a6), 4);
+    dk::flow::call(0x013032u);
+    *a0 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    *a1 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    *a2 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    *a3 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    *a4 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    *a5 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    *a6 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    dk::bridge::restore(saved);
+}
+
+void hc_Drop_RandomHealthB_case2(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6);
+static void dkslot_013032(void)
+{
+    dk::FnScope scope(0x013032u);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    uint32_t v0 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    uint32_t v1 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    uint32_t v2 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    uint32_t v3 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    uint32_t v4 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    uint32_t v5 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    uint32_t v6 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    try {
+        hc_Drop_RandomHealthB_case2(&v0, &v1, &v2, &v3, &v4, &v5, &v6);
+        dk::bridge::set_reg(2, dk::to_u32(v0), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(3, dk::to_u32(v1), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(4, dk::to_u32(v2), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(5, dk::to_u32(v3), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(8, dk::to_u32(v4), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(12, dk::to_u32(v5), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(14, dk::to_u32(v6), dk::val_bytes<uint32_t>());
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void Drop_RandomHealthB_case6(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(2, dk::to_u32(*a0), 4);
+    dk::bridge::set_reg(3, dk::to_u32(*a1), 4);
+    dk::bridge::set_reg(4, dk::to_u32(*a2), 4);
+    dk::bridge::set_reg(5, dk::to_u32(*a3), 4);
+    dk::bridge::set_reg(8, dk::to_u32(*a4), 4);
+    dk::bridge::set_reg(12, dk::to_u32(*a5), 4);
+    dk::bridge::set_reg(14, dk::to_u32(*a6), 4);
+    dk::flow::call(0x013036u);
+    *a0 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    *a1 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    *a2 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    *a3 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    *a4 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    *a5 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    *a6 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    dk::bridge::restore(saved);
+}
+
+void hc_Drop_RandomHealthB_case6(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6);
+static void dkslot_013036(void)
+{
+    dk::FnScope scope(0x013036u);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    uint32_t v0 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    uint32_t v1 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    uint32_t v2 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    uint32_t v3 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    uint32_t v4 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    uint32_t v5 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    uint32_t v6 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    try {
+        hc_Drop_RandomHealthB_case6(&v0, &v1, &v2, &v3, &v4, &v5, &v6);
+        dk::bridge::set_reg(2, dk::to_u32(v0), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(3, dk::to_u32(v1), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(4, dk::to_u32(v2), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(5, dk::to_u32(v3), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(8, dk::to_u32(v4), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(12, dk::to_u32(v5), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(14, dk::to_u32(v6), dk::val_bytes<uint32_t>());
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void Drop_HealthA9(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(2, dk::to_u32(*a0), 4);
+    dk::bridge::set_reg(3, dk::to_u32(*a1), 4);
+    dk::bridge::set_reg(4, dk::to_u32(*a2), 4);
+    dk::bridge::set_reg(5, dk::to_u32(*a3), 4);
+    dk::bridge::set_reg(8, dk::to_u32(*a4), 4);
+    dk::bridge::set_reg(12, dk::to_u32(*a5), 4);
+    dk::bridge::set_reg(14, dk::to_u32(*a6), 4);
+    dk::flow::call(0x013060u);
+    *a0 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    *a1 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    *a2 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    *a3 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    *a4 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    *a5 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    *a6 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    dk::bridge::restore(saved);
+}
+
+void hc_Drop_HealthA9(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6);
+static void dkslot_013060(void)
+{
+    dk::FnScope scope(0x013060u);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    uint32_t v0 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    uint32_t v1 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    uint32_t v2 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    uint32_t v3 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    uint32_t v4 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    uint32_t v5 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    uint32_t v6 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    try {
+        hc_Drop_HealthA9(&v0, &v1, &v2, &v3, &v4, &v5, &v6);
+        dk::bridge::set_reg(2, dk::to_u32(v0), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(3, dk::to_u32(v1), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(4, dk::to_u32(v2), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(5, dk::to_u32(v3), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(8, dk::to_u32(v4), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(12, dk::to_u32(v5), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(14, dk::to_u32(v6), dk::val_bytes<uint32_t>());
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
 void Ending_AsylumGate(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6, uint32_t * a7, uint32_t * a8, uint32_t * a9, uint32_t * a10)
 {
     uint32_t saved[15]; dk::bridge::save(saved);
@@ -33856,6 +34260,192 @@ static void dkslot_008CF0(void)
     dk::flow::g_left = 0;
     try {
         hc_Hitbox_ScanOfIdDone();
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void Hitbox_KindAllEnemies(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6, uint32_t * a7, uint32_t a8, uint32_t * a9, uint32_t a10, uint32_t * a11, uint32_t a12, uint32_t * a13)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(8, dk::to_u32(a8), 4);
+    dk::bridge::set_reg(11, dk::to_u32(a10), 4);
+    dk::bridge::set_reg(13, dk::to_u32(a12), 4);
+    dk::bridge::set_reg(0, dk::to_u32(*a0), 4);
+    dk::bridge::set_reg(1, dk::to_u32(*a1), 4);
+    dk::bridge::set_reg(2, dk::to_u32(*a2), 4);
+    dk::bridge::set_reg(3, dk::to_u32(*a3), 4);
+    dk::bridge::set_reg(4, dk::to_u32(*a4), 4);
+    dk::bridge::set_reg(5, dk::to_u32(*a5), 4);
+    dk::bridge::set_reg(6, dk::to_u32(*a6), 4);
+    dk::bridge::set_reg(7, dk::to_u32(*a7), 4);
+    dk::bridge::set_reg(9, dk::to_u32(*a9), 4);
+    dk::bridge::set_reg(12, dk::to_u32(*a11), 4);
+    dk::bridge::set_reg(14, dk::to_u32(*a13), 4);
+    dk::flow::call(0x004E2Eu);
+    *a0 = dk::from_u32<uint32_t>(dk::bridge::reg(0));
+    *a1 = dk::from_u32<uint32_t>(dk::bridge::reg(1));
+    *a2 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    *a3 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    *a4 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    *a5 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    *a6 = dk::from_u32<uint32_t>(dk::bridge::reg(6));
+    *a7 = dk::from_u32<uint32_t>(dk::bridge::reg(7));
+    *a9 = dk::from_u32<uint32_t>(dk::bridge::reg(9));
+    *a11 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    *a13 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    dk::bridge::restore(saved);
+}
+
+void hc_Hitbox_KindAllEnemies(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6, uint32_t * a7, uint32_t a8, uint32_t * a9, uint32_t a10, uint32_t * a11, uint32_t a12, uint32_t * a13);
+static void dkslot_004E2E(void)
+{
+    dk::FnScope scope(0x004E2Eu);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    uint32_t v0 = dk::from_u32<uint32_t>(dk::bridge::reg(0));
+    uint32_t v1 = dk::from_u32<uint32_t>(dk::bridge::reg(1));
+    uint32_t v2 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    uint32_t v3 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    uint32_t v4 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    uint32_t v5 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    uint32_t v6 = dk::from_u32<uint32_t>(dk::bridge::reg(6));
+    uint32_t v7 = dk::from_u32<uint32_t>(dk::bridge::reg(7));
+    uint32_t v9 = dk::from_u32<uint32_t>(dk::bridge::reg(9));
+    uint32_t v11 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    uint32_t v13 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    try {
+        hc_Hitbox_KindAllEnemies(&v0, &v1, &v2, &v3, &v4, &v5, &v6, &v7, dk::from_u32<uint32_t>(dk::bridge::reg(8)), &v9, dk::from_u32<uint32_t>(dk::bridge::reg(11)), &v11, dk::from_u32<uint32_t>(dk::bridge::reg(13)), &v13);
+        dk::bridge::set_reg(0, dk::to_u32(v0), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(1, dk::to_u32(v1), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(2, dk::to_u32(v2), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(3, dk::to_u32(v3), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(4, dk::to_u32(v4), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(5, dk::to_u32(v5), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(6, dk::to_u32(v6), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(7, dk::to_u32(v7), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(9, dk::to_u32(v9), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(12, dk::to_u32(v11), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(14, dk::to_u32(v13), dk::val_bytes<uint32_t>());
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void Hitbox_HitAllEnemyBoxes(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6, uint32_t * a7, uint32_t a8, uint32_t * a9, uint32_t * a10, uint32_t a11, uint32_t * a12, uint32_t a13, uint32_t * a14)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(8, dk::to_u32(a8), 4);
+    dk::bridge::set_reg(11, dk::to_u32(a11), 4);
+    dk::bridge::set_reg(13, dk::to_u32(a13), 4);
+    dk::bridge::set_reg(0, dk::to_u32(*a0), 4);
+    dk::bridge::set_reg(1, dk::to_u32(*a1), 4);
+    dk::bridge::set_reg(2, dk::to_u32(*a2), 4);
+    dk::bridge::set_reg(3, dk::to_u32(*a3), 4);
+    dk::bridge::set_reg(4, dk::to_u32(*a4), 4);
+    dk::bridge::set_reg(5, dk::to_u32(*a5), 4);
+    dk::bridge::set_reg(6, dk::to_u32(*a6), 4);
+    dk::bridge::set_reg(7, dk::to_u32(*a7), 4);
+    dk::bridge::set_reg(9, dk::to_u32(*a9), 4);
+    dk::bridge::set_reg(10, dk::to_u32(*a10), 4);
+    dk::bridge::set_reg(12, dk::to_u32(*a12), 4);
+    dk::bridge::set_reg(14, dk::to_u32(*a14), 4);
+    dk::flow::call(0x004E4Au);
+    *a0 = dk::from_u32<uint32_t>(dk::bridge::reg(0));
+    *a1 = dk::from_u32<uint32_t>(dk::bridge::reg(1));
+    *a2 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    *a3 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    *a4 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    *a5 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    *a6 = dk::from_u32<uint32_t>(dk::bridge::reg(6));
+    *a7 = dk::from_u32<uint32_t>(dk::bridge::reg(7));
+    *a9 = dk::from_u32<uint32_t>(dk::bridge::reg(9));
+    *a10 = dk::from_u32<uint32_t>(dk::bridge::reg(10));
+    *a12 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    *a14 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    dk::bridge::restore(saved);
+}
+
+void hc_Hitbox_HitAllEnemyBoxes(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6, uint32_t * a7, uint32_t a8, uint32_t * a9, uint32_t * a10, uint32_t a11, uint32_t * a12, uint32_t a13, uint32_t * a14);
+static void dkslot_004E4A(void)
+{
+    dk::FnScope scope(0x004E4Au);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    uint32_t v0 = dk::from_u32<uint32_t>(dk::bridge::reg(0));
+    uint32_t v1 = dk::from_u32<uint32_t>(dk::bridge::reg(1));
+    uint32_t v2 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    uint32_t v3 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    uint32_t v4 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    uint32_t v5 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    uint32_t v6 = dk::from_u32<uint32_t>(dk::bridge::reg(6));
+    uint32_t v7 = dk::from_u32<uint32_t>(dk::bridge::reg(7));
+    uint32_t v9 = dk::from_u32<uint32_t>(dk::bridge::reg(9));
+    uint32_t v10 = dk::from_u32<uint32_t>(dk::bridge::reg(10));
+    uint32_t v12 = dk::from_u32<uint32_t>(dk::bridge::reg(12));
+    uint32_t v14 = dk::from_u32<uint32_t>(dk::bridge::reg(14));
+    try {
+        hc_Hitbox_HitAllEnemyBoxes(&v0, &v1, &v2, &v3, &v4, &v5, &v6, &v7, dk::from_u32<uint32_t>(dk::bridge::reg(8)), &v9, &v10, dk::from_u32<uint32_t>(dk::bridge::reg(11)), &v12, dk::from_u32<uint32_t>(dk::bridge::reg(13)), &v14);
+        dk::bridge::set_reg(0, dk::to_u32(v0), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(1, dk::to_u32(v1), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(2, dk::to_u32(v2), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(3, dk::to_u32(v3), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(4, dk::to_u32(v4), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(5, dk::to_u32(v5), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(6, dk::to_u32(v6), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(7, dk::to_u32(v7), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(9, dk::to_u32(v9), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(10, dk::to_u32(v10), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(12, dk::to_u32(v12), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(14, dk::to_u32(v14), dk::val_bytes<uint32_t>());
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void Hitbox_LinkByKind_AllPlayers(uint32_t a0, uint32_t a1)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(8, dk::to_u32(a0), 4);
+    dk::bridge::set_reg(9, dk::to_u32(a1), 4);
+    dk::flow::call(0x004F42u);
+    dk::bridge::restore(saved);
+}
+
+void hc_Hitbox_LinkByKind_AllPlayers(uint32_t a0, uint32_t a1);
+static void dkslot_004F42(void)
+{
+    dk::FnScope scope(0x004F42u);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    try {
+        hc_Hitbox_LinkByKind_AllPlayers(dk::from_u32<uint32_t>(dk::bridge::reg(8)), dk::from_u32<uint32_t>(dk::bridge::reg(9)));
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void Hitbox_LinkByKind_AllEnemies(uint32_t a0, uint32_t a1)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(8, dk::to_u32(a0), 4);
+    dk::bridge::set_reg(9, dk::to_u32(a1), 4);
+    dk::flow::call(0x004F4Au);
+    dk::bridge::restore(saved);
+}
+
+void hc_Hitbox_LinkByKind_AllEnemies(uint32_t a0, uint32_t a1);
+static void dkslot_004F4A(void)
+{
+    dk::FnScope scope(0x004F4Au);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    try {
+        hc_Hitbox_LinkByKind_AllEnemies(dk::from_u32<uint32_t>(dk::bridge::reg(8)), dk::from_u32<uint32_t>(dk::bridge::reg(9)));
         if (!dk::flow::g_left) dk::flow::rts();
     } catch (dk::Unwind &) {
     }
@@ -59649,6 +60239,249 @@ static void dkslot_004EF4(void)
     dk::flow::g_left = left0;
 }
 
+void Op2_BranchTouchBox_KindC(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6, uint32_t * a7, uint32_t * a8, uint32_t * a9, const u16 ** a10, uint32_t a11, uint32_t a12, uint32_t a13)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(12, dk::to_u32(a11), 4);
+    dk::bridge::set_reg(13, dk::to_u32(a12), 4);
+    dk::bridge::set_reg(14, dk::to_u32(a13), 4);
+    dk::bridge::set_reg(0, dk::to_u32(*a0), 4);
+    dk::bridge::set_reg(1, dk::to_u32(*a1), 4);
+    dk::bridge::set_reg(2, dk::to_u32(*a2), 4);
+    dk::bridge::set_reg(3, dk::to_u32(*a3), 4);
+    dk::bridge::set_reg(4, dk::to_u32(*a4), 4);
+    dk::bridge::set_reg(5, dk::to_u32(*a5), 4);
+    dk::bridge::set_reg(6, dk::to_u32(*a6), 4);
+    dk::bridge::set_reg(7, dk::to_u32(*a7), 4);
+    dk::bridge::set_reg(8, dk::to_u32(*a8), 4);
+    dk::bridge::set_reg(9, dk::to_u32(*a9), 4);
+    dk::bridge::set_reg(10, dk::to_u32(*a10), 4);
+    dk::flow::call(0x003756u);
+    *a0 = dk::from_u32<uint32_t>(dk::bridge::reg(0));
+    *a1 = dk::from_u32<uint32_t>(dk::bridge::reg(1));
+    *a2 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    *a3 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    *a4 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    *a5 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    *a6 = dk::from_u32<uint32_t>(dk::bridge::reg(6));
+    *a7 = dk::from_u32<uint32_t>(dk::bridge::reg(7));
+    *a8 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    *a9 = dk::from_u32<uint32_t>(dk::bridge::reg(9));
+    *a10 = dk::from_u32<const u16 *>(dk::bridge::reg(10));
+    dk::bridge::restore(saved);
+}
+
+void hc_Op2_BranchTouchBox_KindC(uint32_t * a0, uint32_t * a1, uint32_t * a2, uint32_t * a3, uint32_t * a4, uint32_t * a5, uint32_t * a6, uint32_t * a7, uint32_t * a8, uint32_t * a9, const u16 ** a10, uint32_t a11, uint32_t a12, uint32_t a13);
+static void dkslot_003756(void)
+{
+    dk::FnScope scope(0x003756u);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    uint32_t v0 = dk::from_u32<uint32_t>(dk::bridge::reg(0));
+    uint32_t v1 = dk::from_u32<uint32_t>(dk::bridge::reg(1));
+    uint32_t v2 = dk::from_u32<uint32_t>(dk::bridge::reg(2));
+    uint32_t v3 = dk::from_u32<uint32_t>(dk::bridge::reg(3));
+    uint32_t v4 = dk::from_u32<uint32_t>(dk::bridge::reg(4));
+    uint32_t v5 = dk::from_u32<uint32_t>(dk::bridge::reg(5));
+    uint32_t v6 = dk::from_u32<uint32_t>(dk::bridge::reg(6));
+    uint32_t v7 = dk::from_u32<uint32_t>(dk::bridge::reg(7));
+    uint32_t v8 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    uint32_t v9 = dk::from_u32<uint32_t>(dk::bridge::reg(9));
+    const u16 * v10 = dk::from_u32<const u16 *>(dk::bridge::reg(10));
+    try {
+        hc_Op2_BranchTouchBox_KindC(&v0, &v1, &v2, &v3, &v4, &v5, &v6, &v7, &v8, &v9, &v10, dk::from_u32<uint32_t>(dk::bridge::reg(12)), dk::from_u32<uint32_t>(dk::bridge::reg(13)), dk::from_u32<uint32_t>(dk::bridge::reg(14)));
+        dk::bridge::set_reg(0, dk::to_u32(v0), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(1, dk::to_u32(v1), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(2, dk::to_u32(v2), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(3, dk::to_u32(v3), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(4, dk::to_u32(v4), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(5, dk::to_u32(v5), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(6, dk::to_u32(v6), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(7, dk::to_u32(v7), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(8, dk::to_u32(v8), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(9, dk::to_u32(v9), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(10, dk::to_u32(v10), dk::val_bytes<const u16 *>());
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void Op2_SetTimer1Rand(uint32_t * a0, uint32_t * a1, const u16 ** a2, Vm2Block * a3)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(12, dk::to_u32(a3), 4);
+    dk::bridge::set_reg(0, dk::to_u32(*a0), 4);
+    dk::bridge::set_reg(8, dk::to_u32(*a1), 4);
+    dk::bridge::set_reg(10, dk::to_u32(*a2), 4);
+    dk::flow::call(0x000F88u);
+    *a0 = dk::from_u32<uint32_t>(dk::bridge::reg(0));
+    *a1 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    *a2 = dk::from_u32<const u16 *>(dk::bridge::reg(10));
+    dk::bridge::restore(saved);
+}
+
+void hc_Op2_SetTimer1Rand(uint32_t * a0, uint32_t * a1, const u16 ** a2, Vm2Block * a3);
+static void dkslot_000F88(void)
+{
+    dk::FnScope scope(0x000F88u);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    uint32_t v0 = dk::from_u32<uint32_t>(dk::bridge::reg(0));
+    uint32_t v1 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    const u16 * v2 = dk::from_u32<const u16 *>(dk::bridge::reg(10));
+    try {
+        hc_Op2_SetTimer1Rand(&v0, &v1, &v2, dk::from_u32<Vm2Block *>(dk::bridge::reg(12)));
+        dk::bridge::set_reg(0, dk::to_u32(v0), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(8, dk::to_u32(v1), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(10, dk::to_u32(v2), dk::val_bytes<const u16 *>());
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void Op2_BranchVar1Ne(uint16_t * a0, uint32_t * a1, const u16 ** a2, Vm2Block * a3)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(12, dk::to_u32(a3), 4);
+    dk::bridge::set_reg(0, dk::to_u32(*a0), 4);
+    dk::bridge::set_reg(8, dk::to_u32(*a1), 4);
+    dk::bridge::set_reg(10, dk::to_u32(*a2), 4);
+    dk::flow::call(0x002130u);
+    *a0 = dk::from_u32<uint16_t>(dk::bridge::reg(0));
+    *a1 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    *a2 = dk::from_u32<const u16 *>(dk::bridge::reg(10));
+    dk::bridge::restore(saved);
+}
+
+void hc_Op2_BranchVar1Ne(uint16_t * a0, uint32_t * a1, const u16 ** a2, Vm2Block * a3);
+static void dkslot_002130(void)
+{
+    dk::FnScope scope(0x002130u);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    uint16_t v0 = dk::from_u32<uint16_t>(dk::bridge::reg(0));
+    uint32_t v1 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    const u16 * v2 = dk::from_u32<const u16 *>(dk::bridge::reg(10));
+    try {
+        hc_Op2_BranchVar1Ne(&v0, &v1, &v2, dk::from_u32<Vm2Block *>(dk::bridge::reg(12)));
+        dk::bridge::set_reg(0, dk::to_u32(v0), dk::val_bytes<uint16_t>());
+        dk::bridge::set_reg(8, dk::to_u32(v1), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(10, dk::to_u32(v2), dk::val_bytes<const u16 *>());
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void Op2_BranchVar1Gt(uint16_t * a0, uint32_t * a1, const u16 ** a2, Vm2Block * a3)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(12, dk::to_u32(a3), 4);
+    dk::bridge::set_reg(0, dk::to_u32(*a0), 4);
+    dk::bridge::set_reg(8, dk::to_u32(*a1), 4);
+    dk::bridge::set_reg(10, dk::to_u32(*a2), 4);
+    dk::flow::call(0x002140u);
+    *a0 = dk::from_u32<uint16_t>(dk::bridge::reg(0));
+    *a1 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    *a2 = dk::from_u32<const u16 *>(dk::bridge::reg(10));
+    dk::bridge::restore(saved);
+}
+
+void hc_Op2_BranchVar1Gt(uint16_t * a0, uint32_t * a1, const u16 ** a2, Vm2Block * a3);
+static void dkslot_002140(void)
+{
+    dk::FnScope scope(0x002140u);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    uint16_t v0 = dk::from_u32<uint16_t>(dk::bridge::reg(0));
+    uint32_t v1 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    const u16 * v2 = dk::from_u32<const u16 *>(dk::bridge::reg(10));
+    try {
+        hc_Op2_BranchVar1Gt(&v0, &v1, &v2, dk::from_u32<Vm2Block *>(dk::bridge::reg(12)));
+        dk::bridge::set_reg(0, dk::to_u32(v0), dk::val_bytes<uint16_t>());
+        dk::bridge::set_reg(8, dk::to_u32(v1), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(10, dk::to_u32(v2), dk::val_bytes<const u16 *>());
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void Op2_ApplyMoveBranchAtY(uint32_t * a0, uint32_t a1, uint32_t a2, uint32_t * a3, const u16 ** a4, Vm2Obj * a5)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(1, dk::to_u32(a1), 4);
+    dk::bridge::set_reg(2, dk::to_u32(a2), 4);
+    dk::bridge::set_reg(14, dk::to_u32(a5), 4);
+    dk::bridge::set_reg(0, dk::to_u32(*a0), 4);
+    dk::bridge::set_reg(8, dk::to_u32(*a3), 4);
+    dk::bridge::set_reg(10, dk::to_u32(*a4), 4);
+    dk::flow::call(0x004C5Eu);
+    *a0 = dk::from_u32<uint32_t>(dk::bridge::reg(0));
+    *a3 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    *a4 = dk::from_u32<const u16 *>(dk::bridge::reg(10));
+    dk::bridge::restore(saved);
+}
+
+void hc_Op2_ApplyMoveBranchAtY(uint32_t * a0, uint32_t a1, uint32_t a2, uint32_t * a3, const u16 ** a4, Vm2Obj * a5);
+static void dkslot_004C5E(void)
+{
+    dk::FnScope scope(0x004C5Eu);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    uint32_t v0 = dk::from_u32<uint32_t>(dk::bridge::reg(0));
+    uint32_t v3 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    const u16 * v4 = dk::from_u32<const u16 *>(dk::bridge::reg(10));
+    try {
+        hc_Op2_ApplyMoveBranchAtY(&v0, dk::from_u32<uint32_t>(dk::bridge::reg(1)), dk::from_u32<uint32_t>(dk::bridge::reg(2)), &v3, &v4, dk::from_u32<Vm2Obj *>(dk::bridge::reg(14)));
+        dk::bridge::set_reg(0, dk::to_u32(v0), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(8, dk::to_u32(v3), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(10, dk::to_u32(v4), dk::val_bytes<const u16 *>());
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void Op2_ApplyMoveLandAtY(uint32_t * a0, uint32_t a1, uint32_t a2, uint32_t * a3, const u16 ** a4, Vm2Motion * a5, Vm2Obj * a6)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(1, dk::to_u32(a1), 4);
+    dk::bridge::set_reg(2, dk::to_u32(a2), 4);
+    dk::bridge::set_reg(11, dk::to_u32(a5), 4);
+    dk::bridge::set_reg(14, dk::to_u32(a6), 4);
+    dk::bridge::set_reg(0, dk::to_u32(*a0), 4);
+    dk::bridge::set_reg(8, dk::to_u32(*a3), 4);
+    dk::bridge::set_reg(10, dk::to_u32(*a4), 4);
+    dk::flow::call(0x004C9Au);
+    *a0 = dk::from_u32<uint32_t>(dk::bridge::reg(0));
+    *a3 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    *a4 = dk::from_u32<const u16 *>(dk::bridge::reg(10));
+    dk::bridge::restore(saved);
+}
+
+void hc_Op2_ApplyMoveLandAtY(uint32_t * a0, uint32_t a1, uint32_t a2, uint32_t * a3, const u16 ** a4, Vm2Motion * a5, Vm2Obj * a6);
+static void dkslot_004C9A(void)
+{
+    dk::FnScope scope(0x004C9Au);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    uint32_t v0 = dk::from_u32<uint32_t>(dk::bridge::reg(0));
+    uint32_t v3 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    const u16 * v4 = dk::from_u32<const u16 *>(dk::bridge::reg(10));
+    try {
+        hc_Op2_ApplyMoveLandAtY(&v0, dk::from_u32<uint32_t>(dk::bridge::reg(1)), dk::from_u32<uint32_t>(dk::bridge::reg(2)), &v3, &v4, dk::from_u32<Vm2Motion *>(dk::bridge::reg(11)), dk::from_u32<Vm2Obj *>(dk::bridge::reg(14)));
+        dk::bridge::set_reg(0, dk::to_u32(v0), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(8, dk::to_u32(v3), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(10, dk::to_u32(v4), dk::val_bytes<const u16 *>());
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
 void Op4_SetResume(const u16 ** a0, Vm4Obj * a1)
 {
     uint32_t saved[15]; dk::bridge::save(saved);
@@ -66141,6 +66974,56 @@ static void dkslot_0069A8(void)
         dk::bridge::set_reg(10, dk::to_u32(v9), dk::val_bytes<uint32_t>());
         dk::bridge::set_reg(12, dk::to_u32(v10), dk::val_bytes<const u16 *>());
         dk::bridge::flags_set(&v12);
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void Op4_ForkAndEnd(uint32_t * a0, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, uint32_t * a5, uint32_t * a6, uint32_t * a7, const u16 ** a8, uint32_t * a9, uint32_t a10)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(2, dk::to_u32(a1), 4);
+    dk::bridge::set_reg(3, dk::to_u32(a2), 4);
+    dk::bridge::set_reg(4, dk::to_u32(a3), 4);
+    dk::bridge::set_reg(5, dk::to_u32(a4), 4);
+    dk::bridge::set_reg(14, dk::to_u32(a10), 4);
+    dk::bridge::set_reg(0, dk::to_u32(*a0), 4);
+    dk::bridge::set_reg(8, dk::to_u32(*a5), 4);
+    dk::bridge::set_reg(9, dk::to_u32(*a6), 4);
+    dk::bridge::set_reg(11, dk::to_u32(*a7), 4);
+    dk::bridge::set_reg(12, dk::to_u32(*a8), 4);
+    dk::bridge::set_reg(13, dk::to_u32(*a9), 4);
+    dk::flow::call(0x0060BCu);
+    *a0 = dk::from_u32<uint32_t>(dk::bridge::reg(0));
+    *a5 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    *a6 = dk::from_u32<uint32_t>(dk::bridge::reg(9));
+    *a7 = dk::from_u32<uint32_t>(dk::bridge::reg(11));
+    *a8 = dk::from_u32<const u16 *>(dk::bridge::reg(12));
+    *a9 = dk::from_u32<uint32_t>(dk::bridge::reg(13));
+    dk::bridge::restore(saved);
+}
+
+void hc_Op4_ForkAndEnd(uint32_t * a0, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, uint32_t * a5, uint32_t * a6, uint32_t * a7, const u16 ** a8, uint32_t * a9, uint32_t a10);
+static void dkslot_0060BC(void)
+{
+    dk::FnScope scope(0x0060BCu);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    uint32_t v0 = dk::from_u32<uint32_t>(dk::bridge::reg(0));
+    uint32_t v5 = dk::from_u32<uint32_t>(dk::bridge::reg(8));
+    uint32_t v6 = dk::from_u32<uint32_t>(dk::bridge::reg(9));
+    uint32_t v7 = dk::from_u32<uint32_t>(dk::bridge::reg(11));
+    const u16 * v8 = dk::from_u32<const u16 *>(dk::bridge::reg(12));
+    uint32_t v9 = dk::from_u32<uint32_t>(dk::bridge::reg(13));
+    try {
+        hc_Op4_ForkAndEnd(&v0, dk::from_u32<uint32_t>(dk::bridge::reg(2)), dk::from_u32<uint32_t>(dk::bridge::reg(3)), dk::from_u32<uint32_t>(dk::bridge::reg(4)), dk::from_u32<uint32_t>(dk::bridge::reg(5)), &v5, &v6, &v7, &v8, &v9, dk::from_u32<uint32_t>(dk::bridge::reg(14)));
+        dk::bridge::set_reg(0, dk::to_u32(v0), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(8, dk::to_u32(v5), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(9, dk::to_u32(v6), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(11, dk::to_u32(v7), dk::val_bytes<uint32_t>());
+        dk::bridge::set_reg(12, dk::to_u32(v8), dk::val_bytes<const u16 *>());
+        dk::bridge::set_reg(13, dk::to_u32(v9), dk::val_bytes<uint32_t>());
         if (!dk::flow::g_left) dk::flow::rts();
     } catch (dk::Unwind &) {
     }
@@ -91754,6 +92637,160 @@ static void dkslot_00AEFC(void)
     dk::flow::g_left = left0;
 }
 
+void VInt_BusyMode04(uint32_t a0)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(8, dk::to_u32(a0), 4);
+    dk::flow::call(0x00AEC8u);
+    dk::bridge::restore(saved);
+}
+
+void hc_VInt_BusyMode04(uint32_t a0);
+static void dkslot_00AEC8(void)
+{
+    dk::FnScope scope(0x00AEC8u);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    try {
+        hc_VInt_BusyMode04(dk::from_u32<uint32_t>(dk::bridge::reg(8)));
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void VInt_BusyMode14(uint32_t a0)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(8, dk::to_u32(a0), 4);
+    dk::flow::call(0x00AED8u);
+    dk::bridge::restore(saved);
+}
+
+void hc_VInt_BusyMode14(uint32_t a0);
+static void dkslot_00AED8(void)
+{
+    dk::FnScope scope(0x00AED8u);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    try {
+        hc_VInt_BusyMode14(dk::from_u32<uint32_t>(dk::bridge::reg(8)));
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void VInt_BusyMode18(uint32_t a0)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(8, dk::to_u32(a0), 4);
+    dk::flow::call(0x00AEDCu);
+    dk::bridge::restore(saved);
+}
+
+void hc_VInt_BusyMode18(uint32_t a0);
+static void dkslot_00AEDC(void)
+{
+    dk::FnScope scope(0x00AEDCu);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    try {
+        hc_VInt_BusyMode18(dk::from_u32<uint32_t>(dk::bridge::reg(8)));
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void VInt_BusyMode1C(uint32_t a0)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(8, dk::to_u32(a0), 4);
+    dk::flow::call(0x00AEE0u);
+    dk::bridge::restore(saved);
+}
+
+void hc_VInt_BusyMode1C(uint32_t a0);
+static void dkslot_00AEE0(void)
+{
+    dk::FnScope scope(0x00AEE0u);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    try {
+        hc_VInt_BusyMode1C(dk::from_u32<uint32_t>(dk::bridge::reg(8)));
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void VInt_BusyMode24(uint32_t a0)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(8, dk::to_u32(a0), 4);
+    dk::flow::call(0x00AEE8u);
+    dk::bridge::restore(saved);
+}
+
+void hc_VInt_BusyMode24(uint32_t a0);
+static void dkslot_00AEE8(void)
+{
+    dk::FnScope scope(0x00AEE8u);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    try {
+        hc_VInt_BusyMode24(dk::from_u32<uint32_t>(dk::bridge::reg(8)));
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void VInt_BusyMode30(uint32_t a0)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(8, dk::to_u32(a0), 4);
+    dk::flow::call(0x00AEF4u);
+    dk::bridge::restore(saved);
+}
+
+void hc_VInt_BusyMode30(uint32_t a0);
+static void dkslot_00AEF4(void)
+{
+    dk::FnScope scope(0x00AEF4u);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    try {
+        hc_VInt_BusyMode30(dk::from_u32<uint32_t>(dk::bridge::reg(8)));
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
+void VInt_BusyMode3C(uint32_t a0)
+{
+    uint32_t saved[15]; dk::bridge::save(saved);
+    dk::bridge::set_reg(8, dk::to_u32(a0), 4);
+    dk::flow::call(0x00AF00u);
+    dk::bridge::restore(saved);
+}
+
+void hc_VInt_BusyMode3C(uint32_t a0);
+static void dkslot_00AF00(void)
+{
+    dk::FnScope scope(0x00AF00u);
+    int left0 = dk::flow::g_left;
+    dk::flow::g_left = 0;
+    try {
+        hc_VInt_BusyMode3C(dk::from_u32<uint32_t>(dk::bridge::reg(8)));
+        if (!dk::flow::g_left) dk::flow::rts();
+    } catch (dk::Unwind &) {
+    }
+    dk::flow::g_left = left0;
+}
+
 void VIntObj_RunList(uint32_t a0, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, uint32_t a5, uint32_t a6, uint32_t * a7, uint32_t * a8, uint32_t * a9)
 {
     uint32_t saved[15]; dk::bridge::save(saved);
@@ -95359,6 +96396,7 @@ extern "C" const DkCodeEntry dk_code_table[] = {
     { 0x000EF6u, dkslot_000EF6 },
     { 0x000F2Eu, dkslot_000F2E },
     { 0x000F80u, dkslot_000F80 },
+    { 0x000F88u, dkslot_000F88 },
     { 0x000F9Au, dkslot_000F9A },
     { 0x000FA2u, dkslot_000FA2 },
     { 0x001000u, dkslot_001000 },
@@ -95526,6 +96564,8 @@ extern "C" const DkCodeEntry dk_code_table[] = {
     { 0x002100u, dkslot_002100 },
     { 0x002110u, dkslot_002110 },
     { 0x002120u, dkslot_002120 },
+    { 0x002130u, dkslot_002130 },
+    { 0x002140u, dkslot_002140 },
     { 0x002150u, dkslot_002150 },
     { 0x002180u, dkslot_002180 },
     { 0x002188u, dkslot_002188 },
@@ -95620,6 +96660,7 @@ extern "C" const DkCodeEntry dk_code_table[] = {
     { 0x00374Au, dkslot_00374A },
     { 0x00374Eu, dkslot_00374E },
     { 0x003752u, dkslot_003752 },
+    { 0x003756u, dkslot_003756 },
     { 0x00375Au, dkslot_00375A },
     { 0x003760u, dkslot_003760 },
     { 0x003768u, dkslot_003768 },
@@ -95742,6 +96783,8 @@ extern "C" const DkCodeEntry dk_code_table[] = {
     { 0x004C1Eu, dkslot_004C1E },
     { 0x004C38u, dkslot_004C38 },
     { 0x004C52u, dkslot_004C52 },
+    { 0x004C5Eu, dkslot_004C5E },
+    { 0x004C9Au, dkslot_004C9A },
     { 0x004CDAu, dkslot_004CDA },
     { 0x004D9Cu, dkslot_004D9C },
     { 0x004DA4u, dkslot_004DA4 },
@@ -95750,9 +96793,11 @@ extern "C" const DkCodeEntry dk_code_table[] = {
     { 0x004E22u, dkslot_004E22 },
     { 0x004E26u, dkslot_004E26 },
     { 0x004E2Au, dkslot_004E2A },
+    { 0x004E2Eu, dkslot_004E2E },
     { 0x004E32u, dkslot_004E32 },
     { 0x004E3Au, dkslot_004E3A },
     { 0x004E42u, dkslot_004E42 },
+    { 0x004E4Au, dkslot_004E4A },
     { 0x004E52u, dkslot_004E52 },
     { 0x004E64u, dkslot_004E64 },
     { 0x004EA8u, dkslot_004EA8 },
@@ -95760,7 +96805,9 @@ extern "C" const DkCodeEntry dk_code_table[] = {
     { 0x004EF4u, dkslot_004EF4 },
     { 0x004EF6u, dkslot_004EF6 },
     { 0x004F3Eu, dkslot_004F3E },
+    { 0x004F42u, dkslot_004F42 },
     { 0x004F46u, dkslot_004F46 },
+    { 0x004F4Au, dkslot_004F4A },
     { 0x004F4Eu, dkslot_004F4E },
     { 0x004F68u, dkslot_004F68 },
     { 0x004F9Eu, dkslot_004F9E },
@@ -95905,6 +96952,7 @@ extern "C" const DkCodeEntry dk_code_table[] = {
     { 0x00609Eu, dkslot_00609E },
     { 0x0060ACu, dkslot_0060AC },
     { 0x0060B8u, dkslot_0060B8 },
+    { 0x0060BCu, dkslot_0060BC },
     { 0x0060C2u, dkslot_0060C2 },
     { 0x0060C4u, dkslot_0060C4 },
     { 0x006116u, dkslot_006116 },
@@ -96346,13 +97394,20 @@ extern "C" const DkCodeEntry dk_code_table[] = {
     { 0x00AEB8u, dkslot_00AEB8 },
     { 0x00AEBCu, dkslot_00AEBC },
     { 0x00AEC4u, dkslot_00AEC4 },
+    { 0x00AEC8u, dkslot_00AEC8 },
     { 0x00AECCu, dkslot_00AECC },
     { 0x00AED0u, dkslot_00AED0 },
     { 0x00AED4u, dkslot_00AED4 },
+    { 0x00AED8u, dkslot_00AED8 },
+    { 0x00AEDCu, dkslot_00AEDC },
+    { 0x00AEE0u, dkslot_00AEE0 },
+    { 0x00AEE8u, dkslot_00AEE8 },
     { 0x00AEECu, dkslot_00AEEC },
     { 0x00AEF0u, dkslot_00AEF0 },
+    { 0x00AEF4u, dkslot_00AEF4 },
     { 0x00AEF8u, dkslot_00AEF8 },
     { 0x00AEFCu, dkslot_00AEFC },
+    { 0x00AF00u, dkslot_00AF00 },
     { 0x00AF04u, dkslot_00AF04 },
     { 0x00AF0Au, dkslot_00AF0A },
     { 0x00AF10u, dkslot_00AF10 },
@@ -96562,13 +97617,21 @@ extern "C" const DkCodeEntry dk_code_table[] = {
     { 0x012EEEu, dkslot_012EEE },
     { 0x012FB8u, dkslot_012FB8 },
     { 0x012FBCu, dkslot_012FBC },
+    { 0x012FE4u, dkslot_012FE4 },
+    { 0x013006u, dkslot_013006 },
+    { 0x013008u, dkslot_013008 },
+    { 0x01300Au, dkslot_01300A },
+    { 0x01300Cu, dkslot_01300C },
     { 0x01300Eu, dkslot_01300E },
     { 0x013030u, dkslot_013030 },
+    { 0x013032u, dkslot_013032 },
     { 0x013034u, dkslot_013034 },
+    { 0x013036u, dkslot_013036 },
     { 0x013038u, dkslot_013038 },
     { 0x013042u, dkslot_013042 },
     { 0x01304Cu, dkslot_01304C },
     { 0x013056u, dkslot_013056 },
+    { 0x013060u, dkslot_013060 },
     { 0x01306Au, dkslot_01306A },
     { 0x013074u, dkslot_013074 },
     { 0x01307Eu, dkslot_01307E },
@@ -97566,4 +98629,4 @@ extern "C" const DkCodeEntry dk_code_table[] = {
     { 0x1E7D52u, dkslot_1E7D52 },
     { 0, nullptr }
 };
-extern "C" const int dk_code_count = 2287;
+extern "C" const int dk_code_count = 2313;

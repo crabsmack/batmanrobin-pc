@@ -179,3 +179,4 @@ void Op4TerrainFn(uint32_t code, uint32_t *d0, uint32_t *d1, uint32_t *d2, uint3
 /* the native hit routine of Op4_HitPlayers (`jsr (a3)` at $660A, the long operand: e.g. $106A8), called once per player
  * box overlapping the test rectangle with a2 = the box and d4-d7 = the rectangle: every register */
 void Op4HitFn(uint32_t code, uint32_t *d0, uint32_t *d1, uint32_t *d2, uint32_t *d3, uint32_t *d4, uint32_t *d5, uint32_t *d6, uint32_t *d7, uint32_t *a0, uint32_t *a1, uint32_t *a2, uint32_t *a3, uint32_t *a4, uint32_t *a5, uint32_t *a6);	/* type regs(&d0,&d1,&d2,&d3,&d4,&d5,&d6,&d7,&a0,&a1,&a2,&a3,&a4,&a5,&a6) */
+void Op4_ForkAndEnd(uint32_t *d0, uint32_t d2, uint32_t d3, uint32_t d4, uint32_t d5, uint32_t *a0, uint32_t *a1, uint32_t *a3, const u16 **script, uint32_t *a5, uint32_t a6);	/* $0060BC regs(&d0,d2,d3,d4,d5,&a0,&a1,&a3,&a4,&a5,a6) ccout(NZVC) */

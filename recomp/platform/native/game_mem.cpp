@@ -9,6 +9,7 @@
 
 #include "dk_mem.h"
 #include "native_machine.h"
+#include "state.h"
 
 extern "C" {
 void dk_arena_init(void);
@@ -52,4 +53,13 @@ extern "C" int nm_ram_load(const void *src, size_t len)
     (void)len;
     dk_arena_branch_restore();
     return 1;
+}
+
+/* Quick saves and rewind (state.cpp): the arena's 64 KB of values and its store tags, as they are
+   (host order, the tags saying which bytes hold which units). After nm_ram_init: the arena is mapped
+   once and stays where it is. */
+extern "C" void nm_ram_state_init(void)
+{
+    state_section_range("arena", dk_arena, 0x10000);
+    state_section_range("arena", dk_tags, sizeof dk_tags);
 }

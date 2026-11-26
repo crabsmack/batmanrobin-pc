@@ -32,6 +32,7 @@ namespace dk {
 
 char g_fatal_msg[512];   /* the fatal error ending the run */
 uint32_t g_fn_current;   /* the C function running (the bridge's FnScope) */
+void (*g_fatal_hook)(void);   /* the platform's last word before the exit (the native crash report) */
 
 [[noreturn]] void fatal(const char *fmt, ...)
 {
@@ -41,6 +42,10 @@ uint32_t g_fn_current;   /* the C function running (the bridge's FnScope) */
     va_end(ap);
     fprintf(stderr, "[handc] %s (C function $%06X)\n", g_fatal_msg, (unsigned)g_fn_current);
     fflush(stderr);
+    if (void (*h)(void) = g_fatal_hook) {   /* once: a fatal inside the hook exits plainly */
+        g_fatal_hook = nullptr;
+        h();
+    }
     exit(5);
 }
 
@@ -293,6 +298,35 @@ void branch_restore(void)
     s_ret = s_saved.ret;
     s_rte_pc = s_saved.rte_pc;
     g_fn_current = s_saved.fn;
+}
+
+/* The same state into a caller's buffer (the native runner's quick saves and rewind: many states
+   held at once, platform/native/state.cpp), not the one branch copy above. */
+size_t state_bytes(void) { return sizeof(Saved); }
+
+void state_save(void *dst)
+{
+    Saved s;
+    memset(&s, 0, sizeof s);   /* the padding too: the bytes are compared (the rewind's XOR, its digest) */
+    s.regs = g_regs; s.top = s_top; s.depth = s_depth; s.irq = s_irq; s.left = g_left; s.ret_new = s_ret_new;
+    s.rte = s_rte; s.ret = s_ret; s.rte_pc = s_rte_pc; s.fn = g_fn_current;
+    memcpy(dst, &s, sizeof s);
+}
+
+void state_load(const void *src)
+{
+    Saved s;
+    memcpy(&s, src, sizeof s);
+    g_regs = s.regs;
+    s_top = s.top;
+    s_depth = s.depth;
+    s_irq = s.irq;
+    g_left = s.left;
+    s_ret_new = s.ret_new;
+    s_rte = s.rte;
+    s_ret = s.ret;
+    s_rte_pc = s.rte_pc;
+    g_fn_current = s.fn;
 }
 
 }  /* namespace flow */

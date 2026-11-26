@@ -38,3 +38,10 @@ void VInt_BusyMode0C(uint32_t a0);	/* $00AED0 regs(a0) */
 void VInt_BusyMode10(uint32_t a0);	/* $00AED4 regs(a0) */
 void VInt_BusyMode2C(uint32_t a0);	/* $00AEF0 regs(a0) ccout(NZVC) */
 void VInt_BusyMode38(uint32_t a0);	/* $00AEFC regs(a0) ccout(NZVC) */
+void VInt_BusyMode04(uint32_t a0);	/* $00AEC8 regs(a0) ccout(NZVC) */
+void VInt_BusyMode14(uint32_t a0);	/* $00AED8 regs(a0) ccout(NZVC) */
+void VInt_BusyMode18(uint32_t a0);	/* $00AEDC regs(a0) ccout(NZVC) */
+void VInt_BusyMode1C(uint32_t a0);	/* $00AEE0 regs(a0) ccout(NZVC) */
+void VInt_BusyMode24(uint32_t a0);	/* $00AEE8 regs(a0) ccout(NZVC) */
+void VInt_BusyMode30(uint32_t a0);	/* $00AEF4 regs(a0) ccout(NZVC) */
+void VInt_BusyMode3C(uint32_t a0);	/* $00AF00 regs(a0) ccout(NZVC) */

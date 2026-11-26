@@ -54,6 +54,10 @@ void    snd_busreq(int req);                                     /* after machin
 void    snd_reset(int release);
 size_t  snd_save(void *dst, size_t cap);                         /* branch snapshots (NULL: the size) */
 int     snd_load(const void *src, size_t len);
+/* quick saves and rewind (state.cpp's "sound"): machine 2, the views and the synthesis exactly (the
+   ymfm chips' own state, the writes they carry), the engine's chips and their event queue (NULL: the size) */
+size_t  snd_state_save(uint8_t *dst, size_t cap);
+int     snd_state_load(const uint8_t *src, size_t len);
 
 /* ---- called by the host (host_sdl.cpp) and the runner ---- */
 int     snd_own_path(void);                                      /* the sound is synthesized here */

@@ -1,0 +1,20 @@
+# Code the native port has no C for that tools/raw_reach.py finds a way into, left raw on purpose
+# (ruling R27, docs/phases/P6-enhance.md). One `$ADDR reason` per line; the check fails on any
+# finding not listed here and on any listed address it no longer finds.
+
+# VInt_ScrollModeTbl ($AE7C, jmp (pc,d0.w) on g_ScrollMode) cases $14-$24: every store to
+# g_ScrollMode is an immediate (4 8 $C $10 $28 $2C $34 $38 $3C), none of them these; mode $20's
+# handler alone is 465 raw instructions (NOTES "the table cases left raw", 2026-11-17)
+$00AE90 VInt_ScrollModeTbl case $14: a scroll mode no store sets
+$00AE94 VInt_ScrollModeTbl case $18: a scroll mode no store sets
+$00AE98 VInt_ScrollModeTbl case $1C: a scroll mode no store sets
+$00AE9C VInt_ScrollModeTbl case $20: a scroll mode no store sets
+$00AEA0 VInt_ScrollModeTbl case $24: a scroll mode no store sets
+$00AEE4 VInt_BusyScrollTbl case $20: the same mode $20, which no store sets
+
+# An ILLEGAL instruction ($4AFC) as an a2 op: scripts make it the handler of a vector
+# (Op2_SetVector0HereGoto `3AC2 00DC 07F6` in Scr2_031B4E, Scr2_031D3C, Scr2_0320EA), a trap for a
+# vector that should never fire. On the cartridge it would take the illegal-instruction exception,
+# whose vector is $0440800C: $40800C, outside the 2 MB ROM (a development unit's address), so the
+# original stops there too; the port's stop names it.
+$0007F6 the ILLEGAL op scripts set as a never-firing vector's handler; the cartridge faults there too

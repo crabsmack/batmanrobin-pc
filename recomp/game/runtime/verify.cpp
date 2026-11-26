@@ -90,6 +90,7 @@ extern int g_xtrace;
 uint32_t dk_stack_low(void);   /* spec.c: the sync rows' dead-stack bound */
 const uint8_t *dk_dont_care_map(void);   /* spec.c: [recomp] dont_care, 1 per masked RAM byte */
 void dk_install_crash_report(void (*report)(unsigned long code, void *addr));   /* crash_win.cpp */
+int input_script_mutates_state(void);   /* runner/input_script.c: the script writes RAM (`@poke`) */
 }
 #include "dk_verify_fns.h"
 #include "../dkit_sync.h"     /* [recomp.sync] wait_vint: dk_wait_sites */
@@ -1123,6 +1124,16 @@ extern "C" int dk_verify_entry(uint32_t addr)
     if (probe) st.probes++;
     if (irq && c.waited) {     /* 2. it waited for the V-int: not comparable */
         if (!probe) { st.irq++; st.waits++; }
+        pop();
+        return 1;
+    }
+    /* 2b. the run went on past a runner frame's end in a run whose input script writes RAM (a
+       scenario's `@poke`, kit 0.11.9): the write landed between the timed run's entry and its
+       return, and the C run (from the entry state) never sees it, so the call is not comparable
+       (R27's boss runs, 2026-11-18: 6 calls at their pokes' frames differed by the poked byte
+       $F64A alone). Counted with the interrupt-skipped calls. */
+    if (!irq && g_frame_count != c.frame0 && input_script_mutates_state()) {
+        if (!probe) st.irq++;
         pop();
         return 1;
     }

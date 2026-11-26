@@ -482,8 +482,10 @@ static void move_sprites(const Cap &c, double alpha, GVDP *v, uint64_t *n, uint6
                         int top = ((k ? ny : w16(c.base.vram, e)) & 0x1FF) - 128;
                         for (int yy = top < 0 ? 0 : top; yy < top + hgt && yy < MAX_LINES; yy++) dirty[yy] = 1;
                     }
-                    v->sat[(link * 8) & 0x3FF] = (uint8_t)(ny >> 8);
-                    v->sat[(link * 8 + 1) & 0x3FF] = (uint8_t)ny;
+                    if (!enh_sat_selftest()) {   /* BR_SAT_SELFTEST: X-Men 2's bug, R29's negative control */
+                        v->sat[(link * 8) & 0x3FF] = (uint8_t)(ny >> 8);
+                        v->sat[(link * 8 + 1) & 0x3FF] = (uint8_t)ny;
+                    }
                 }
             }
         }
@@ -532,6 +534,7 @@ static int draw(const Cap &c, const Cap *p, double alpha, uint32_t *fb, int stri
 {
     memcpy(&s_work, &c.base, sizeof s_work);
     GVDP *v = &s_work;
+    enh_sat_begin();
     static uint8_t dirty[MAX_LINES];
     memset(dirty, 0, sizeof dirty);
     int host_moved = 0;
@@ -633,6 +636,7 @@ static int draw(const Cap &c, const Cap *p, double alpha, uint32_t *fb, int stri
             need_load = 0;
         }
         const uint32_t *pal = &c.pals[(size_t)cl.pal * GVDP_OUTPUT_PALETTE_SIZE];
+        enh_sat_line(v);   /* R29: the copy the renderer reads vs VRAM, on each line drawn */
         for (int sub = 0; sub <= dbl; sub++) {
             int row = (line << dbl) + sub;
             int n = gvdp_render_scanline(v, row, s_idx);
@@ -646,6 +650,7 @@ static int draw(const Cap &c, const Cap *p, double alpha, uint32_t *fb, int stri
             in_sync = !memcmp(v->spr_edge, c.line[line + 1].spr_edge, sizeof v->spr_edge) &&
                       v->spr_mask_carry == c.line[line + 1].spr_mask_carry;
     }
+    enh_sat_end();
     if (host_set) spr_host_redraw();
     if (c.bars.bar_l || c.bars.bar_r)   /* widescreen R16: the bars past the map's ends with the pinned HUD over
                                            them, as ws_frame_check paints R_k's (the HUD is not interpolated) */

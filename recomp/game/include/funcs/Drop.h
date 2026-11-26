@@ -18,3 +18,11 @@ void Drop_HealthB9(uint32_t *d2, uint32_t *d3, uint32_t *d4, uint32_t *d5, uint3
 void Drop_HealthBRow(uint32_t *d2, uint32_t *d3, uint32_t *d4, uint32_t *d5, uint32_t *a0, uint32_t *a4, uint32_t *a6);	/* $0130A6 regs(&d2,&d3,&d4,&d5,&a0,&a4,&a6) ccout(NZVC) */
 const void *Drop_CollectHealth(const HitBox *box, dk::Flags *ccr);	/* $013296 regs(a2,&ccr)->a1 ccout(NZVC) clobbers(a0) */
 void Drop_RandomHealthB_case0(uint32_t *d2, uint32_t *d3, uint32_t *d4, uint32_t *d5, uint32_t *a0, uint32_t *a4, uint32_t *a6);	/* $013030 regs(&d2,&d3,&d4,&d5,&a0,&a4,&a6) ccout(NZVC) */
+void Drop_RandomHealthA(uint32_t *d0, uint16_t *d1, uint32_t *d2, uint32_t *d3, uint32_t *d4, uint32_t *d5, uint32_t *a0, uint32_t *a4, uint32_t *a6, dk::Flags *ccr);	/* $012FE4 regs(&d0,&d1,&d2,&d3,&d4,&d5,&a0,&a4,&a6,&ccr) ccout(NZVC) */
+void Drop_RandomHealthA_case0(uint32_t *d2, uint32_t *d3, uint32_t *d4, uint32_t *d5, uint32_t *a0, uint32_t *a4, uint32_t *a6);	/* $013006 regs(&d2,&d3,&d4,&d5,&a0,&a4,&a6) ccout(NZVC) */
+void Drop_RandomHealthA_case2(uint32_t *d2, uint32_t *d3, uint32_t *d4, uint32_t *d5, uint32_t *a0, uint32_t *a4, uint32_t *a6);	/* $013008 regs(&d2,&d3,&d4,&d5,&a0,&a4,&a6) ccout(NZVC) */
+void Drop_RandomHealthA_case4(uint32_t *d2, uint32_t *d3, uint32_t *d4, uint32_t *d5, uint32_t *a0, uint32_t *a4, uint32_t *a6);	/* $01300A regs(&d2,&d3,&d4,&d5,&a0,&a4,&a6) ccout(NZVC) */
+void Drop_RandomHealthA_case6(uint32_t *d2, uint32_t *d3, uint32_t *d4, uint32_t *d5, uint32_t *a0, uint32_t *a4, uint32_t *a6);	/* $01300C regs(&d2,&d3,&d4,&d5,&a0,&a4,&a6) ccout(NZVC) */
+void Drop_RandomHealthB_case2(uint32_t *d2, uint32_t *d3, uint32_t *d4, uint32_t *d5, uint32_t *a0, uint32_t *a4, uint32_t *a6);	/* $013032 regs(&d2,&d3,&d4,&d5,&a0,&a4,&a6) ccout(NZVC) */
+void Drop_RandomHealthB_case6(uint32_t *d2, uint32_t *d3, uint32_t *d4, uint32_t *d5, uint32_t *a0, uint32_t *a4, uint32_t *a6);	/* $013036 regs(&d2,&d3,&d4,&d5,&a0,&a4,&a6) ccout(NZVC) */
+void Drop_HealthA9(uint32_t *d2, uint32_t *d3, uint32_t *d4, uint32_t *d5, uint32_t *a0, uint32_t *a4, uint32_t *a6);	/* $013060 regs(&d2,&d3,&d4,&d5,&a0,&a4,&a6) ccout(NZVC) */

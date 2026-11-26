@@ -1,0 +1,5 @@
+# Op2_BranchVar1Ne: no corpus run calls it (ruling 5, 2; converted 2026-11-18, raw-reach-check). The case runs at Op2_BranchVar1Eq's first call ($002120): the
+# same operands (value, branch offset).
+at $002120
+
+case as_called

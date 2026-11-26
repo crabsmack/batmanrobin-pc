@@ -42,6 +42,10 @@ const uint32_t *nm_framebuffer(int *stride, int *w, int *h);   /* ARGB8888, the 
    model, the Z80, the machine's own state, the flow runtime) into a buffer and back */
 size_t nm_snapshot_save(uint8_t **buf);   /* malloc'd; the caller keeps it */
 int    nm_snapshot_load(const uint8_t *buf, size_t len);
+/* quick saves and rewind (rewind.cpp): the same machine as named sections into a caller's Snapshot
+   (state.h), many held at once; registered once after power-on */
+void     nm_state_init(void);
+uint64_t nm_frame_no(void);               /* runner frames run (the snapshot's own: a load moves it) */
 
 /* the 68000's hardware accesses (platform_native.cpp, after device_of): one call per access, the
    port's 68000 address, as the engine's frame-synchronous bus takes them (exact_sched.c xbus_*) */
@@ -60,6 +64,9 @@ void     dk_native_interrupt(unsigned level, uint32_t pc);
 uint16_t dk_native_sr(void);                           /* the register record's SR (its interrupt mask) */
 size_t   dk_native_flow_save(void *dst, size_t cap);   /* the flow runtime's state (NULL: its size) */
 void     dk_native_flow_load(const void *src);
+size_t   dk_native_flow_state_bytes(void);              /* ... into a caller's buffer (state.cpp) */
+void     dk_native_flow_state_save(void *dst);
+void     dk_native_flow_state_load(const void *src);
 
 /* ---- game_mem.cpp (in the native game library: dk_mem.h) ---- */
 void     nm_ram_init(void);               /* the arena at power-on: zeroed, every byte plain */
@@ -70,6 +77,7 @@ void     nm_ram_write16(uint32_t a, uint16_t v);   /* a word / long stored at it
 void     nm_ram_write32(uint32_t a, uint32_t v);
 size_t   nm_ram_save(void *dst, size_t cap);   /* work RAM's whole state (NULL: its size) */
 int      nm_ram_load(const void *src, size_t len);
+void     nm_ram_state_init(void);         /* the arena's values and tags as state.cpp's "arena" section */
 
 /* ---- runner.cpp ---- */
 extern uint8_t g_rom[0x400000];
@@ -89,6 +97,10 @@ uint16_t ns_peek(uint32_t n, int player);
 uint32_t ns_peek_frames(void);            /* how many reference frames ns_peek can still give */
 int      ns_should_exit(void);
 int      ns_exit_code(void);
+/* where the script is (rewind.cpp's headless tests: a step back replays a frame with the script where
+   it was): into dst (NULL: the size), back from src */
+size_t   ns_position_save(void *dst);
+int      ns_position_load(const void *src, size_t len);
 
 #ifdef __cplusplus
 }

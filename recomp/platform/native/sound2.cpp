@@ -28,6 +28,8 @@ extern "C" {
 #include "video/genesis_machine.h"
 #include "audio/event_queue.h"
 #include "audio/mixer.h"
+#include "audio/ym2612.h"
+#include "audio/sn76489.h"
 }
 #include "ymfm_opn.h"
 
@@ -884,6 +886,145 @@ extern "C" int snd_load(const void *src, size_t len)
     synth_start(s_fm1, S.v1);
     synth_start(s_fm2, S.v2);
     return 1;
+}
+
+/* ======================================================================== */
+/* Quick saves and rewind (state.cpp's "sound", rewind.cpp): the sound exactly as it is, so a rewind
+   step's replayed frame makes the sound it made (heard backwards: [rewind] sound). Unlike a branch
+   snapshot's (the synthesis restarted from the registers), each ymfm chip's own state goes with it
+   (its envelopes and phases), the writes it carries, its output filter, and the engine's chips (the
+   PSG; the YM2612 the cartridge path mixes) with the event queue between the Z80 and them. Each part
+   is prefixed by its length. Counters (C) are not state: they count what was played. */
+
+namespace {
+
+struct Blob {
+    uint8_t *o;
+    size_t n, cap;
+    bool ok = true;
+    void put(const void *p, size_t k)
+    {
+        if (o && n + k <= cap) memcpy(o + n, p, k);
+        else if (o) ok = false;
+        n += k;
+    }
+    void part(const std::vector<uint8_t> &v)
+    {
+        uint32_t k = (uint32_t)v.size();
+        put(&k, sizeof k);
+        put(v.data(), v.size());
+    }
+};
+
+std::vector<uint8_t> synth_bytes(FmSynth &f)
+{
+    std::vector<uint8_t> chip;
+    ymfm::ymfm_saved_state st(chip, true);
+    f.chip->save_restore(st);
+    std::vector<uint8_t> o;
+    auto add = [&](const void *p, size_t k) { o.insert(o.end(), (const uint8_t *)p, (const uint8_t *)p + k); };
+    uint32_t n = (uint32_t)chip.size(), nq = (uint32_t)f.q.size(), nb = (uint32_t)f.buf.size();
+    add(&n, sizeof n);
+    add(chip.data(), chip.size());
+    add(&f.accum, sizeof f.accum);
+    add(f.prev, sizeof f.prev);
+    add(f.out, sizeof f.out);
+    add(&nq, sizeof nq);
+    for (const Ev &e : f.q) { add(&e.stamp, 4); add(&e.port, 1); add(&e.v, 1); }   /* no padding */
+    add(&nb, sizeof nb);
+    add(f.buf.data(), f.buf.size() * sizeof(int16_t));
+    return o;
+}
+
+bool synth_load(FmSynth &f, const uint8_t *p, size_t len)
+{
+    const uint8_t *e = p + len;
+    auto get = [&](void *d, size_t k) { if ((size_t)(e - p) < k) return false; memcpy(d, p, k); p += k; return true; };
+    uint32_t n, nq, nb;
+    if (!get(&n, sizeof n) || (size_t)(e - p) < n) return false;
+    if (!f.chip) f.reset();
+    std::vector<uint8_t> chip(p, p + n);
+    p += n;
+    ymfm::ymfm_saved_state st(chip, false);
+    f.chip->save_restore(st);
+    if (!get(&f.accum, sizeof f.accum) || !get(f.prev, sizeof f.prev) || !get(f.out, sizeof f.out) || !get(&nq, sizeof nq))
+        return false;
+    f.q.resize(nq);
+    for (Ev &v : f.q)
+        if (!get(&v.stamp, 4) || !get(&v.port, 1) || !get(&v.v, 1)) return false;
+    if (!get(&nb, sizeof nb) || (size_t)(e - p) != (size_t)nb * sizeof(int16_t)) return false;
+    f.buf.resize(nb);
+    return get(f.buf.data(), (size_t)nb * sizeof(int16_t));
+}
+
+std::vector<uint8_t> engine_part(size_t (*save)(void *, size_t))
+{
+    std::vector<uint8_t> v(save(nullptr, 0));
+    if (!v.empty() && save(v.data(), v.size()) != v.size()) v.clear();
+    return v;
+}
+
+}  // namespace
+
+extern "C" size_t snd_state_save(uint8_t *dst, size_t cap)
+{
+    State c;
+    memcpy(&c, &S, sizeof c);   /* the padding as it is (the bytes are compared: rewind's XOR, its digest) */
+    c.m2.z.read_byte = nullptr; c.m2.z.write_byte = nullptr; c.m2.z.port_in = nullptr; c.m2.z.port_out = nullptr;
+    std::vector<uint8_t> st((const uint8_t *)&c, (const uint8_t *)&c + sizeof c);
+    std::vector<uint8_t> held;
+    for (const AudioEvent &e : s_held) {   /* field by field: no padding */
+        const uint8_t *b = (const uint8_t *)&e.cycle_stamp;
+        held.insert(held.end(), b, b + sizeof e.cycle_stamp);
+        held.push_back(e.port);
+        held.push_back(e.value);
+    }
+    Blob b{ dst, 0, dst ? cap : 0 };
+    b.part(st);
+    b.part(synth_bytes(s_fm1));
+    b.part(synth_bytes(s_fm2));
+    b.part(held);
+    b.part(engine_part(ym2612_rb_save));
+    b.part(engine_part(psg_rb_save));
+    b.part(engine_part(audio_event_rb_save));
+    return dst && !b.ok ? 0 : b.n;
+}
+
+extern "C" int snd_state_load(const uint8_t *src, size_t len)
+{
+    const uint8_t *p = src, *e = src + len;
+    auto part = [&](const uint8_t **at, size_t *n) {
+        uint32_t k;
+        if ((size_t)(e - p) < sizeof k) return false;
+        memcpy(&k, p, sizeof k);
+        p += sizeof k;
+        if ((size_t)(e - p) < k) return false;
+        *at = p;
+        *n = k;
+        p += k;
+        return true;
+    };
+    const uint8_t *a[7];
+    size_t n[7];
+    for (int i = 0; i < 7; i++)
+        if (!part(&a[i], &n[i])) return 0;
+    if (p != e || n[0] != sizeof S) return 0;
+    memcpy(&S, a[0], sizeof S);
+    m2_wire();
+    if (!synth_load(s_fm1, a[1], n[1]) || !synth_load(s_fm2, a[2], n[2])) return 0;
+    const size_t ev = sizeof(uint32_t) + 2;
+    if (n[3] % ev) return 0;
+    s_held.clear();
+    for (size_t i = 0; i < n[3]; i += ev) {
+        AudioEvent x;
+        memset(&x, 0, sizeof x);
+        memcpy(&x.cycle_stamp, a[3] + i, sizeof x.cycle_stamp);
+        x.port = a[3][i + 4];
+        x.value = a[3][i + 5];
+        s_held.push_back(x);
+    }
+    return (n[4] == 0 || ym2612_rb_load(a[4], n[4])) && (n[5] == 0 || psg_rb_load(a[5], n[5])) &&
+           audio_event_rb_load(a[6], n[6]);
 }
 
 /* ======================================================================== */

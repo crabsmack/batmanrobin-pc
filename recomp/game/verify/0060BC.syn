@@ -1,0 +1,5 @@
+# Op4_ForkAndEnd: no corpus run calls it (ruling 5, 2; converted 2026-11-18, raw-reach-check). The case runs at Op4_Fork's first call ($00609E): the same
+# operand (the child-script offset) and spawn registers d2-d5.
+at $00609E
+
+case as_called

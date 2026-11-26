@@ -1,0 +1,27 @@
+# Op2_ApplyMoveBranchAtY: no corpus run calls it (ruling 5, 2; converted 2026-11-18, raw-reach-check). The case runs at Op2_BranchVar1Eq's first call ($002120): two
+# operand words (limit, branch offset) and the object in a6; d1/d2 as they stand.
+# The other cases set y ($42(a6), 16.16) beside the limit (the script word at a2) and the move d2,
+# so each of the op's four paths runs: from below or above the limit, reaching it or not.
+at $002120
+
+case as_called
+
+case below_reaches
+w a6+$42 = {a2}+1
+w a6+$44 = 0
+reg d2 = $FFFE0000
+
+case below_short
+w a6+$42 = {a2}+2
+w a6+$44 = 0
+reg d2 = $FFFF0000
+
+case above_reaches
+w a6+$42 = {a2}-1
+w a6+$44 = 0
+reg d2 = $20000
+
+case above_short
+w a6+$42 = {a2}-2
+w a6+$44 = 0
+reg d2 = $10000

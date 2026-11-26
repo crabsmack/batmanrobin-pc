@@ -1,0 +1,5 @@
+# Hitbox_LinkByKind_AllPlayers: no corpus run calls it (ruling 5, 2; converted 2026-11-17, fix-spawn-table-gaps). Kind 4 of Hitbox_LinkByKind's jsr table, the same branch as kind
+# 0; the case runs at kind 0's first call ($004F3E), a0 = the box being linked.
+at $004F3E
+
+case as_kind0

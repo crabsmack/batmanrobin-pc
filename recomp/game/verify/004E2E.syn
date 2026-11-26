@@ -1,0 +1,5 @@
+# Hitbox_KindAllEnemies: no corpus run calls it (ruling 5, 2; converted 2026-11-17, fix-spawn-table-gaps). Kind $C of Hitbox_TestAttackBoxAt's jmp table; the case runs at
+# Hitbox_KindFirstEnemy's first call ($004E2A), the same jmp with d3 = 8 (the players' attacks).
+at $004E2A
+
+case as_kind8

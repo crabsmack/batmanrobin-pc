@@ -1,0 +1,3 @@
+# Known false positives of the publication guard: one regex per line, matched against the offending line.
+# Dear ImGui's vendored stb_truetype credits list (third-party contributors, upstream text)
+^//\s+Rob Loach\s+Cort Stratton\s*$

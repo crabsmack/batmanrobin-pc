@@ -69,7 +69,7 @@ Art_LockoutFont:	; 1bpp 8x8 font for the region-lockout message, 59 glyphs from 
 	include "src/f/000F2E.asm"
 	incrom	$000F44,$3C
 	include "src/f/000F80.asm"
-	incrom	$000F88,$12
+	include "src/f/000F88.asm"
 	include "src/f/000F9A.asm"
 	incrom	$000FB8,$48
 	include "src/f/001000.asm"
@@ -158,7 +158,8 @@ Art_LockoutFont:	; 1bpp 8x8 font for the region-lockout message, 59 glyphs from 
 	include "src/f/00208E.asm"
 	incrom	$0020DC,$16
 	include "src/f/0020F2.asm"
-	incrom	$002130,$20
+	include "src/f/002130.asm"
+	include "src/f/002140.asm"
 	include "src/f/002150.asm"
 	incrom	$002160,$20
 	include "src/f/002180.asm"
@@ -230,7 +231,7 @@ Scr2_002D28:	; a2-VM script: read by the a2 VM's handlers through a2
 	include "src/f/0034A6.asm"
 	incrom	$003574,$1A0
 	include "src/f/003714.asm"
-	incrom	$003756,$4
+	include "src/f/003756.asm"
 	include "src/f/00375A.asm"
 	include "src/f/003798.asm"
 	include "src/f/00385A.asm"
@@ -289,19 +290,20 @@ Scr2_002D28:	; a2-VM script: read by the a2 VM's handlers through a2
 	include "src/f/004AB4.asm"
 	incrom	$004AD2,$A2
 	include "src/f/004B74.asm"
-	incrom	$004C5E,$7C
+	include "src/f/004C5E.asm"
+	include "src/f/004C9A.asm"
 	include "src/f/004CDA.asm"
 	include "src/f/004DEC.asm"
 	include "src/f/004DF4.asm"
-	incrom	$004E2E,$4
+	include "src/f/004E2E.asm"
 	include "src/f/004E32.asm"
-	incrom	$004E4A,$8
+	include "src/f/004E4A.asm"
 	include "src/f/004E52.asm"
 	incrom	$004E7E,$2A
 	include "src/f/004EA8.asm"
-	incrom	$004F42,$4
+	include "src/f/004F42.asm"
 	include "src/f/004F46.asm"
-	incrom	$004F4A,$4
+	include "src/f/004F4A.asm"
 	include "src/f/004F4E.asm"
 	include "src/f/005078.asm"
 	include "src/f/0050A2.asm"
@@ -397,7 +399,7 @@ Scr2_002D28:	; a2-VM script: read by the a2 VM's handlers through a2
 	include "src/f/00607C.asm"
 	incrom	$00608E,$10
 	include "src/f/00609E.asm"
-	incrom	$0060BC,$6
+	include "src/f/0060BC.asm"
 	include "src/f/0060C2.asm"
 	include "src/f/0060C4.asm"
 	include "src/f/00613A.asm"
@@ -718,13 +720,17 @@ Tbl_00A87E:	; read by Pal_VIntUpload (pc $00A862); 43% read in the corpus
 	include "src/f/00AEA4.asm"
 	include "src/f/00AEBC.asm"
 	include "src/f/00AEC4.asm"
-	incrom	$00AEC8,$4
+	include "src/f/00AEC8.asm"
 	include "src/f/00AECC.asm"
-	incrom	$00AED8,$14
+	include "src/f/00AED8.asm"
+	include "src/f/00AEDC.asm"
+	include "src/f/00AEE0.asm"
+	incrom	$00AEE4,$4
+	include "src/f/00AEE8.asm"
 	include "src/f/00AEEC.asm"
-	incrom	$00AEF4,$4
+	include "src/f/00AEF4.asm"
 	include "src/f/00AEF8.asm"
-	incrom	$00AF00,$4
+	include "src/f/00AF00.asm"
 	include "src/f/00AF04.asm"
 	incrom	$00AF56,$2E
 	include "src/f/00AF84.asm"
@@ -906,13 +912,17 @@ Tbl_012EF0:	; addressed as data by code (operand in 012ED0); never read in the c
 	incrom	$012EF0,$C8
 	include "src/f/012FB8.asm"
 	include "src/f/012FBC.asm"
-	incrom	$012FE4,$2A
+	include "src/f/012FE4.asm"
+	include "src/f/013006.asm"
+	include "src/f/013008.asm"
+	include "src/f/01300A.asm"
+	include "src/f/01300C.asm"
 	include "src/f/01300E.asm"
-	incrom	$013032,$2
+	include "src/f/013032.asm"
 	include "src/f/013034.asm"
-	incrom	$013036,$2
+	include "src/f/013036.asm"
 	include "src/f/013038.asm"
-	incrom	$013060,$A
+	include "src/f/013060.asm"
 	include "src/f/01306A.asm"
 Scr4_0130B0:	; a4-VM script by its format: 4 of 16 words are a4 handler entry addresses; never run in the corpus
 	incrom	$0130B0,$20
@@ -1600,6 +1610,7 @@ Scr2_0278C6:	; a2-VM script: read by the a2 VM's handlers through a2; referenced
 	include "src/f/0278CE.asm"
 Scr4_0278E2:	; a4-VM script: read by the a4 VM's handlers through a4; 99% read in the corpus; referenced by 0278CE
 	incrom	$0278E2,$23A
+Scr4_027B1C:	; a4-VM script: read by the a4 VM's handlers through a4 (VM4_Next $53BA's dispatch, Op4 ops $53D4, $5606, $613A); the stage 2 boss's script after Scr4_0278E2, read only by the boss runs that beat it fast (scenario-boss04-s1/s3, energy scales 1, R27)
 	incrom	$027B1C,$10C
 Scr4_027C28:	; a4-VM script: read by the a4 VM's handlers through a4; 23% read in the corpus
 	incrom	$027C28,$6A

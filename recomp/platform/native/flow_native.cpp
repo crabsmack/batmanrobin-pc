@@ -59,3 +59,9 @@ extern "C" void dk_native_flow_load(const void *src)
     (void)src;
     dk::flow::branch_restore();
 }
+
+/* ... and into a caller's buffer (state.cpp's "flow" section: quick saves and rewind, many states
+   held at once) */
+extern "C" size_t dk_native_flow_state_bytes(void) { return dk::flow::state_bytes(); }
+extern "C" void dk_native_flow_state_save(void *dst) { dk::flow::state_save(dst); }
+extern "C" void dk_native_flow_state_load(const void *src) { dk::flow::state_load(src); }

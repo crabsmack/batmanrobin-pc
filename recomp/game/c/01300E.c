@@ -28,9 +28,9 @@ void Drop_RandomHealthB(uint32_t *d0, uint16_t *d1, uint32_t *d2, uint32_t *d3, 
     *d0 = (*d0 & 0xFFFF0000u) | offset;
     switch (offset) {                        /* the bra.s table at $013030 */
     case 0: dk::jump(at_Drop_RandomHealthB_case0); return;
-    case 2: dk::jump(at_Drop_HealthB2); return;          /* $013032: bra.s Drop_HealthB2 (raw) */
+    case 2: dk::jump(at_Drop_RandomHealthB_case2); return;
     case 4: dk::jump(at_Drop_RandomHealthB_case4); return;
-    default: dk::jump(at_Drop_HealthB3); return;         /* $013036: bra.s Drop_HealthB3 (raw) */
+    default: dk::jump(at_Drop_RandomHealthB_case6); return;
     }
 }
 

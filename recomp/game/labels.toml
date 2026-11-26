@@ -555,6 +555,10 @@ extra_seeds = [
   0x004C38,  # Op2_ClampMoveToAreaY
   0x004C4C,  # loc_004C4C
   0x004C52,  # Op2_ApplyMove
+  0x004C84,  # loc_004C84
+  0x004CB6,  # loc_004CB6
+  0x004CC8,  # loc_004CC8
+  0x004CD2,  # loc_004CD2
   0x004D14,  # loc_004D14
   0x004D32,  # loc_004D32
   0x004D4A,  # loc_004D4A
@@ -5026,6 +5030,7 @@ extra_seeds = [
   0x012EEE,  # SpawnAction_None
   0x012FD4,  # loc_012FD4
   0x012FDC,  # loc_012FDC
+  0x013004,  # loc_013004
   0x01302E,  # loc_01302E
   0x013030,  # Drop_RandomHealthB_case0
   0x013042,  # Drop_HealthA2

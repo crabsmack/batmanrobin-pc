@@ -1,0 +1,5 @@
+# Drop_RandomHealthB_case6: no corpus run calls it (ruling 5, 2; converted 2026-11-17, fix-spawn-table-gaps). Case 6 of Drop_RandomHealthB's bra.s table (the TAS took cases 0
+# and 4); the case runs at case 0's first call ($013030), the same call (d4/d5 the position, a4/a6 the caller's).
+at $013030
+
+case as_called

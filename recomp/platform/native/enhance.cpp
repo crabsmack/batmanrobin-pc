@@ -5,8 +5,9 @@
  *                     a branch plan its own
  *   the present clock --present-log OUT (present.csv) and high_fps: runner frame k's picture R_k is
  *                     shown at k x T (T one NTSC frame, as the 60 Hz build shows it); with
- *                     high_fps = H the ticks of an H Hz clock strictly between (k-1) x T and k x T
- *                     show frames interpolated from R_(k-1) toward R_k (the interpolator,
+ *                     high_fps = H the span (k-1) x T .. k x T in n = H x T rounded even parts
+ *                     (R28: enh_between_times), its n - 1 inner times
+ *                     showing frames interpolated from R_(k-1) toward R_k (the interpolator,
  *                     enh_set_interpolator; without one, R_(k-1) again). R_k is made before them:
  *                     no added latency, the frames in between only show earlier what R_k shows.
  *   the game's state  --game-rows: game_crc32 (view_masks.h) and gameplay beside each sync row
@@ -25,6 +26,7 @@ extern "C" {
 #include "video/genesis_machine.h"
 }
 #include "enhance.h"
+#include "crc32_fast.h"
 #include "runtime/dk_image.h"
 #include "native_machine.h"
 #include "options.h"
@@ -130,19 +132,7 @@ static uint32_t render_p99(void)
 
 /* ---- the game's state (--game-rows) ---- */
 
-static uint32_t s_crc[256];
-
-static uint32_t crc_update(uint32_t c, const uint8_t *p, size_t n)
-{
-    if (!s_crc[1])
-        for (uint32_t i = 0; i < 256; i++) {
-            uint32_t x = i;
-            for (int k = 0; k < 8; k++) x = (x & 1u) ? 0xEDB88320u ^ (x >> 1) : x >> 1;
-            s_crc[i] = x;
-        }
-    while (n--) c = s_crc[(c ^ *p++) & 0xFFu] ^ (c >> 8);
-    return c;
-}
+static uint32_t crc_update(uint32_t c, const uint8_t *p, size_t n) { return crc32_fast_update(c, p, n); }
 
 static void zero(uint8_t *mem, uint32_t size, uint32_t lo, uint32_t n)
 {
@@ -180,12 +170,24 @@ uint32_t enh_game_crc(const DkImage *im, const uint8_t *ram_mask)
 
 /* ---- picture hashes ---- */
 
+#define FNV_PRIME 0x100000001B3ULL
+
+/* FNV-1a-64 over a pixel's four bytes in memory order (little-endian: the low byte first) */
+static inline uint64_t fnv_px(uint64_t x, uint32_t px)
+{
+    x ^= px & 0xFFu;         x *= FNV_PRIME;
+    x ^= (px >> 8) & 0xFFu;  x *= FNV_PRIME;
+    x ^= (px >> 16) & 0xFFu; x *= FNV_PRIME;
+    x ^= px >> 24;           x *= FNV_PRIME;
+    return x;
+}
+
 static uint64_t fnv(const uint32_t *fb, int stride, int x0, int w, int h)
 {
     uint64_t x = 0xCBF29CE484222325ULL;
     for (int y = 0; y < h; y++) {
-        const uint8_t *p = (const uint8_t *)(fb + (size_t)y * (size_t)stride + x0);
-        for (int i = 0; i < w * 4; i++) { x ^= p[i]; x *= 0x100000001B3ULL; }
+        const uint32_t *row = fb + (size_t)y * (size_t)stride + x0;
+        for (int i = 0; i < w; i++) x = fnv_px(x, row[i]);
     }
     return x;
 }
@@ -202,18 +204,25 @@ uint64_t enh_centre_hash(void)
     if (x0 + sw > w) return 0;
     if (!g_enh_centre_nrects) return fnv(fb, stride, x0 + skip, sw - skip, h);
     /* the listed rectangles (widescreen.cpp: the HUD where either view draws it) hash as zero */
+    /* each row's covered columns once (a rect test per pixel was ~1 ms of every runner frame) */
+    static uint8_t cover[1024];
+    if (sw > (int)sizeof cover) return 0;
     uint64_t x = 0xCBF29CE484222325ULL;
     for (int y = 0; y < h; y++) {
         const uint32_t *row = fb + (size_t)y * (size_t)stride + x0;
-        for (int c = skip; c < sw; c++) {
-            uint32_t px = row[c];
-            for (int k = 0; k < g_enh_centre_nrects; k++) {
-                const EnhRect &r = g_enh_centre_rects[k];
-                if (c >= r.x0 && c < r.x1 && y >= r.y0 && y < r.y1) { px = 0; break; }
-            }
-            const uint8_t *p = (const uint8_t *)&px;
-            for (int i = 0; i < 4; i++) { x ^= p[i]; x *= 0x100000001B3ULL; }
+        int any = 0;
+        for (int k = 0; k < g_enh_centre_nrects; k++) {
+            const EnhRect &r = g_enh_centre_rects[k];
+            if (y < r.y0 || y >= r.y1) continue;
+            int a = r.x0 > skip ? r.x0 : skip, b = r.x1 < sw ? r.x1 : sw;
+            if (a >= b) continue;
+            if (!any) { memset(cover, 0, (size_t)sw); any = 1; }
+            memset(cover + a, 1, (size_t)(b - a));
         }
+        if (!any)
+            for (int c = skip; c < sw; c++) x = fnv_px(x, row[c]);
+        else
+            for (int c = skip; c < sw; c++) x = fnv_px(x, cover[c] ? 0u : row[c]);
     }
     return x;
 }
@@ -292,8 +301,50 @@ static void row(uint64_t k, double t, int whole, int gameplay, uint64_t hash, in
     }
 }
 
-/* After runner frame k (its picture R_k rendered when `rendered`, its logic done): the frames of the
-   clock between R_(k-1) and R_k, then R_k at k x T. frame_us: the runner frame's time (R_k's sample). */
+/* ---- R29: the renderer's sprite-table copy against VRAM ---- */
+
+static int s_sat_on, s_sat_bad;
+
+void enh_sat_begin(void) { s_sat_on = 1; s_sat_bad = 0; }
+
+void enh_sat_line(const GVDP *v)
+{
+    if (!s_sat_on || s_sat_bad) return;
+    const int h40 = gvdp_screen_width(v) == 320;
+    const uint16_t base = h40 ? 0xFC00 : 0xFE00, sb = (uint16_t)((v->reg[5] << 9) & base);
+    for (int s = 0; s < (h40 ? 80 : 64); s++)
+        for (int i = 0; i < 4; i++)   /* y, size, link: what the renderer reads from the copy */
+            if (v->sat[s * 8 + i] != v->vram[(uint16_t)(sb + s * 8 + i)]) { s_sat_bad = 1; return; }
+}
+
+void enh_sat_end(void)
+{
+    if (!s_sat_on) return;
+    s_sat_on = 0;
+    g_enh.sat_checks++;
+    if (s_sat_bad) g_enh.sat_cache_mismatch++;
+}
+
+int enh_sat_selftest(void)
+{
+    static int on = -1;
+    if (on < 0) { const char *e = getenv("BR_SAT_SELFTEST"); on = e && *e == '1'; }
+    return on;
+}
+
+int enh_between_times(double t0, double t1, int hz, double *ts, int max)
+{
+    if (hz <= 0 || t1 <= t0) return 0;
+    int n = (int)((t1 - t0) * hz / 1e6 + 0.5);
+    if (n < 1) n = 1;
+    int m = 0;
+    for (int j = 1; j < n && m < max; j++) ts[m++] = t0 + j * (t1 - t0) / n;
+    return m;
+}
+
+/* After runner frame k (its picture R_k rendered when `rendered`, its logic done): the frames in
+   between R_(k-1) and R_k (the span's even parts, enh_between_times), then R_k at k x T. frame_us:
+   the runner frame's time (R_k's sample). */
 void enh_present_frame(uint64_t k, int gameplay, int rendered, double frame_us)
 {
     if (!g_enh.present.active) return;
@@ -301,10 +352,10 @@ void enh_present_frame(uint64_t k, int gameplay, int rendered, double frame_us)
     const uint32_t *fb = nm_framebuffer(&stride, &w, &h);
     int hz = g_opt.high_fps;
     if (hz > 0 && k >= 2) {
-        double t0 = (double)(k - 1) * T_US, t1 = (double)k * T_US, step = 1e6 / hz;
-        double t = (double)(long long)(t0 / step + 1.0) * step;
-        for (; t < t1; t += step) {
-            if (t <= t0) continue;
+        double t0 = (double)(k - 1) * T_US, t1 = (double)k * T_US, ts[64];
+        int nb = enh_between_times(t0, t1, hz, ts, 64);
+        for (int j = 0; j < nb; j++) {
+            double t = ts[j];
             int made = 0;
             uint64_t hash = 0;
             if (rendered) {
@@ -360,7 +411,8 @@ std::string enh_json(int with_render)
 {
     const EnhCounters &e = g_enh;
     char b[64];
-    std::string o = "{\"gameplay_frames\": " + u64(e.gameplay_frames);
+    std::string o = "{\"gameplay_frames\": " + u64(e.gameplay_frames) + ", \"sat_checks\": " + u64(e.sat_checks) +
+                    ", \"sat_cache_mismatch\": " + u64(e.sat_cache_mismatch);
     o += ", \"present\": ";
     if (e.present.active) {
         const EnhPresent &p = e.present;

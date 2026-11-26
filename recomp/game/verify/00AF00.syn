@@ -1,0 +1,5 @@
+# VInt_BusyMode3C: no corpus run calls it (ruling 5, 2; converted 2026-11-17, fix-spawn-table-gaps). Busy slot $3C of VInt_BusyScrollTbl, the same branch as slot $38;
+# the case runs at VInt_BusyMode38's first call ($00AEFC), a0 = the VDP control port.
+at $00AEFC
+
+case as_mode38

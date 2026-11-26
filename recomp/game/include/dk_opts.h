@@ -10,6 +10,11 @@ extern "C" int opt_weapon_level(void);   /* weapon_level: 0 = the cartridge's, e
 /* Main_Start's start weapon level (g_StartWeaponLvl, copied to each player's record +$2A when it
    spawns): the option's level when set, else the cartridge's */
 #define OPT_START_WEAPON_LVL(v)  (opt_weapon_level() ? (uint16_t)opt_weapon_level() : (uint16_t)(v))
+extern "C" int opt_start_section(void);  /* start_stage: 0 = the cartridge's, else a section id */
+/* Main_NewGame's g_SectionId: the section the order table steps from to the start_stage option's
+   section (Section_RunNext then goes there first), else the cartridge's 0 (stage 1's opening) */
+#define OPT_START_SECTION(v)     (opt_start_section() ? (uint16_t)opt_start_section() : (uint16_t)(v))
 #else
 #define OPT_START_WEAPON_LVL(v)  ((uint16_t)(v))
+#define OPT_START_SECTION(v)     ((uint16_t)(v))
 #endif

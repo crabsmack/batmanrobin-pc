@@ -58,6 +58,7 @@ extern "C" {
 #include "present.h"
 #include "sound2.h"
 #include "widescreen.h"
+#include "state.h"
 
 GenesisMachine g_machine;
 extern "C" unsigned long g_snd_frame;   /* chip_trace.c: the sound's frame number (the mixer reads it) */
@@ -873,16 +874,19 @@ static void fsync_display(uint32_t pc)
     const int hf = s_render && g_opt.high_fps;          /* phase 6 R3: present.cpp's capture */
     if (s_render) { gvdp_reset_stats(); ws_frame_setup(); }   /* phase 6: the 16:9 view (widescreen.cpp), captured with it */
     if (hf) hf_display_begin();
+    if (s_render) enh_sat_begin();                      /* R29: the sprite table's copy vs VRAM, each line */
     fsync_hint(pc);                                     /* a latch the V-int re-enabled */
     for (int line = 0; line <= h; line++) {             /* the active lines, then vblank's first */
         if (--counter < 0) { counter = REG(10); s.hint_pending = 0x10; }
         if (line < h && s_render) {
             ws_line(line);
             if (hf) hf_display_line(line);
+            enh_sat_line(V);
             render_line(line);
         }
         fsync_hint(pc);
     }
+    if (s_render) enh_sat_end();
     if (hf) hf_display_end();
     if (s_render) { ws_frame_check(); vdp_frame_counters(); }
 }
@@ -1179,4 +1183,133 @@ extern "C" int nm_snapshot_load(const uint8_t *b, size_t len)
     hf_invalidate();   /* high_fps: the restored picture has no previous frame */
     audio_event_queue_reset();
     return 1;
+}
+
+/* ======================================================================== */
+/* Quick saves and rewind (rewind.cpp, R33): the same machine as state.cpp's named sections, into
+   caller-owned snapshots (many at once: the rewind ring, four slots). Unlike a branch snapshot they
+   also keep the Z80's EI shadow and instruction time (a branch keeps the running ones, as
+   stepped-gen's do) and the sound's synthesis exactly (the chips' own state, not restarted from the
+   registers): a rewind step must give back the frame it showed, its sound included. A section left
+   out of the loads is caught by tools/rewindcheck.py (BR_REWIND_SKIP). */
+
+extern "C" uint64_t nm_frame_no(void) { return s.frame_no; }
+
+static size_t fiber_save(uint8_t *dst, size_t cap)
+{
+    if (!dst) return fiber_snapshot_bound(s_game_fiber);
+    return fiber_snapshot_save(s_game_fiber, dst, cap);
+}
+
+static int fiber_load(const uint8_t *src, size_t len) { return fiber_snapshot_load(s_game_fiber, src, len) == 0; }
+
+static size_t flow_save(uint8_t *dst, size_t cap)
+{
+    size_t n = dk_native_flow_state_bytes();
+    if (!dst) return n;
+    if (cap < n) return 0;
+    dk_native_flow_state_save(dst);
+    return n;
+}
+
+static int flow_load(const uint8_t *src, size_t len)
+{
+    if (len != dk_native_flow_state_bytes()) return 0;
+    dk_native_flow_state_load(src);
+    return 1;
+}
+
+/* g_machine with its host pointers scrubbed (the copy's bytes are compared: rewind's XOR, the digest) */
+static size_t gm_save(uint8_t *dst, size_t cap)
+{
+    if (!dst) return sizeof g_machine;
+    if (cap < sizeof g_machine) return 0;
+    memcpy(dst, &g_machine, sizeof g_machine);
+    GenesisMachine *m = (GenesisMachine *)dst;
+    m->vdp.bus_read = nullptr; m->vdp.colour_updated = nullptr; m->bus.vdp = nullptr;
+    m->z80.read_byte = nullptr; m->z80.write_byte = nullptr; m->z80.port_in = nullptr; m->z80.port_out = nullptr;
+    m->z80.userdata = nullptr;
+    return sizeof g_machine;
+}
+
+static int gm_load(const uint8_t *src, size_t len)
+{
+    if (len != sizeof g_machine) return 0;
+    memcpy(&g_machine, src, sizeof g_machine);
+    wire_pointers();
+    return 1;
+}
+
+static size_t spr_save(uint8_t *dst, size_t cap)
+{
+    size_t n = spr_host_save(nullptr, 0);
+    if (!dst) return n;
+    return cap < n ? 0 : spr_host_save(dst, n);
+}
+
+static int spr_load(const uint8_t *src, size_t len)
+{
+    if (len != spr_host_save(nullptr, 0)) return 0;
+    spr_host_load(src);
+    return 1;
+}
+
+static size_t wsd_save(uint8_t *dst, size_t cap)
+{
+    size_t n = ws_draw_save(nullptr, 0);
+    if (!dst) return n;
+    return cap < n ? 0 : ws_draw_save(dst, n);
+}
+
+static int wsd_load(const uint8_t *src, size_t len)
+{
+    if (len != ws_draw_save(nullptr, 0)) return 0;
+    ws_draw_load(src);
+    return 1;
+}
+
+static size_t ws_save(uint8_t *dst, size_t cap)
+{
+    size_t n = ws_saved_size();
+    if (!dst) return n;
+    if (cap < n) return 0;
+    ws_saved_get(dst);
+    return n;
+}
+
+static int ws_load(const uint8_t *src, size_t len)
+{
+    if (len != ws_saved_size()) return 0;
+    ws_saved_put(src);
+    return 1;
+}
+
+static size_t snd_full_save(uint8_t *dst, size_t cap) { return snd_state_save(dst, cap); }
+static int snd_full_load(const uint8_t *src, size_t len) { return snd_state_load(src, len); }
+
+static void machine_after_load(void)
+{
+    for (unsigned c = 0; c < GVDP_CRAM_ENTRIES; c++) colour_cb(nullptr, c, g_machine.vdp.cram[c]);
+    hf_invalidate();   /* high_fps: the loaded picture has no previous frame */
+}
+
+/* The sections, in the snapshot's order */
+extern "C" void nm_state_init(void)
+{
+    static int done;
+    if (done) return;
+    done = 1;
+    state_section_custom("fiber", fiber_save, fiber_load);     /* the game's C frames, the run loops */
+    nm_ram_state_init();                                         /* "arena": work RAM, values and tags */
+    state_section_custom("flow", flow_save, flow_load);         /* the flow runtime's registers and loops */
+    state_section_custom("machine", gm_save, gm_load);          /* the video model, the Z80 and its RAM, the bus */
+    /* the schedule and the devices' latches (MState), the sound's frame number, the Z80's EI shadow
+       and its instruction's time and stamp */
+    STATE_VAR("platform", s); STATE_VAR("platform", g_snd_frame); STATE_VAR("platform", s_ei_shadow);
+    STATE_VAR("platform", s_znow); STATE_VAR("platform", s_zstamp);
+    state_section_custom("sprites", spr_save, spr_load);        /* the game's native sprite lists' host side */
+    state_section_custom("ws_draw", wsd_save, wsd_load);        /* R11's margin draws */
+    state_section_custom("widescreen", ws_save, ws_load);       /* what the widescreen code was told */
+    state_section_custom("sound", snd_full_save, snd_full_load);   /* machine 2, the synthesis, the chips */
+    state_after_load(machine_after_load);
 }

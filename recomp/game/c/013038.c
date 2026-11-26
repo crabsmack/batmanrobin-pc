@@ -50,8 +50,8 @@ void Drop_HealthA3(uint32_t *d2, uint32_t *d3, uint32_t *d4, uint32_t *d5, uint3
     run_drop(Scr4_0130E0, script);
 }
 
-/* Drop_HealthA5 - spawn action 39: drops five A-style health pickups (entry 40, nine of them at
- * $013060, is never run and stays raw).
+/* Drop_HealthA5 - spawn action 39: drops five A-style health pickups (entry 40, nine of them, is
+ * Drop_HealthA9 at $013060).
  * In:  x/y = the position (d4/d5)
  * Out: script = Scr4_0130D0 (a4), then Drop_RunFxScript
  * Evidence: lea Scr4_0130D0,a4 / bra.w Drop_RunFxScript; Tbl_012EF0 entry 39

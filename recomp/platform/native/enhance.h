@@ -162,6 +162,13 @@ typedef struct EnhCounters {
     EnhWs      ws;
     EnhSprites sprites;
     EnhAudio   audio;
+    /* R29: the renderer takes each sprite's y, size and link from the VDP's own copy of the sprite
+       table (the engine's sprite attribute cache), x and pattern from VRAM. Every render (the whole
+       frames and high_fps's frames in between) checks the two agree on each line it draws: sat_checks
+       counts renders checked, sat_cache_mismatch those where a line disagreed. X-Men 2's port wrote
+       VRAM only for four weeks (no sprite moved vertically between frames) and every check passed. */
+    uint64_t   sat_checks;
+    uint64_t   sat_cache_mismatch;
 } EnhCounters;
 
 extern EnhCounters g_enh;
@@ -217,6 +224,16 @@ void enh_render_sample(double us);
    Null: none. The sound side sets it at start (the --audio-hash PCM, its counters). */
 extern void (*g_enh_audio_frame)(uint64_t frame);
 
+/* R29's check, around each render: begin, then each line before it is drawn (after anything that
+   edits the table for that line), then end (counts the render). BR_SAT_SELFTEST=1 is its negative
+   control: present.cpp moves sprites in VRAM only (X-Men 2's bug), so the check must count
+   mismatches and the frames in between differ from the presentation reference. */
+struct GVDP;
+void enh_sat_begin(void);
+void enh_sat_line(const struct GVDP *v);
+void enh_sat_end(void);
+int  enh_sat_selftest(void);
+
 #ifdef __cplusplus
 }
 
@@ -227,6 +244,12 @@ std::string enh_json(int with_render);                  /* the `[dkit] enhance` 
 void enh_present_init(const char *present_csv);         /* null: no log (the clock runs with high_fps) */
 void enh_present_frame(uint64_t k, int gameplay, int rendered, double frame_us);
 void enh_present_close(void);
+/* high_fps's frames in between (R3, R28): the span (k-1)T..kT in n even parts, n = hz x T rounded
+   (at least 1): writes the n - 1 times strictly inside it to ts (at most max) and returns how many.
+   Not the ticks of an hz clock with R_k on top: X-Men 2's absolute clock showed 180 pictures a second
+   at 120, bunched, and a 120 Hz display dropped one in three (kit playbook/porting.md "High frame
+   rate"). Both the headless present clock and the played loop use it. */
+int enh_between_times(double t0, double t1, int hz, double *ts, int max);
 uint32_t enh_game_crc(const DkImage *im, const uint8_t *ram_mask);   /* game.csv's game_crc32 */
 uint64_t enh_centre_hash(void);                         /* fb_centre of the frame just drawn */
 void enh_centre_shot(uint64_t sync);   /* BR_CENTRE_SHOT: that sync row's frame as a PPM (diagnosing) */

@@ -1,0 +1,5 @@
+# Hitbox_HitAllEnemyBoxes: no corpus run calls it (ruling 5, 2; converted 2026-11-17, fix-spawn-table-gaps). Attack-box kind $C, Hitbox_HitFirstEnemyBox's search with
+# Hitbox_StrikeAll; the case runs at Hitbox_HitFirstEnemyBox's first call ($004E42), the same rectangle and lists.
+at $004E42
+
+case as_first_enemy
